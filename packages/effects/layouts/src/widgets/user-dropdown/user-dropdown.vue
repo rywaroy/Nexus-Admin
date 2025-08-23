@@ -23,7 +23,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
   VbenAvatar,
-  VbenIcon,
 } from '@vben-core/shadcn-ui';
 
 import { useMagicKeys, whenever } from '@vueuse/core';
@@ -81,7 +80,6 @@ const props = withDefaults(defineProps<Props>(), {
   trigger: 'click',
   hoverDelay: 500,
 });
-
 const emit = defineEmits<{ logout: [] }>();
 
 const { globalLockScreenShortcutKey, globalLogoutShortcutKey } =
