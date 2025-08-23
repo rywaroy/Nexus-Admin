@@ -1450,6 +1450,108 @@ const [Drawer, drawerApi] = useVbenDrawer({
 </template>
 ```
 
+### **图标(Icon)使用文档**
+
+Vben Admin 项目深度集成了图标方案，提供了多种灵活的方式来使用图标，主要包括 Iconify、本地 SVG 图标和图标选择器组件。
+
+#### **1. Iconify 图标库 (推荐)**
+
+项目集成了 [Iconify](https://icon-sets.iconify.design/)，它是一个海量的图标库集合，包含了 Material Design Icons (mdi), Ant Design Icons, Font Awesome 等超过200,000个图标。这是最推荐的使用方式。
+
+**用法**:
+
+你可以直接将 Iconify 图标作为 Vue 组件来使用。组件名称遵循 `@vben/icons` 规范。
+
+  - **命名**: 组件名由 `[IconSet]` + `[IconName]` 组成，例如 `MdiGithub`、`MdiGoogle`。
+  - **样式**: 可以像普通 HTML 元素一样，通过 `class` 属性来控制图标的大小、颜色等。
+
+**示例代码 (`index.vue`)**:
+
+```vue
+<script lang="ts" setup>
+// 从 @vben/icons 导入需要的图标
+import {
+  MdiGithub,
+  MdiGoogle,
+  MdiQqchat,
+  MdiWechat,
+} from '@vben/icons';
+</script>
+
+<template>
+  <Card title="Iconify">
+    <div class="flex items-center gap-5">
+      <MdiGithub class="size-8" />
+
+      <MdiGoogle class="size-8 text-red-500" />
+
+      <MdiQqchat class="size-8 text-green-500" />
+      <MdiWechat class="size-8" />
+    </div>
+  </Card>
+</template>
+```
+
+#### **2. 本地 SVG 图标**
+
+对于项目特有或者需要离线使用的图标，可以将其作为 SVG 文件存放在项目中，并像 Iconify 图标一样作为组件导入和使用。
+
+**用法**:
+
+本地 SVG 图标也被封装成了 Vue 组件。
+
+  - **命名**: 同样遵循 `@vben/icons` 规范，例如 `SvgAvatar1Icon`、`SvgBellIcon`。
+  - **存放位置**: 放在 `packages/icons/src/svg/icons` 文件夹， `packages/icons/src/svg/index.ts` 文件中导出。
+
+**示例代码 (`index.vue`)**:
+
+```vue
+<script lang="ts" setup>
+// 从 @vben/icons 导入本地 SVG 图标
+import {
+  SvgAvatar1Icon,
+  SvgBellIcon,
+  SvgCardIcon,
+  SvgDownloadIcon,
+} from '@vben/icons';
+</script>
+
+<template>
+  <Card title="Svg Icons">
+    <div class="flex items-center gap-5">
+      <SvgAvatar1Icon class="size-8" />
+      <SvgBellIcon class="size-8" />
+      <SvgCardIcon class="size-8" />
+      <SvgDownloadIcon class="size-8" />
+    </div>
+  </Card>
+</template>
+```
+
+#### **3. Tailwind CSS 类名方式**
+
+可以直接通过 `class` 的方式使用 Iconify 图标，无需在 `<script>` 中导入。
+
+**用法**:
+
+  - **格式**: `icon-[<icon-set>--<icon-name>]`。
+  - **优点**: 非常便捷，适合在模板中快速添加图标。
+
+**示例代码 (`index.vue`)**:
+
+```vue
+<template>
+  <Card title="Tailwind CSS">
+    <div class="flex items-center gap-5 text-3xl">
+      <span class="icon-[ant-design--alipay-circle-outlined]"></span>
+      <span class="icon-[ant-design--account-book-filled]"></span>
+      <span class="icon-[svg-spinners--wind-toy]"></span>
+      <span class="icon-[svg-spinners--blocks-wave]"></span>
+    </div>
+  </Card>
+</template>
+```
+
 ## 基础页面
 
 ### 列表页模版
