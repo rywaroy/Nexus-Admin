@@ -335,6 +335,7 @@ useVbenForm 返回的第二个参数，是一个对象，包含了一些表单�
 | handleReset | 表单重置回调 | `(values: Record<string, any>,) => Promise<void> \| void` | - |
 | handleSubmit | 表单提交回调 | `(values: Record<string, any>,) => Promise<void> \| void` | - |
 | handleValuesChange | 表单值变化回调 | `(values: Record<string, any>, fieldsChanged: string[]) => void` | - |
+| handleCollapsedChange | 表单收起展开状态变化回调 | `(collapsed: boolean) => void` | - |
 | actionButtonsReverse | 调换操作按钮位置 | `boolean` | `false` |
 | resetButtonOptions | 重置按钮组件参数 | `ActionButtonOptions` | - |
 | submitButtonOptions | 提交按钮组件参数 | `ActionButtonOptions` | - |
@@ -473,6 +474,8 @@ export interface FormSchema<
   fieldName: string;
   /** 帮助信息 */
   help?: CustomRenderType;
+  /** 是否隐藏表单项 */
+  hide?: boolean;
   /** 表单的标签（如果是一个string，会用于默认必选规则的消息提示） */
   label?: CustomRenderType;
   /** 自定义组件内部渲染  */
