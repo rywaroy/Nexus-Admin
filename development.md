@@ -394,7 +394,7 @@ const [Form] = useVbenForm({
 | `label` | `string` | 表单项的标签文本。 |
 | `component` | `string` | **必需。** 所使用的组件类型，例如 `'Input'`, `'Select'` 等。 |
 | `componentProps` | `object` | `function` | 传递给组件的 `props`。可以是一个对象，也可以是一个返回对象的函数，以实现动态 `props`。 |
-| `rules` | `string` | `object[]` | 表单校验规则，可以是 `'required'` 快捷字符串或标准的 `async-validator` 规则数组。 |
+| `rules` | `string` | zod 对象 |
 | `defaultValue` | `any` | 表单项的默认值。 |
 | `ifShow` | `boolean` | `function` | 控制表单项是否显示。可以是一个布尔值，也可以是一个返回布尔值的函数，以实现动态显示/隐藏。 |
 
@@ -411,16 +411,7 @@ const schema = [
     component: 'InputPassword',
     fieldName: 'password',
     label: '密码',
-    rules: [
-      {
-        required: true,
-        message: '请输入密码',
-      },
-      {
-        len: 6,
-        message: '密码长度必须为6位',
-      },
-    ],
+    rules: z.string().min(1, { message: '最少输入6个字符' }),,
   },
 ];
 ```
@@ -1193,7 +1184,7 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       fieldName: 'field2',
       label: '字段2',
-      rules: 'required',
+      rules: z.string().min(1, { message: '最少输入1个字符' }),,
     },
     {
       component: 'Select',
@@ -1462,20 +1453,15 @@ Vben Admin 项目深度集成了图标方案，提供了多种灵活的方式来
 
 你可以直接将 Iconify 图标作为 Vue 组件来使用。组件名称遵循 `@vben/icons` 规范。
 
-  - **命名**: 组件名由 `[IconSet]` + `[IconName]` 组成，例如 `MdiGithub`、`MdiGoogle`。
-  - **样式**: 可以像普通 HTML 元素一样，通过 `class` 属性来控制图标的大小、颜色等。
+- **命名**: 组件名由 `[IconSet]` + `[IconName]` 组成，例如 `MdiGithub`、`MdiGoogle`。
+- **样式**: 可以像普通 HTML 元素一样，通过 `class` 属性来控制图标的大小、颜色等。
 
 **示例代码 (`index.vue`)**:
 
 ```vue
 <script lang="ts" setup>
 // 从 @vben/icons 导入需要的图标
-import {
-  MdiGithub,
-  MdiGoogle,
-  MdiQqchat,
-  MdiWechat,
-} from '@vben/icons';
+import { MdiGithub, MdiGoogle, MdiQqchat, MdiWechat } from '@vben/icons';
 </script>
 
 <template>
@@ -1500,8 +1486,8 @@ import {
 
 本地 SVG 图标也被封装成了 Vue 组件。
 
-  - **命名**: 同样遵循 `@vben/icons` 规范，例如 `SvgAvatar1Icon`、`SvgBellIcon`。
-  - **存放位置**: 放在 `packages/icons/src/svg/icons` 文件夹， `packages/icons/src/svg/index.ts` 文件中导出。
+- **命名**: 同样遵循 `@vben/icons` 规范，例如 `SvgAvatar1Icon`、`SvgBellIcon`。
+- **存放位置**: 放在 `packages/icons/src/svg/icons` 文件夹， `packages/icons/src/svg/index.ts` 文件中导出。
 
 **示例代码 (`index.vue`)**:
 
@@ -1534,8 +1520,8 @@ import {
 
 **用法**:
 
-  - **格式**: `icon-[<icon-set>--<icon-name>]`。
-  - **优点**: 非常便捷，适合在模板中快速添加图标。
+- **格式**: `icon-[<icon-set>--<icon-name>]`。
+- **优点**: 非常便捷，适合在模板中快速添加图标。
 
 **示例代码 (`index.vue`)**:
 
