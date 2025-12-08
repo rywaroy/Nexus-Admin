@@ -5,6 +5,7 @@ import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 import { startProgress, stopProgress } from '@vben/utils';
 
+import { getAccessCodesApi } from '#/api';
 import { accessRoutes, coreRouteNames } from '#/router/routes';
 import { useAuthStore } from '#/store';
 
@@ -102,6 +103,15 @@ function setupAccessGuard(router: Router) {
       // 则会在菜单中显示，但是访问会被重定向到403
       routes: accessRoutes,
     });
+
+    // 获取并设置权限码（用于按钮级权限控制）
+    try {
+      const accessCodes = await getAccessCodesApi();
+      accessStore.setAccessCodes(accessCodes);
+    } catch {
+      // 获取权限码失败时不阻断流程，仅清空权限码
+      accessStore.setAccessCodes([]);
+    }
 
     // 保存菜单信息和路由信息
     accessStore.setAccessMenus(accessibleMenus);

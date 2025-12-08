@@ -1,5 +1,22 @@
 {
   "title": "System Management",
+  "role": {
+    "title": "Role Management",
+    "list": "Role List",
+    "name": "Role",
+    "roleName": "Role Name",
+    "id": "Role ID",
+    "status": "Status",
+    "remark": "Remark",
+    "permissions": "Permissions",
+    "createTime": "Create Time",
+    "operation": "Operation",
+    "statusEnabled": "Enabled",
+    "statusDisabled": "Disabled",
+    "switchStatus": "Switch Status",
+    "switchStatusConfirm": "Are you sure you want to switch the status of \"{0}\" to [{1}]?",
+    "deleteFailed": "Delete failed"
+  },
   "menu": {
     "title": "Menu Management",
     "parent": "Parent Menu",

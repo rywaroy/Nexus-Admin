@@ -1,5 +1,22 @@
 {
   "title": "系统管理",
+  "role": {
+    "title": "角色管理",
+    "list": "角色列表",
+    "name": "角色",
+    "roleName": "角色名称",
+    "id": "角色ID",
+    "status": "状态",
+    "remark": "备注",
+    "permissions": "权限设置",
+    "createTime": "创建时间",
+    "operation": "操作",
+    "statusEnabled": "启用",
+    "statusDisabled": "停用",
+    "switchStatus": "切换状态",
+    "switchStatusConfirm": "你要将「{0}」的状态切换为【{1}】吗？",
+    "deleteFailed": "删除失败"
+  },
   "menu": {
     "list": "菜单列表",
     "activeIcon": "激活图标",
