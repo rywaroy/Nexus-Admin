@@ -22,6 +22,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/system/menu/list.vue'),
       },
       {
+        path: 'dept',
+        name: 'SystemDept',
+        meta: {
+          icon: 'mdi:file-tree-outline',
+          title: $t('system.dept.title'),
+        },
+        component: () => import('#/views/system/dept/list.vue'),
+      },
+      {
         path: 'role',
         name: 'SystemRole',
         meta: {

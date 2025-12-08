@@ -1,5 +1,21 @@
 {
   "title": "System Management",
+  "dept": {
+    "title": "Department Management",
+    "list": "Department List",
+    "name": "Department",
+    "deptName": "Department Name",
+    "id": "Department ID",
+    "parent": "Parent Department",
+    "status": "Status",
+    "remark": "Remark",
+    "createTime": "Create Time",
+    "operation": "Operation",
+    "appendChild": "Add Child",
+    "switchStatus": "Switch Status",
+    "switchStatusConfirm": "Are you sure you want to switch the status of \"{0}\" to [{1}]?",
+    "cannotDeleteWithChildren": "Cannot delete department with children"
+  },
   "role": {
     "title": "Role Management",
     "list": "Role List",
