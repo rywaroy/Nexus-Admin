@@ -8,6 +8,8 @@ import { defineOverridesPreferences } from '@vben/preferences';
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
+    // mixed 模式：前端静态路由 + 后端动态路由
+    accessMode: 'mixed',
     name: import.meta.env.VITE_APP_TITLE,
   },
 });
