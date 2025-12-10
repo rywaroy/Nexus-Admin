@@ -4,6 +4,7 @@ import type {
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
 
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon, Plus } from '@vben/icons';
 import { $t, $te } from '@vben/locales';
@@ -15,7 +16,7 @@ import { Button, message } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteMenu, getMenuList, SystemMenuApi } from '#/api/system/menu';
 
-import { useColumns } from './data';
+import { PERMISSION_CODES, useColumns } from './data';
 import Form from './modules/form.vue';
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
@@ -23,9 +24,11 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
   destroyOnClose: true,
 });
 
+const { hasAccessByCodes } = useAccess();
+
 const [Grid, gridApi] = useVbenVxeGrid({
   gridOptions: {
-    columns: useColumns(onActionClick),
+    columns: useColumns(onActionClick, hasAccessByCodes),
     height: 'auto',
     keepSource: true,
     pagerConfig: {
@@ -123,7 +126,11 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
     <FormDrawer @success="onRefresh" />
     <Grid>
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <Button
+          v-access:code="PERMISSION_CODES.create"
+          type="primary"
+          @click="onCreate"
+        >
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('system.menu.name')]) }}
         </Button>

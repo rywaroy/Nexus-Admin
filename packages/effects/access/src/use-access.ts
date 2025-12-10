@@ -27,6 +27,11 @@ function useAccess() {
    * @param codes
    */
   function hasAccessByCodes(codes: string[]) {
+    // admin 角色拥有所有权限，直接返回 true
+    if (userStore.userRoles.includes('admin')) {
+      return true;
+    }
+
     const userCodesSet = new Set(accessStore.accessCodes);
 
     const intersection = codes.filter((item) => userCodesSet.has(item));

@@ -6,6 +6,14 @@ import type { SystemDeptApi } from '#/api/system/dept';
 
 import { $t } from '#/locales';
 
+/** 权限码常量 */
+export const PERMISSION_CODES = {
+  create: 'system:dept:create',
+  delete: 'system:dept:delete',
+  list: 'system:dept:list',
+  update: 'system:dept:update',
+} as const;
+
 /**
  * 部门列表筛选表单 Schema
  */
@@ -84,6 +92,9 @@ export function useFormSchema(
 
 /**
  * 部门列表列定义
+ * @param onActionClick 操作按钮点击回调
+ * @param onStatusChange 状态切换回调
+ * @param hasAccess 权限检查函数
  */
 export function useColumns(
   onActionClick: OnActionClickFn<SystemDeptApi.SystemDept>,
@@ -91,6 +102,7 @@ export function useColumns(
     newStatus: number,
     row: SystemDeptApi.SystemDept,
   ) => PromiseLike<boolean | undefined>,
+  hasAccess?: (codes: string[]) => boolean,
 ): VxeTableGridOptions<SystemDeptApi.SystemDept>['columns'] {
   return [
     {
@@ -146,15 +158,18 @@ export function useColumns(
           {
             code: 'append',
             icon: 'mdi:plus',
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.create]),
             text: $t('system.dept.appendChild'),
           },
           {
             code: 'edit',
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.update]),
           },
           {
             code: 'delete',
             disabled: (row: SystemDeptApi.SystemDept) =>
               Array.isArray(row.children) && row.children.length > 0,
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.delete]),
           },
         ],
       },

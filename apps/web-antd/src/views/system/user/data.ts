@@ -6,6 +6,16 @@ import type { SystemUserApi } from '#/api/system/user';
 
 import { $t } from '#/locales';
 
+/** 权限码常量 */
+export const PERMISSION_CODES = {
+  create: 'system:user:create',
+  delete: 'system:user:delete',
+  list: 'system:user:list',
+  query: 'system:user:query',
+  resetPassword: 'system:user:reset-password',
+  update: 'system:user:update',
+} as const;
+
 interface FormSchemaOptions {
   deptTree: SystemDeptApi.SystemDept[];
   roleList: SystemRoleApi.SystemRole[];
@@ -167,6 +177,9 @@ export const useResetPasswordSchema = (): VbenFormSchema[] => [
 
 /**
  * 用户列表列定义
+ * @param onActionClick 操作按钮点击回调
+ * @param onStatusChange 状态切换回调
+ * @param hasAccess 权限检查函数
  */
 export const useColumns = (
   onActionClick: OnActionClickFn<SystemUserApi.SystemUser>,
@@ -174,6 +187,7 @@ export const useColumns = (
     newStatus: number,
     row: SystemUserApi.SystemUser,
   ) => PromiseLike<boolean | undefined>,
+  hasAccess?: (codes: string[]) => boolean,
 ): VxeTableGridOptions<SystemUserApi.SystemUser>['columns'] => [
   {
     field: 'username',
@@ -229,13 +243,16 @@ export const useColumns = (
       options: [
         {
           code: 'edit',
+          show: () => !hasAccess || hasAccess([PERMISSION_CODES.update]),
         },
         {
           code: 'resetPassword',
+          show: () => !hasAccess || hasAccess([PERMISSION_CODES.resetPassword]),
           text: $t('system.user.resetPassword'),
         },
         {
           code: 'delete',
+          show: () => !hasAccess || hasAccess([PERMISSION_CODES.delete]),
         },
       ],
     },

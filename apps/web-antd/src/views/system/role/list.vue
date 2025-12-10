@@ -5,6 +5,7 @@ import type {
 } from '#/adapter/vxe-table';
 import type { SystemRoleApi } from '#/api/system/role';
 
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
@@ -14,8 +15,10 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteRole, getRoleList, updateRole } from '#/api/system/role';
 import { $t } from '#/locales';
 
-import { useColumns, useGridFormSchema } from './data';
+import { PERMISSION_CODES, useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
+
+const { hasAccessByCodes } = useAccess();
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -28,7 +31,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     submitOnChange: true,
   },
   gridOptions: {
-    columns: useColumns(onActionClick, onStatusChange),
+    columns: useColumns(onActionClick, onStatusChange, hasAccessByCodes),
     height: 'auto',
     keepSource: true,
     proxyConfig: {
@@ -167,7 +170,7 @@ function onCreate() {
     <Grid :table-title="$t('system.role.list')">
       <template #toolbar-tools>
         <Button
-          v-access:code="'system:role:create'"
+          v-access:code="PERMISSION_CODES.create"
           type="primary"
           @click="onCreate"
         >

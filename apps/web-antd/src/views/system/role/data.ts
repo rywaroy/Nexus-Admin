@@ -2,11 +2,16 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemRoleApi } from '#/api/system/role';
 
-import { useAccess } from '@vben/access';
-
 import { $t } from '#/locales';
 
-const { hasAccessByCodes } = useAccess();
+/** 权限码常量 */
+export const PERMISSION_CODES = {
+  create: 'system:role:create',
+  delete: 'system:role:delete',
+  list: 'system:role:list',
+  query: 'system:role:query',
+  update: 'system:role:update',
+} as const;
 
 /**
  * 角色列表筛选表单 Schema
@@ -75,6 +80,9 @@ export function useFormSchema(): VbenFormSchema[] {
 
 /**
  * 角色列表列定义
+ * @param onActionClick 操作按钮点击回调
+ * @param onStatusChange 状态切换回调
+ * @param hasAccess 权限检查函数
  */
 export function useColumns(
   onActionClick: OnActionClickFn<SystemRoleApi.SystemRole>,
@@ -82,6 +90,7 @@ export function useColumns(
     newStatus: number,
     row: SystemRoleApi.SystemRole,
   ) => PromiseLike<boolean | undefined>,
+  hasAccess?: (codes: string[]) => boolean,
 ): VxeTableGridOptions<SystemRoleApi.SystemRole>['columns'] {
   return [
     {
@@ -134,11 +143,11 @@ export function useColumns(
         options: [
           {
             code: 'edit',
-            show: () => hasAccessByCodes(['system:role:update']),
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.update]),
           },
           {
             code: 'delete',
-            show: () => hasAccessByCodes(['system:role:delete']),
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.delete]),
           },
         ],
       },

@@ -5,6 +5,7 @@ import type {
 } from '#/adapter/vxe-table';
 import type { SystemDeptApi } from '#/api/system/dept';
 
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
@@ -14,7 +15,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteDept, getDeptTree, updateDept } from '#/api/system/dept';
 import { $t } from '#/locales';
 
-import { useColumns, useGridFormSchema } from './data';
+import { PERMISSION_CODES, useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
@@ -22,13 +23,15 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
   destroyOnClose: true,
 });
 
+const { hasAccessByCodes } = useAccess();
+
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     schema: useGridFormSchema(),
     submitOnChange: true,
   },
   gridOptions: {
-    columns: useColumns(onActionClick, onStatusChange),
+    columns: useColumns(onActionClick, onStatusChange, hasAccessByCodes),
     height: 'auto',
     keepSource: true,
     pagerConfig: {
@@ -180,7 +183,11 @@ function onCreate() {
     <FormDrawer @success="onRefresh" />
     <Grid :table-title="$t('system.dept.list')">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <Button
+          v-access:code="PERMISSION_CODES.create"
+          type="primary"
+          @click="onCreate"
+        >
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('system.dept.name')]) }}
         </Button>

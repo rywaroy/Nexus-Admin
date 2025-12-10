@@ -3,6 +3,14 @@ import type { SystemMenuApi } from '#/api/system/menu';
 
 import { $t } from '#/locales';
 
+/** 权限码常量 */
+export const PERMISSION_CODES = {
+  create: 'system:menu:create',
+  delete: 'system:menu:delete',
+  list: 'system:menu:list',
+  update: 'system:menu:update',
+} as const;
+
 export function getMenuTypeOptions() {
   return [
     {
@@ -21,8 +29,14 @@ export function getMenuTypeOptions() {
   ];
 }
 
+/**
+ * 菜单列表列定义
+ * @param onActionClick 操作按钮点击回调
+ * @param hasAccess 权限检查函数
+ */
 export function useColumns(
   onActionClick: OnActionClickFn<SystemMenuApi.SystemMenu>,
+  hasAccess?: (codes: string[]) => boolean,
 ): VxeTableGridOptions<SystemMenuApi.SystemMenu>['columns'] {
   return [
     {
@@ -96,10 +110,17 @@ export function useColumns(
         options: [
           {
             code: 'append',
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.create]),
             text: $t('system.menu.appendChild'),
           },
-          'edit',
-          'delete',
+          {
+            code: 'edit',
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.update]),
+          },
+          {
+            code: 'delete',
+            show: () => !hasAccess || hasAccess([PERMISSION_CODES.delete]),
+          },
         ],
       },
       field: 'operation',

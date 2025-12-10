@@ -8,6 +8,7 @@ import type { SystemUserApi } from '#/api/system/user';
 
 import { onMounted, ref } from 'vue';
 
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
@@ -18,9 +19,11 @@ import { getDeptTree } from '#/api/system/dept';
 import { deleteUser, getUserList, updateUserStatus } from '#/api/system/user';
 import { $t } from '#/locales';
 
-import { useColumns, useGridFormSchema } from './data';
+import { PERMISSION_CODES, useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 import ResetPasswordForm from './modules/reset-password.vue';
+
+const { hasAccessByCodes } = useAccess();
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -86,7 +89,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     submitOnChange: true,
   },
   gridOptions: {
-    columns: useColumns(onActionClick, onStatusChange),
+    columns: useColumns(onActionClick, onStatusChange, hasAccessByCodes),
     height: 'auto',
     keepSource: true,
     proxyConfig: {
@@ -279,7 +282,11 @@ onMounted(() => {
       <div class="flex-1 overflow-hidden">
         <Grid :table-title="$t('system.user.list')">
           <template #toolbar-tools>
-            <Button type="primary" @click="onCreate">
+            <Button
+              v-access:code="PERMISSION_CODES.create"
+              type="primary"
+              @click="onCreate"
+            >
               <Plus class="size-5" />
               {{ $t('ui.actionTitle.create', [$t('system.user.name')]) }}
             </Button>
