@@ -4,6 +4,8 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemDeptApi } from '#/api/system/dept';
 
+import dayjs from 'dayjs';
+
 import { $t } from '#/locales';
 
 /** 权限码常量 */
@@ -142,6 +144,8 @@ export function useColumns(
     },
     {
       field: 'createTime',
+      formatter: ({ cellValue }) =>
+        cellValue ? dayjs(cellValue).format('YYYY-MM-DD HH:mm:ss') : '',
       title: $t('system.dept.createTime'),
       width: 180,
     },

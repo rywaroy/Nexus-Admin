@@ -4,6 +4,8 @@ import type { SystemDeptApi } from '#/api/system/dept';
 import type { SystemRoleApi } from '#/api/system/role';
 import type { SystemUserApi } from '#/api/system/user';
 
+import dayjs from 'dayjs';
+
 import { $t } from '#/locales';
 
 /** 权限码常量 */
@@ -100,6 +102,7 @@ export const useFormSchema = (
       },
       placeholder: $t('system.user.deptPlaceholder'),
       showSearch: true,
+      style: { width: '100%' },
       treeData: options.deptTree,
       treeDefaultExpandAll: true,
     },
@@ -117,6 +120,7 @@ export const useFormSchema = (
         value: role.name,
       })),
       placeholder: $t('system.user.rolesPlaceholder'),
+      style: { width: '100%' },
     },
     fieldName: 'roles',
     label: $t('system.user.roles'),
@@ -229,6 +233,8 @@ export const useColumns = (
   },
   {
     field: 'createTime',
+    formatter: ({ cellValue }) =>
+      cellValue ? dayjs(cellValue).format('YYYY-MM-DD HH:mm:ss') : '',
     title: $t('system.user.createTime'),
     width: 180,
   },

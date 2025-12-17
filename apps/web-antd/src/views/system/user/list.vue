@@ -86,7 +86,7 @@ const onClearDeptFilter = () => {
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     schema: useGridFormSchema(),
-    submitOnChange: true,
+    submitOnChange: false,
   },
   gridOptions: {
     columns: useColumns(onActionClick, onStatusChange, hasAccessByCodes),
@@ -191,18 +191,9 @@ function onResetPassword(row: SystemUserApi.SystemUser) {
 }
 
 /**
- * 删除用户（带二次确认）
+ * 删除用户
  */
 async function onDelete(row: SystemUserApi.SystemUser) {
-  try {
-    await confirm(
-      $t('ui.actionMessage.deleteConfirm', [row.username]),
-      $t('ui.actionTitle.delete'),
-    );
-  } catch {
-    return;
-  }
-
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.username]),
     duration: 0,
