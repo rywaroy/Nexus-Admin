@@ -25,6 +25,26 @@ const formData = ref<SystemUserApi.SystemUser>();
 const deptTree = ref<SystemDeptApi.SystemDept[]>([]);
 const roleList = ref<SystemRoleApi.SystemRole[]>([]);
 
+/**
+ * 将 roles 统一转换为"角色名称数组"
+ * 兼容历史数据里把角色ID写入 roles 的情况
+ */
+function normalizeRolesToNames(roles: unknown): string[] | undefined {
+  if (!Array.isArray(roles)) return undefined;
+
+  const roleIdToName = new Map(
+    roleList.value.map((role) => [role.id, role.name]),
+  );
+  const roleNameSet = new Set(roleList.value.map((role) => role.name));
+
+  return roles
+    .map((item) => String(item).trim())
+    .filter(Boolean)
+    .map((item) =>
+      roleNameSet.has(item) ? item : (roleIdToName.get(item) ?? item),
+    );
+}
+
 const isEdit = computed(() => !!formData.value?.id);
 
 const formOptions = computed(() => ({
@@ -43,7 +63,10 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (!valid) return;
 
     drawerApi.lock();
-    const values = await formApi.getValues();
+    const values = (await formApi.getValues()) as any;
+    // 将 roles 统一转换为角色名称数组
+    const normalizedRoles = normalizeRolesToNames(values.roles);
+    if (normalizedRoles) values.roles = normalizedRoles;
 
     try {
       await (formData.value?.id
@@ -82,7 +105,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
           status: data.status,
           remark: data.remark,
           deptId: data.deptId,
-          roles: data.roles,
+          // 兼容历史数据：将角色ID转换为角色名称
+          roles: normalizeRolesToNames(data.roles) ?? data.roles,
         });
       }
     }

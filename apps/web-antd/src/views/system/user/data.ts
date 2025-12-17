@@ -111,9 +111,10 @@ export const useFormSchema = (
     componentProps: {
       allowClear: true,
       mode: 'multiple',
+      // 后端 User.roles 以"角色名称"存储与鉴权，这里保持一致
       options: options.roleList.map((role) => ({
         label: role.name,
-        value: role.id,
+        value: role.name,
       })),
       placeholder: $t('system.user.rolesPlaceholder'),
     },
