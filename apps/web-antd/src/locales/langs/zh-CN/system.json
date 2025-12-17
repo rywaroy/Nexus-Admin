@@ -3,6 +3,9 @@
   "dept": {
     "title": "部门管理",
     "list": "部门列表",
+    "create": "新增部门",
+    "update": "修改部门",
+    "delete": "删除部门",
     "name": "部门",
     "deptName": "部门名称",
     "id": "部门ID",
@@ -19,6 +22,10 @@
   "role": {
     "title": "角色管理",
     "list": "角色列表",
+    "query": "查询角色",
+    "create": "新增角色",
+    "update": "修改角色",
+    "delete": "删除角色",
     "name": "角色",
     "roleName": "角色名称",
     "id": "角色ID",
@@ -36,6 +43,10 @@
   "user": {
     "title": "用户管理",
     "list": "用户列表",
+    "query": "查询用户",
+    "create": "新增用户",
+    "update": "修改用户",
+    "delete": "删除用户",
     "name": "用户",
     "username": "用户名",
     "nickName": "昵称",
@@ -65,6 +76,9 @@
   },
   "menu": {
     "list": "菜单列表",
+    "create": "新增菜单",
+    "update": "修改菜单",
+    "delete": "删除菜单",
     "activeIcon": "激活图标",
     "activePath": "激活路径",
     "activePathHelp": "跳转到当前路由时，需要激活的菜单路径。\n当不在导航菜单中显示时，需要指定激活路径",

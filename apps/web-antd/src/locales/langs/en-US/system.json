@@ -3,6 +3,9 @@
   "dept": {
     "title": "Department Management",
     "list": "Department List",
+    "create": "Create Department",
+    "update": "Update Department",
+    "delete": "Delete Department",
     "name": "Department",
     "deptName": "Department Name",
     "id": "Department ID",
@@ -19,6 +22,10 @@
   "role": {
     "title": "Role Management",
     "list": "Role List",
+    "query": "Query Role",
+    "create": "Create Role",
+    "update": "Update Role",
+    "delete": "Delete Role",
     "name": "Role",
     "roleName": "Role Name",
     "id": "Role ID",
@@ -36,6 +43,10 @@
   "user": {
     "title": "User Management",
     "list": "User List",
+    "query": "Query User",
+    "create": "Create User",
+    "update": "Update User",
+    "delete": "Delete User",
     "name": "User",
     "username": "Username",
     "nickName": "Nickname",
@@ -65,6 +76,10 @@
   },
   "menu": {
     "title": "Menu Management",
+    "list": "Menu List",
+    "create": "Create Menu",
+    "update": "Update Menu",
+    "delete": "Delete Menu",
     "parent": "Parent Menu",
     "menuTitle": "Title",
     "menuName": "Menu Name",
