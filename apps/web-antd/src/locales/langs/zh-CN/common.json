@@ -1,3 +1,12 @@
 {
-  "clear": "清空"
+  "clear": "清空",
+  "view": "查看",
+  "operation": "操作",
+  "success": "成功",
+  "fail": "失败",
+  "enabled": "启用",
+  "disabled": "停用",
+  "noData": "暂无数据",
+  "confirmTitle": "确认",
+  "batchDelete": "批量删除"
 }

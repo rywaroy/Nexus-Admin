@@ -1,0 +1,41 @@
+{
+  "title": "Monitor",
+  "operlog": {
+    "title": "Operation Log",
+    "list": "Operation Log List",
+    "query": "Query Log",
+    "delete": "Delete Log",
+    "detail": "Log Detail",
+    "clean": "Clear Logs",
+    "operName": "Operator",
+    "deptName": "Department",
+    "operIp": "IP Address",
+    "operLocation": "Location",
+    "operUrl": "Request URL",
+    "operParam": "Request Parameters",
+    "jsonResult": "Response Result",
+    "method": "Method",
+    "requestMethod": "Request Method",
+    "status": "Status",
+    "errorMsg": "Error Message",
+    "operTime": "Operation Time",
+    "costTime": "Duration",
+    "businessType": {
+      "label": "Business Type",
+      "other": "Other",
+      "insert": "Insert",
+      "update": "Update",
+      "delete": "Delete",
+      "grant": "Grant",
+      "export": "Export",
+      "import": "Import",
+      "force": "Force Logout",
+      "clean": "Clean"
+    },
+    "selectTip": "Please select logs to delete",
+    "batchDeleteConfirm": "Are you sure you want to delete {0} selected logs?",
+    "batchDeleteSuccess": "Batch delete successful",
+    "cleanConfirm": "Are you sure you want to clear all operation logs? This action cannot be undone!",
+    "cleanSuccess": "Clear successful, {0} logs deleted"
+  }
+}
