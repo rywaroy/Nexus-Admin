@@ -1,9 +1,9 @@
 import { requestClient } from '#/api/request';
 
 /**
- * 操作日志 API 命名空间
+ * 日志管理 API 命名空间
  */
-export namespace MonitorOperLogApi {
+export namespace SystemLogApi {
   /** 业务类型枚举 */
   export enum BusinessType {
     /** 清空 */
@@ -104,10 +104,8 @@ export namespace MonitorOperLogApi {
 /**
  * 获取操作日志列表
  */
-export const getOperLogList = (
-  params?: MonitorOperLogApi.QueryOperLogRequest,
-) => {
-  return requestClient.get<MonitorOperLogApi.OperLogListResult>(
+export const getOperLogList = (params?: SystemLogApi.QueryOperLogRequest) => {
+  return requestClient.get<SystemLogApi.OperLogListResult>(
     '/monitor/operlog/list',
     { params },
   );
@@ -117,7 +115,7 @@ export const getOperLogList = (
  * 获取操作日志详情
  */
 export const getOperLog = (id: string) => {
-  return requestClient.get<MonitorOperLogApi.OperLog>(`/monitor/operlog/${id}`);
+  return requestClient.get<SystemLogApi.OperLog>(`/monitor/operlog/${id}`);
 };
 
 /**

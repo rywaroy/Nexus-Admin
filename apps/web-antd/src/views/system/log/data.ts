@@ -1,6 +1,6 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
-import type { MonitorOperLogApi } from '#/api/monitor/operlog';
+import type { SystemLogApi } from '#/api/system/log';
 
 import dayjs from 'dayjs';
 
@@ -8,9 +8,9 @@ import { $t } from '#/locales';
 
 /** 权限码常量 */
 export const PERMISSION_CODES = {
-  delete: 'monitor:operlog:delete',
-  list: 'monitor:operlog:list',
-  query: 'monitor:operlog:query',
+  delete: 'system:log:delete',
+  list: 'system:log:list',
+  query: 'system:log:query',
 } as const;
 
 /** 业务类型映射 */
@@ -18,15 +18,15 @@ export const BUSINESS_TYPE_MAP: Record<
   number,
   { color: string; label: string }
 > = {
-  0: { color: 'default', label: 'monitor.operlog.businessType.other' },
-  1: { color: 'success', label: 'monitor.operlog.businessType.insert' },
-  2: { color: 'processing', label: 'monitor.operlog.businessType.update' },
-  3: { color: 'error', label: 'monitor.operlog.businessType.delete' },
-  4: { color: 'warning', label: 'monitor.operlog.businessType.grant' },
-  5: { color: 'cyan', label: 'monitor.operlog.businessType.export' },
-  6: { color: 'purple', label: 'monitor.operlog.businessType.import' },
-  7: { color: 'magenta', label: 'monitor.operlog.businessType.force' },
-  8: { color: 'red', label: 'monitor.operlog.businessType.clean' },
+  0: { color: 'default', label: 'system.log.businessType.other' },
+  1: { color: 'success', label: 'system.log.businessType.insert' },
+  2: { color: 'processing', label: 'system.log.businessType.update' },
+  3: { color: 'error', label: 'system.log.businessType.delete' },
+  4: { color: 'warning', label: 'system.log.businessType.grant' },
+  5: { color: 'cyan', label: 'system.log.businessType.export' },
+  6: { color: 'purple', label: 'system.log.businessType.import' },
+  7: { color: 'magenta', label: 'system.log.businessType.force' },
+  8: { color: 'red', label: 'system.log.businessType.clean' },
 };
 
 /** 操作状态映射 */
@@ -61,12 +61,12 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
   {
     component: 'Input',
     fieldName: 'title',
-    label: $t('monitor.operlog.title'),
+    label: $t('system.log.title'),
   },
   {
     component: 'Input',
     fieldName: 'operName',
-    label: $t('monitor.operlog.operName'),
+    label: $t('system.log.operName'),
   },
   {
     component: 'Select',
@@ -75,7 +75,7 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
       options: getBusinessTypeOptions(),
     },
     fieldName: 'businessType',
-    label: $t('monitor.operlog.businessType.label'),
+    label: $t('system.log.businessType.label'),
   },
   {
     component: 'Select',
@@ -84,12 +84,12 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
       options: getStatusOptions(),
     },
     fieldName: 'status',
-    label: $t('monitor.operlog.status'),
+    label: $t('system.log.status'),
   },
   {
     component: 'RangePicker',
     fieldName: 'dateRange',
-    label: $t('monitor.operlog.operTime'),
+    label: $t('system.log.operTime'),
   },
 ];
 
@@ -99,9 +99,9 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
  * @param hasAccess 权限检查函数
  */
 export const useColumns = (
-  onActionClick: OnActionClickFn<MonitorOperLogApi.OperLog>,
+  onActionClick: OnActionClickFn<SystemLogApi.OperLog>,
   hasAccess?: (codes: string[]) => boolean,
-): VxeTableGridOptions<MonitorOperLogApi.OperLog>['columns'] => [
+): VxeTableGridOptions<SystemLogApi.OperLog>['columns'] => [
   {
     type: 'checkbox',
     width: 50,
@@ -109,7 +109,7 @@ export const useColumns = (
   {
     field: 'title',
     minWidth: 140,
-    title: $t('monitor.operlog.title'),
+    title: $t('system.log.title'),
   },
   {
     cellRender: {
@@ -123,22 +123,22 @@ export const useColumns = (
       ),
     },
     field: 'businessType',
-    title: $t('monitor.operlog.businessType.label'),
+    title: $t('system.log.businessType.label'),
     width: 100,
   },
   {
     field: 'requestMethod',
-    title: $t('monitor.operlog.requestMethod'),
+    title: $t('system.log.requestMethod'),
     width: 90,
   },
   {
     field: 'operName',
-    title: $t('monitor.operlog.operName'),
+    title: $t('system.log.operName'),
     width: 100,
   },
   {
     field: 'operIp',
-    title: $t('monitor.operlog.operIp'),
+    title: $t('system.log.operIp'),
     width: 130,
   },
   {
@@ -153,20 +153,20 @@ export const useColumns = (
       ),
     },
     field: 'status',
-    title: $t('monitor.operlog.status'),
+    title: $t('system.log.status'),
     width: 90,
   },
   {
     field: 'costTime',
     formatter: ({ cellValue }) => (cellValue ? `${cellValue}ms` : ''),
-    title: $t('monitor.operlog.costTime'),
+    title: $t('system.log.costTime'),
     width: 100,
   },
   {
     field: 'operTime',
     formatter: ({ cellValue }) =>
       cellValue ? dayjs(cellValue).format('YYYY-MM-DD HH:mm:ss') : '',
-    title: $t('monitor.operlog.operTime'),
+    title: $t('system.log.operTime'),
     width: 170,
   },
   {
@@ -174,7 +174,7 @@ export const useColumns = (
     cellRender: {
       attrs: {
         nameField: 'title',
-        nameTitle: $t('monitor.operlog.title'),
+        nameTitle: $t('system.log.title'),
         onClick: onActionClick,
       },
       name: 'CellOperation',

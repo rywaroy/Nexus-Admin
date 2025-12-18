@@ -3,7 +3,7 @@ import type {
   OnActionClickParams,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
-import type { MonitorOperLogApi } from '#/api/monitor/operlog';
+import type { SystemLogApi } from '#/api/system/log';
 
 import { ref } from 'vue';
 
@@ -13,11 +13,7 @@ import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Button, message, Modal, Popconfirm } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  cleanOperLog,
-  deleteOperLog,
-  getOperLogList,
-} from '#/api/monitor/operlog';
+import { cleanOperLog, deleteOperLog, getOperLogList } from '#/api/system/log';
 import { $t } from '#/locales';
 
 import { PERMISSION_CODES, useColumns, useGridFormSchema } from './data';
@@ -51,7 +47,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         query: async ({ page }, formValues) => {
           // 处理日期范围
           const { dateRange, ...rest } = formValues;
-          const params: MonitorOperLogApi.QueryOperLogRequest = {
+          const params: SystemLogApi.QueryOperLogRequest = {
             page: page.currentPage,
             pageSize: page.pageSize,
             ...rest,
@@ -79,7 +75,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       search: true,
       zoom: true,
     },
-  } as VxeTableGridOptions<MonitorOperLogApi.OperLog>,
+  } as VxeTableGridOptions<SystemLogApi.OperLog>,
   gridEvents: {
     checkboxAll: onCheckboxChange,
     checkboxChange: onCheckboxChange,
@@ -88,10 +84,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 function onCheckboxChange() {
   const records = gridApi.grid?.getCheckboxRecords() || [];
-  selectedIds.value = records.map((row: MonitorOperLogApi.OperLog) => row._id);
+  selectedIds.value = records.map((row: SystemLogApi.OperLog) => row._id);
 }
 
-function onActionClick(e: OnActionClickParams<MonitorOperLogApi.OperLog>) {
+function onActionClick(e: OnActionClickParams<SystemLogApi.OperLog>) {
   switch (e.code) {
     case 'delete': {
       onDelete(e.row);
@@ -107,14 +103,14 @@ function onActionClick(e: OnActionClickParams<MonitorOperLogApi.OperLog>) {
 /**
  * 查看详情
  */
-function onView(row: MonitorOperLogApi.OperLog) {
+function onView(row: SystemLogApi.OperLog) {
   detailDrawerApi.setData(row).open();
 }
 
 /**
  * 删除单条日志
  */
-async function onDelete(row: MonitorOperLogApi.OperLog) {
+async function onDelete(row: SystemLogApi.OperLog) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.title]),
     duration: 0,
@@ -144,7 +140,7 @@ async function onDelete(row: MonitorOperLogApi.OperLog) {
  */
 async function onBatchDelete() {
   if (selectedIds.value.length === 0) {
-    message.warning($t('monitor.operlog.selectTip'));
+    message.warning($t('system.log.selectTip'));
     return;
   }
 
@@ -157,7 +153,7 @@ async function onBatchDelete() {
   try {
     await deleteOperLog(selectedIds.value);
     message.success({
-      content: $t('monitor.operlog.batchDeleteSuccess'),
+      content: $t('system.log.batchDeleteSuccess'),
       key: 'action_process_msg',
     });
     // 清除选中状态
@@ -181,7 +177,7 @@ async function onBatchDelete() {
  */
 async function onClean() {
   Modal.confirm({
-    content: $t('monitor.operlog.cleanConfirm'),
+    content: $t('system.log.cleanConfirm'),
     title: $t('common.confirmTitle'),
     okType: 'danger',
     onOk: async () => {
@@ -194,7 +190,7 @@ async function onClean() {
       try {
         const result = await cleanOperLog();
         message.success({
-          content: $t('monitor.operlog.cleanSuccess', [result.deletedCount]),
+          content: $t('system.log.cleanSuccess', [result.deletedCount]),
           key: 'action_process_msg',
         });
         selectedIds.value = [];
@@ -221,14 +217,12 @@ function onRefresh() {
   <Page auto-content-height>
     <DetailDrawer />
 
-    <Grid :table-title="$t('monitor.operlog.list')">
+    <Grid :table-title="$t('system.log.list')">
       <template #toolbar-tools>
         <div class="flex gap-2">
           <span v-access:code="PERMISSION_CODES.delete">
             <Popconfirm
-              :title="
-                $t('monitor.operlog.batchDeleteConfirm', [selectedIds.length])
-              "
+              :title="$t('system.log.batchDeleteConfirm', [selectedIds.length])"
               :disabled="selectedIds.length === 0"
               @confirm="onBatchDelete"
             >
@@ -243,7 +237,7 @@ function onRefresh() {
             type="primary"
             @click="onClean"
           >
-            {{ $t('monitor.operlog.clean') }}
+            {{ $t('system.log.clean') }}
           </Button>
         </div>
       </template>

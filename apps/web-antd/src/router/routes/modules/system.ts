@@ -48,6 +48,15 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('#/views/system/user/list.vue'),
       },
+      {
+        path: 'log',
+        name: 'SystemLog',
+        meta: {
+          icon: 'mdi:clipboard-text-clock-outline',
+          title: $t('system.log.title'),
+        },
+        component: () => import('#/views/system/log/list.vue'),
+      },
     ],
   },
 ];
