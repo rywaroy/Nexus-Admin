@@ -85,6 +85,8 @@
     "menuName": "Menu Name",
     "name": "Menu",
     "type": "Type",
+    "order": "Order",
+    "orderHelp": "Lower values appear first",
     "typeCatalog": "Catalog",
     "typeMenu": "Menu",
     "typeButton": "Button",

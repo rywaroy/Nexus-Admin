@@ -244,6 +244,18 @@ const schema: VbenFormSchema[] = [
     label: $t('system.menu.authCode'),
   },
   {
+    component: 'InputNumber',
+    componentProps: {
+      min: 0,
+      placeholder: $t('system.menu.orderHelp'),
+      style: { width: '100%' },
+    },
+    defaultValue: 0,
+    fieldName: 'order',
+    help: $t('system.menu.orderHelp'),
+    label: $t('system.menu.order'),
+  },
+  {
     component: 'RadioGroup',
     componentProps: {
       buttonStyle: 'solid',
@@ -508,6 +520,11 @@ const transformFormData = (data: any): SystemMenuApi.CreateMenuRequest => {
     result.badgeVariants = data.badgeVariants;
   }
 
+  // 排序值
+  if (data.order !== undefined && data.order !== null) {
+    result.order = data.order;
+  }
+
   // 布尔属性 - 仅在类型支持时设置
   if (['menu'].includes(data.type)) {
     result.keepAlive = !!data.keepAlive;
@@ -554,6 +571,7 @@ const transformToFormData = (data: SystemMenuApi.SystemMenu): any => {
     hideChildrenInMenu: data.meta?.hideChildrenInMenu,
     hideInBreadcrumb: data.meta?.hideInBreadcrumb,
     hideInTab: data.meta?.hideInTab,
+    order: data.meta?.order ?? 0,
   };
 
   // 外链/iframe
