@@ -23,6 +23,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
   VbenAvatar,
+  VbenIcon,
 } from '@vben-core/shadcn-ui';
 
 import { useMagicKeys, whenever } from '@vueuse/core';

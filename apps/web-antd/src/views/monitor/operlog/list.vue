@@ -224,18 +224,19 @@ function onRefresh() {
     <Grid :table-title="$t('monitor.operlog.list')">
       <template #toolbar-tools>
         <div class="flex gap-2">
-          <Popconfirm
-            v-access:code="PERMISSION_CODES.delete"
-            :title="
-              $t('monitor.operlog.batchDeleteConfirm', [selectedIds.length])
-            "
-            :disabled="selectedIds.length === 0"
-            @confirm="onBatchDelete"
-          >
-            <Button :disabled="selectedIds.length === 0" danger>
-              {{ $t('common.batchDelete') }}
-            </Button>
-          </Popconfirm>
+          <span v-access:code="PERMISSION_CODES.delete">
+            <Popconfirm
+              :title="
+                $t('monitor.operlog.batchDeleteConfirm', [selectedIds.length])
+              "
+              :disabled="selectedIds.length === 0"
+              @confirm="onBatchDelete"
+            >
+              <Button :disabled="selectedIds.length === 0" danger>
+                {{ $t('common.batchDelete') }}
+              </Button>
+            </Popconfirm>
+          </span>
           <Button
             v-access:code="PERMISSION_CODES.delete"
             danger
