@@ -525,6 +525,95 @@ const schema = [
 - `'VbenButton'`
 - `'VbenDivider'`
 
+**异步数据组件**
+
+- `'ApiSelect'`: 异步加载选项的下拉选择器
+- `'ApiTreeSelect'`: 异步加载选项的树形选择器
+
+#### **ApiSelect 组件**
+
+`ApiSelect` 是项目封装的支持异步加载数据的选择器组件。与普通 `Select` 不同，它可以通过 `api` 属性自动调用接口获取选项数据。
+
+**注意**：普通的 `Select` 组件不支持 `api` 属性，必须使用 `ApiSelect` 才能实现异步加载。
+
+**基础用法**
+
+```typescript
+{
+  component: 'ApiSelect',
+  fieldName: 'orgId',
+  label: '所属机构',
+  rules: 'required',
+  componentProps: {
+    placeholder: '请选择机构',
+    api: () => getOrgAllApi({ status: 'active' }),
+    labelField: 'name',   // 指定选项显示文本的字段名
+    valueField: 'id',     // 指定选项值的字段名
+  },
+}
+```
+
+**核心属性**
+
+| 属性 | 类型 | 描述 |
+| :-- | :-- | :-- |
+| `api` | `() => Promise<T[]>` | **必需。** 返回选项数据的异步函数 |
+| `labelField` | `string` | 指定选项显示文本对应的字段名，默认 `'label'` |
+| `valueField` | `string` | 指定选项值对应的字段名，默认 `'value'` |
+| `resultField` | `string` | 如果接口返回的是对象而非数组，指定数据所在的字段名 |
+| `params` | `object` | 传递给 api 函数的参数 |
+| `immediate` | `boolean` | 是否立即加载数据，默认 `true` |
+
+**完整示例**
+
+```typescript
+// 方式一：api 函数内部处理参数
+{
+  component: 'ApiSelect',
+  fieldName: 'orgId',
+  label: '所属机构',
+  componentProps: {
+    placeholder: '请选择机构',
+    class: 'w-full',
+    showSearch: true,           // 支持搜索
+    filterOption: true,         // 本地过滤
+    optionFilterProp: 'label',  // 按 label 过滤
+    api: () => getOrgAllApi({ status: 'active' }),
+    labelField: 'name',
+    valueField: 'id',
+  },
+}
+
+// 方式二：通过 params 传递参数
+{
+  component: 'ApiSelect',
+  fieldName: 'orgId',
+  label: '所属机构',
+  componentProps: {
+    api: getOrgAllApi,
+    params: { status: 'active' },
+    labelField: 'name',
+    valueField: 'id',
+  },
+}
+
+// 方式三：手动转换数据格式（不推荐，建议使用 labelField/valueField）
+{
+  component: 'ApiSelect',
+  fieldName: 'orgId',
+  label: '所属机构',
+  componentProps: {
+    api: async () => {
+      const data = await getOrgAllApi({ status: 'active' });
+      return data.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+    },
+  },
+}
+```
+
 **如何自定义和扩展**
 
 1.  **UI 框架原生组件**: 你可以直接使用当前 UI 框架的任何表单相关组件的名称，例如，在 Ant Design Vue 版本中，可以直接使用 `'AInput'` 或 `'ASelect'`。
