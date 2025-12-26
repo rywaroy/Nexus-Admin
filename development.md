@@ -169,12 +169,12 @@ export default routes;
 
 **关键配置说明：**
 
-  - `path`: 路由的访问路径。
-  - `name`: 路由的唯一名称，建议大写驼峰。
-  - `component`: 页面所使用的布局组件。通常，业务页面都使用 `basic.vue` 这个基础布局。
-  - `meta`: 路由的元信息，这是生成菜单的关键。
-    - `title`: 会显示在菜单和 Tab 标签页上的标题。
-    - `icon`: 菜单项的图标。项目内置了基于 Iconify（`@iconify/vue`）的图标方案，推荐直接使用 [Iconify](https://icones.js.org/) 上的图标名称（`前缀:名称`），例如 `ant-design:upload-outlined`。
+- `path`: 路由的访问路径。
+- `name`: 路由的唯一名称，建议大写驼峰。
+- `component`: 页面所使用的布局组件。通常，业务页面都使用 `basic.vue` 这个基础布局。
+- `meta`: 路由的元信息，这是生成菜单的关键。
+  - `title`: 会显示在菜单和 Tab 标签页上的标题。
+  - `icon`: 菜单项的图标。项目内置了基于 Iconify（`@iconify/vue`）的图标方案，推荐直接使用 [Iconify](https://icones.js.org/) 上的图标名称（`前缀:名称`），例如 `ant-design:upload-outlined`。
 
 #### **3. 自动注册路由模块**
 
