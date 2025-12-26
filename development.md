@@ -169,12 +169,12 @@ export default routes;
 
 **关键配置说明：**
 
-- `path`: 路由的访问路径。
-- `name`: 路由的唯一名称，建议大写驼峰。
-- `component`: 页面所使用的布局组件。通常，业务页面都使用 `basic.vue` 这个基础布局。
-- `meta`: 路由的元信息，这是生成菜单的关键。
-  - `title`: 会显示在菜单和 Tab 标签页上的标题。
-  - `icon`: 菜单项的图标。`vue-vben-admin` 使用了 `unplugin-icons`，你可以直接使用 [Iconify](https://icones.js.org/) 上的图标名称。
+  - `path`: 路由的访问路径。
+  - `name`: 路由的唯一名称，建议大写驼峰。
+  - `component`: 页面所使用的布局组件。通常，业务页面都使用 `basic.vue` 这个基础布局。
+  - `meta`: 路由的元信息，这是生成菜单的关键。
+    - `title`: 会显示在菜单和 Tab 标签页上的标题。
+    - `icon`: 菜单项的图标。项目内置了基于 Iconify（`@iconify/vue`）的图标方案，推荐直接使用 [Iconify](https://icones.js.org/) 上的图标名称（`前缀:名称`），例如 `ant-design:upload-outlined`。
 
 #### **3. 自动注册路由模块**
 
@@ -193,7 +193,7 @@ export default routes;
 | 字段 | 类型 | 描述 |
 | :-- | :-- | :-- |
 | `title` | `string` | **必需。** 用于在菜单、面包屑和标签页中显示的标题。它支持国际化，你可以直接写入 `i18n` 的 `key`。 |
-| `icon` | `string` | 菜单和面包屑的图标。推荐使用 [Iconify](https://icones.js.org/) 图标集。 |
+| `icon` | `string \| Component` | 菜单和面包屑的图标。推荐使用 [Iconify](https://icones.js.org/) 图标名（`前缀:名称`）；也支持直接传入 Vue 组件（如 `@ant-design/icons-vue`）。 |
 | `roles` | `string[]` | **权限控制**：指定哪些角色可以访问该路由。 |
 | `permissions` | `string[]` | **权限控制**：指定需要哪些权限点才能访问该路由。 |
 | `access` | `(route: RouteLocationNormalized) => boolean` | **权限控制**：更灵活的函数式权限判断，返回 `true` 表示有权限。 |
@@ -1625,6 +1625,109 @@ import {
     </div>
   </Card>
 </template>
+```
+
+#### **4. 统一渲染组件：VbenIcon（推荐）**
+
+在项目里，菜单、面包屑、Tab、按钮等位置最终都是通过 `VbenIcon` 统一渲染图标。它支持多种输入形式：
+
+- **Iconify 图标名（推荐）**：`icon="ant-design:upload-outlined"`（格式：`前缀:名称`）
+- **Vue 组件**：`:icon="UploadOutlined"`（例如 `@ant-design/icons-vue`）
+- **远程图片**：`icon="https://xxx/icon.svg"`（http/https）
+- **默认占位**：`fallback`（没有传 `icon` 时显示默认图标）
+
+**示例代码：**
+
+```vue
+<script lang="ts" setup>
+import { UploadOutlined } from '@ant-design/icons-vue';
+
+import { VbenIcon } from '@vben-core/shadcn-ui';
+</script>
+
+<template>
+  <!-- Iconify：前缀:名称 -->
+  <VbenIcon icon="ant-design:upload-outlined" class="size-5" />
+
+  <!-- Ant Design Vue 图标组件 -->
+  <VbenIcon :icon="UploadOutlined" class="size-5" />
+
+  <!-- 远程图片 -->
+  <VbenIcon icon="https://example.com/icon.svg" class="size-5" />
+
+  <!-- 没有 icon 时使用默认占位 -->
+  <VbenIcon fallback class="size-5" />
+</template>
+```
+
+#### **5. IconifyIcon（只渲染 Iconify 字符串）**
+
+如果你只需要渲染 Iconify 图标名字符串（例如路由 `meta.icon`、后端下发的 `icon` 字段），也可以直接用 `IconifyIcon`：
+
+```vue
+<script lang="ts" setup>
+import { IconifyIcon } from '@vben/icons';
+</script>
+
+<template>
+  <IconifyIcon icon="ant-design:upload-outlined" class="size-5" />
+</template>
+```
+
+#### **6. Ant Design 图标怎么用**
+
+项目里“Ant Design 图标”通常有两条路线，按推荐顺序如下：
+
+1. **Iconify（推荐）**：使用 `ant-design:<icon-name>`，适合路由 `meta.icon`、菜单配置、`VbenIcon/IconifyIcon`。
+
+```ts
+// 路由 meta.icon 示例
+meta: {
+  title: '系统管理',
+  icon: 'ant-design:setting-outlined',
+}
+```
+
+2. **Tailwind 类名方式**：注意这里用 `--` 连接（`icon-[ant-design--setting-outlined]`），不是 `:`
+
+```vue
+<template>
+  <span class="icon-[ant-design--setting-outlined] text-xl"></span>
+</template>
+```
+
+3. **@ant-design/icons-vue 组件方式**：适合你希望以“组件”形态直接使用（例如和某些组件库用法保持一致）
+
+```vue
+<script lang="ts" setup>
+import { SettingOutlined } from '@ant-design/icons-vue';
+</script>
+
+<template>
+  <SettingOutlined class="text-xl" />
+</template>
+```
+
+#### **7. IconPicker（图标选择器）补充说明**
+
+`IconPicker` 选择后输出的值是 **Iconify 图标名字符串**（例如 `ant-design:upload-outlined`），适合保存到数据库、写入路由 `meta.icon` 或菜单配置中。
+
+- `prefix`：图标集前缀（如 `ant-design`、`carbon`、`mdi`）
+- `autoFetchApi`：默认 `true`，会请求 `https://api.iconify.design` 获取图标列表（需要网络）
+  - 如果你的环境无法访问该接口：可设置 `autoFetchApi: false` 并手动传入 `icons: string[]`，或直接使用本地 `svg:` 图标
+
+```ts
+// 表单 Schema 示例（以 vben-form 为例）
+{
+  component: 'IconPicker',
+  componentProps: {
+    prefix: 'ant-design', // 选择 Ant Design 图标集
+    // autoFetchApi: false,
+    // icons: ['ant-design:upload-outlined', 'ant-design:setting-outlined'],
+  },
+  fieldName: 'icon',
+  label: '图标',
+}
 ```
 
 ## 基础页面
