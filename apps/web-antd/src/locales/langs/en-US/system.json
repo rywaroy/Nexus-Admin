@@ -115,6 +115,7 @@
   "menu": {
     "title": "Menu Management",
     "list": "Menu List",
+    "query": "Query Menu",
     "create": "Create Menu",
     "update": "Update Menu",
     "delete": "Delete Menu",

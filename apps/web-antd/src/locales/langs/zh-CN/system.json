@@ -115,6 +115,7 @@
   "menu": {
     "list": "菜单列表",
     "create": "新增菜单",
+    "query": "查询菜单",
     "update": "修改菜单",
     "delete": "删除菜单",
     "activeIcon": "激活图标",
