@@ -37,7 +37,7 @@ export namespace SystemLogApi {
   /** 操作日志信息 */
   export interface OperLog {
     /** 日志ID */
-    _id: string;
+    id: string;
     /** 模块标题 */
     title: string;
     /** 业务类型 */
@@ -105,17 +105,16 @@ export namespace SystemLogApi {
  * 获取操作日志列表
  */
 export const getOperLogList = (params?: SystemLogApi.QueryOperLogRequest) => {
-  return requestClient.get<SystemLogApi.OperLogListResult>(
-    '/monitor/operlog/list',
-    { params },
-  );
+  return requestClient.get<SystemLogApi.OperLogListResult>('/system/log/list', {
+    params,
+  });
 };
 
 /**
  * 获取操作日志详情
  */
 export const getOperLog = (id: string) => {
-  return requestClient.get<SystemLogApi.OperLog>(`/monitor/operlog/${id}`);
+  return requestClient.get<SystemLogApi.OperLog>(`/system/log/${id}`);
 };
 
 /**
@@ -124,7 +123,7 @@ export const getOperLog = (id: string) => {
 export const deleteOperLog = (ids: string | string[]) => {
   const idsStr = Array.isArray(ids) ? ids.join(',') : ids;
   return requestClient.delete<{ deletedCount: number }>(
-    `/monitor/operlog/${idsStr}`,
+    `/system/log/${idsStr}`,
   );
 };
 
@@ -132,7 +131,5 @@ export const deleteOperLog = (ids: string | string[]) => {
  * 清空操作日志
  */
 export const cleanOperLog = () => {
-  return requestClient.delete<{ deletedCount: number }>(
-    '/monitor/operlog/clean',
-  );
+  return requestClient.delete<{ deletedCount: number }>('/system/log/clean');
 };

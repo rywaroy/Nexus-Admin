@@ -11,6 +11,7 @@ import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 
 import { Button, message, Modal, Popconfirm } from 'ant-design-vue';
+import dayjs from 'dayjs';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { cleanOperLog, deleteOperLog, getOperLogList } from '#/api/system/log';
@@ -53,8 +54,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
             ...rest,
           };
           if (dateRange?.length === 2) {
-            params.beginTime = dateRange[0];
-            params.endTime = dateRange[1];
+            params.beginTime = dayjs(dateRange[0]).startOf('day').toISOString();
+            params.endTime = dayjs(dateRange[1]).endOf('day').toISOString();
           }
 
           const result = await getOperLogList(params);
@@ -66,7 +67,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       },
     },
     rowConfig: {
-      keyField: '_id',
+      keyField: 'id',
     },
     toolbarConfig: {
       custom: true,
@@ -84,7 +85,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 function onCheckboxChange() {
   const records = gridApi.grid?.getCheckboxRecords() || [];
-  selectedIds.value = records.map((row: SystemLogApi.OperLog) => row._id);
+  selectedIds.value = records.map((row: SystemLogApi.OperLog) => row.id);
 }
 
 function onActionClick(e: OnActionClickParams<SystemLogApi.OperLog>) {
@@ -118,7 +119,7 @@ async function onDelete(row: SystemLogApi.OperLog) {
   });
 
   try {
-    await deleteOperLog(row._id);
+    await deleteOperLog(row.id);
     message.success({
       content: $t('ui.actionMessage.deleteSuccess', [row.title]),
       key: 'action_process_msg',
