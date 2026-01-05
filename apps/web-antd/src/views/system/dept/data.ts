@@ -64,6 +64,7 @@ export function useFormSchema(
           value: 'id',
         },
         showSearch: true,
+        style: { width: '100%' },
         treeData: deptTree.value,
         treeDefaultExpandAll: true,
       }),
