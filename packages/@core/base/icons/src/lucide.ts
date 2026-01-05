@@ -35,6 +35,7 @@ export {
   Inbox,
   Info,
   InspectionPanel,
+  Key,
   Languages,
   LoaderCircle,
   LockKeyhole,

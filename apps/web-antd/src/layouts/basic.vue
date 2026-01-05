@@ -2,16 +2,18 @@
 // import type { NotificationItem } from '@vben/layouts';
 
 import { computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { useWatermark } from '@vben/hooks';
-// import { BookOpenText, CircleHelp, SvgGithubIcon } from '@vben/icons';
+import { Key } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
   // Notification,
   UserDropdown,
 } from '@vben/layouts';
+import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 
@@ -72,6 +74,7 @@ import LoginForm from '#/views/_core/authentication/login.vue';
 // ]);
 
 // const router = useRouter();
+const router = useRouter();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const accessStore = useAccessStore();
@@ -81,6 +84,13 @@ const { destroyWatermark, updateWatermark } = useWatermark();
 // );
 
 const menus = computed(() => [
+  {
+    handler: () => {
+      router.push('/auth/change-password');
+    },
+    icon: Key,
+    text: $t('authentication.changePassword'),
+  },
   // {
   //   handler: () => {
   //     openWindow(VBEN_DOC_URL, {
