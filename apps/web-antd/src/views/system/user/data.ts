@@ -1,11 +1,12 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemDeptApi } from '#/api/system/dept';
-import type { SystemRoleApi } from '#/api/system/role';
 import type { SystemUserApi } from '#/api/system/user';
 
 import dayjs from 'dayjs';
 
+import { getPostList } from '#/api/system/post';
+import { getRoleList } from '#/api/system/role';
 import { $t } from '#/locales';
 
 /** 权限码常量 */
@@ -20,7 +21,6 @@ export const PERMISSION_CODES = {
 
 interface FormSchemaOptions {
   deptTree: SystemDeptApi.SystemDept[];
-  roleList: SystemRoleApi.SystemRole[];
 }
 
 /**
@@ -41,6 +41,19 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
     component: 'Input',
     fieldName: 'phone',
     label: $t('system.user.phone'),
+  },
+  {
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: () => getPostList({ status: 0, pageSize: 1000 }),
+      labelField: 'postName',
+      valueField: 'id',
+      resultField: 'list',
+      placeholder: $t('system.user.postsPlaceholder'),
+    },
+    fieldName: 'postId',
+    label: $t('system.user.posts'),
   },
   {
     component: 'Select',
@@ -110,20 +123,35 @@ export const useFormSchema = (
     label: $t('system.user.dept'),
   },
   {
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
       allowClear: true,
       mode: 'multiple',
-      // 后端 User.roles 以"角色名称"存储与鉴权，这里保持一致
-      options: options.roleList.map((role) => ({
-        label: role.name,
-        value: role.name,
-      })),
+      api: () => getRoleList({ status: 0, pageSize: 1000 }),
+      // 后端 User.roles 以"角色名称"存储与鉴权，这里 label 和 value 都用 name
+      labelField: 'name',
+      valueField: 'name',
+      resultField: 'list',
       placeholder: $t('system.user.rolesPlaceholder'),
       style: { width: '100%' },
     },
     fieldName: 'roles',
     label: $t('system.user.roles'),
+  },
+  {
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      mode: 'multiple',
+      api: () => getPostList({ status: 0, pageSize: 1000 }),
+      labelField: 'postName',
+      valueField: 'id',
+      resultField: 'list',
+      placeholder: $t('system.user.postsPlaceholder'),
+      style: { width: '100%' },
+    },
+    fieldName: 'postIds',
+    label: $t('system.user.posts'),
   },
   {
     component: 'Input',

@@ -24,6 +24,8 @@ export namespace SystemUserApi {
     deptId?: string;
     /** 角色列表 */
     roles: string[];
+    /** 岗位ID列表 */
+    postIds: string[];
     /** 备注 */
     remark?: string;
     /** 创建时间 */
@@ -52,6 +54,8 @@ export namespace SystemUserApi {
     status?: 0 | 1;
     /** 部门ID */
     deptId?: string;
+    /** 岗位ID */
+    postId?: string;
   }
 
   /** 创建用户请求 */
@@ -74,6 +78,8 @@ export namespace SystemUserApi {
     deptId?: string;
     /** 角色列表 */
     roles?: string[];
+    /** 岗位ID列表 */
+    postIds?: string[];
     /** 备注 */
     remark?: string;
   }

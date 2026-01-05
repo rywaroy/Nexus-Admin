@@ -96,6 +96,8 @@
     "deptTree": "Department",
     "roles": "Roles",
     "rolesPlaceholder": "Select roles",
+    "posts": "Posts",
+    "postsPlaceholder": "Select posts",
     "status": "Status",
     "remark": "Remark",
     "password": "Password",
@@ -158,5 +160,26 @@
       "none": "None"
     },
     "badgeVariants": "Badge Style"
+  },
+  "post": {
+    "title": "Post Management",
+    "list": "Post List",
+    "query": "Query Post",
+    "create": "Create Post",
+    "update": "Update Post",
+    "delete": "Delete Post",
+    "name": "Post",
+    "postCode": "Post Code",
+    "postName": "Post Name",
+    "postSort": "Sort",
+    "status": "Status",
+    "remark": "Remark",
+    "createTime": "Create Time",
+    "operation": "Operation",
+    "statusEnabled": "Enabled",
+    "statusDisabled": "Disabled",
+    "switchStatus": "Switch Status",
+    "switchStatusConfirm": "Are you sure you want to switch the status of \"{0}\" to [{1}]?",
+    "deleteFailed": "Delete failed"
   }
 }

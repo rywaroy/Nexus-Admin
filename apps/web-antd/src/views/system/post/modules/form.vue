@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import type { SystemDeptApi } from '#/api/system/dept';
-import type { SystemUserApi } from '#/api/system/user';
+import type { SystemPostApi } from '#/api/system/post';
 
 import { computed, nextTick, ref } from 'vue';
 
@@ -9,8 +8,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { getDeptTree } from '#/api/system/dept';
-import { createUser, updateUser } from '#/api/system/user';
+import { createPost, updatePost } from '#/api/system/post';
 import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
@@ -19,17 +17,10 @@ const emit = defineEmits<{
   success: [];
 }>();
 
-const formData = ref<SystemUserApi.SystemUser>();
-const deptTree = ref<SystemDeptApi.SystemDept[]>([]);
-
-const isEdit = computed(() => !!formData.value?.id);
-
-const formOptions = computed(() => ({
-  deptTree: deptTree.value,
-}));
+const formData = ref<SystemPostApi.SystemPost>();
 
 const [Form, formApi] = useVbenForm({
-  schema: computed(() => useFormSchema(isEdit.value, formOptions.value)),
+  schema: useFormSchema(),
   showDefaultActions: false,
 });
 
@@ -39,12 +30,12 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (!valid) return;
 
     drawerApi.lock();
-    const values = (await formApi.getValues()) as any;
+    const values = await formApi.getValues();
 
     try {
       await (formData.value?.id
-        ? updateUser(formData.value.id, values)
-        : createUser(values as SystemUserApi.CreateUserRequest));
+        ? updatePost(formData.value.id, values)
+        : createPost(values as SystemPostApi.CreatePostRequest));
       message.success($t('ui.actionMessage.operationSuccess'));
       emit('success');
       drawerApi.close();
@@ -60,47 +51,29 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
   async onOpenChange(isOpen) {
     if (isOpen) {
-      const data = drawerApi.getData<SystemUserApi.SystemUser>();
+      const data = drawerApi.getData<SystemPostApi.SystemPost>();
       formApi.resetForm();
 
       formData.value = data?.id ? data : undefined;
 
-      // 加载部门树
-      await loadOptions();
-
       await nextTick();
       if (data?.id) {
         formApi.setValues({
-          username: data.username,
-          nickName: data.nickName,
-          email: data.email,
-          phone: data.phone,
+          postCode: data.postCode,
+          postName: data.postName,
+          postSort: data.postSort,
           status: data.status,
           remark: data.remark,
-          deptId: data.deptId,
-          roles: data.roles,
-          postIds: data.postIds,
         });
       }
     }
   },
 });
 
-/**
- * 加载部门树
- */
-const loadOptions = async () => {
-  try {
-    deptTree.value = await getDeptTree({ status: 0 });
-  } catch {
-    message.error($t('ui.actionMessage.operationFailed'));
-  }
-};
-
 const getDrawerTitle = computed(() =>
   formData.value?.id
-    ? $t('ui.actionTitle.edit', [$t('system.user.name')])
-    : $t('ui.actionTitle.create', [$t('system.user.name')]),
+    ? $t('ui.actionTitle.edit', [$t('system.post.name')])
+    : $t('ui.actionTitle.create', [$t('system.post.name')]),
 );
 </script>
 

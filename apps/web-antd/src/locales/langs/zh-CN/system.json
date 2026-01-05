@@ -96,6 +96,8 @@
     "deptTree": "部门",
     "roles": "角色",
     "rolesPlaceholder": "请选择角色",
+    "posts": "岗位",
+    "postsPlaceholder": "请选择岗位",
     "status": "状态",
     "remark": "备注",
     "password": "密码",
@@ -158,5 +160,26 @@
     "typeEmbedded": "内嵌",
     "typeLink": "外链",
     "typeMenu": "菜单"
+  },
+  "post": {
+    "title": "岗位管理",
+    "list": "岗位列表",
+    "query": "查询岗位",
+    "create": "新增岗位",
+    "update": "修改岗位",
+    "delete": "删除岗位",
+    "name": "岗位",
+    "postCode": "岗位编码",
+    "postName": "岗位名称",
+    "postSort": "排序",
+    "status": "状态",
+    "remark": "备注",
+    "createTime": "创建时间",
+    "operation": "操作",
+    "statusEnabled": "启用",
+    "statusDisabled": "停用",
+    "switchStatus": "切换状态",
+    "switchStatusConfirm": "你要将「{0}」的状态切换为【{1}】吗？",
+    "deleteFailed": "删除失败"
   }
 }
