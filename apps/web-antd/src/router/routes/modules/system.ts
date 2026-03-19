@@ -31,6 +31,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/system/dept/list.vue'),
       },
       {
+        path: 'dict',
+        name: 'SystemDict',
+        meta: {
+          icon: 'mdi:book-open-page-variant-outline',
+          title: $t('system.dict.title'),
+        },
+        component: () => import('#/views/system/dict/list.vue'),
+      },
+      {
         path: 'role',
         name: 'SystemRole',
         meta: {
