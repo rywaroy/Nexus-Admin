@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
-import { Page } from '@vben/common-ui';
+import { Page } from "@vben/common-ui";
 
-import { useFullscreen } from '@vueuse/core';
-import { Button, Card } from 'ant-design-vue';
+import { useFullscreen } from "@vueuse/core";
+import { Button, Card } from "ant-design-vue";
 
 const domRef = ref<HTMLElement>();
 
 const { enter, exit, isFullscreen, toggle } = useFullscreen();
 
-const { isFullscreen: isDomFullscreen, toggle: toggleDom } =
-  useFullscreen(domRef);
+const { isFullscreen: isDomFullscreen, toggle: toggleDom } = useFullscreen(domRef);
 </script>
 
 <template>
@@ -23,9 +22,7 @@ const { isFullscreen: isDomFullscreen, toggle: toggleDom } =
         </Button>
         <Button @click="toggle"> Toggle Window Full Screen </Button>
 
-        <Button :disabled="!isFullscreen" danger @click="exit">
-          Exit Window Full Screen
-        </Button>
+        <Button :disabled="!isFullscreen" danger @click="exit"> Exit Window Full Screen </Button>
 
         <span class="text-nowrap"> Current State: {{ isFullscreen }} </span>
       </div>
@@ -35,12 +32,9 @@ const { isFullscreen: isDomFullscreen, toggle: toggleDom } =
       <Button type="primary" @click="toggleDom"> Enter Dom Full Screen </Button>
     </Card>
 
-    <div
-      ref="domRef"
-      class="mx-auto mt-10 flex h-64 w-1/2 items-center justify-center rounded-md bg-yellow-400"
-    >
+    <div ref="domRef" class="mx-auto mt-10 flex-center h-64 w-1/2 rounded-md bg-yellow-400">
       <Button class="mr-2" type="primary" @click="toggleDom">
-        {{ isDomFullscreen ? 'Exit Dom Full Screen' : 'Enter Dom Full Screen' }}
+        {{ isDomFullscreen ? "Exit Dom Full Screen" : "Enter Dom Full Screen" }}
       </Button>
     </div>
   </Page>

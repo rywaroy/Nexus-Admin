@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import type { BuiltinThemeType } from '@vben/types';
+import type { BuiltinThemeType } from "@vben/types";
 
-import { Palette } from '@vben/icons';
-import {
-  COLOR_PRESETS,
-  preferences,
-  updatePreferences,
-} from '@vben/preferences';
+import { Palette } from "@vben/icons";
+import { COLOR_PRESETS, preferences, updatePreferences } from "@vben/preferences";
 
-import { VbenIconButton } from '@vben-core/shadcn-ui';
+import { VbenIconButton } from "@vben-core/shadcn-ui";
 
 defineOptions({
-  name: 'AuthenticationColorToggle',
+  name: "AuthenticationColorToggle",
 });
 
 function handleUpdate(colorPrimary: string, type: BuiltinThemeType) {
@@ -26,21 +22,19 @@ function handleUpdate(colorPrimary: string, type: BuiltinThemeType) {
 
 <template>
   <div class="group relative flex items-center overflow-hidden">
-    <div
-      class="flex w-0 overflow-hidden transition-all duration-500 ease-out group-hover:w-60"
-    >
+    <div class="flex w-0 overflow-hidden transition-all duration-500 ease-out group-hover:w-60">
       <template v-for="preset in COLOR_PRESETS" :key="preset.color">
         <VbenIconButton
-          class="flex-center flex-shrink-0"
+          class="flex-center shrink-0"
           @click="handleUpdate(preset.color, preset.type)"
         >
           <div
             :style="{ backgroundColor: preset.color }"
-            class="flex-center relative size-5 rounded-full hover:scale-110"
+            class="relative flex-center size-5 rounded-full hover:scale-110"
           >
             <svg
               v-if="preferences.theme.builtinType === preset.type"
-              class="h-3.5 w-3.5 text-white"
+              class="size-3.5 text-white"
               height="1em"
               viewBox="0 0 15 15"
               width="1em"
@@ -58,7 +52,7 @@ function handleUpdate(colorPrimary: string, type: BuiltinThemeType) {
     </div>
 
     <VbenIconButton>
-      <Palette class="text-primary size-4" />
+      <Palette class="size-4 text-primary" />
     </VbenIconButton>
   </div>
 </template>

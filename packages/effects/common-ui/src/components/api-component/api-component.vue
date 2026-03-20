@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import type { Component } from 'vue';
+import type { Component } from "vue";
 
-import type { AnyPromiseFunction } from '@vben/types';
+import type { AnyPromiseFunction } from "@vben/types";
 
-import { computed, nextTick, ref, unref, useAttrs, watch } from 'vue';
+import { computed, nextTick, ref, unref, useAttrs, watch } from "vue";
 
-import { LoaderCircle } from '@vben/icons';
+import { LoaderCircle } from "@vben/icons";
 
-import { cloneDeep, get, isEqual, isFunction } from '@vben-core/shared/utils';
+import { cloneDeep, get, isEqual, isFunction } from "@vben-core/shared/utils";
 
-import { objectOmit } from '@vueuse/core';
+import { objectOmit } from "@vueuse/core";
 
 type OptionsItem = {
   [name: string]: any;
@@ -64,32 +64,27 @@ interface Props {
    * - 函数：自定义选择逻辑，函数的参数为请求的结果数组，返回值为选择的选项
    * - false：不自动选择(默认)
    */
-  autoSelect?:
-    | 'first'
-    | 'last'
-    | 'one'
-    | ((item: OptionsItem[]) => OptionsItem)
-    | false;
+  autoSelect?: "first" | "last" | "one" | ((item: OptionsItem[]) => OptionsItem) | false;
 }
 
-defineOptions({ name: 'ApiComponent', inheritAttrs: false });
+defineOptions({ name: "ApiComponent", inheritAttrs: false });
 
 const props = withDefaults(defineProps<Props>(), {
-  labelField: 'label',
-  valueField: 'value',
-  disabledField: 'disabled',
-  childrenField: '',
-  optionsPropName: 'options',
-  resultField: '',
-  visibleEvent: '',
+  labelField: "label",
+  valueField: "value",
+  disabledField: "disabled",
+  childrenField: "",
+  optionsPropName: "options",
+  resultField: "",
+  visibleEvent: "",
   numberToString: false,
   params: () => ({}),
   immediate: true,
   alwaysLoad: false,
-  loadingSlot: '',
+  loadingSlot: "",
   beforeFetch: undefined,
   afterFetch: undefined,
-  modelPropName: 'modelValue',
+  modelPropName: "modelValue",
   api: undefined,
   autoSelect: false,
   options: () => [],
@@ -111,13 +106,7 @@ const isFirstLoaded = ref(false);
 const hasPendingRequest = ref(false);
 
 const getOptions = computed(() => {
-  const {
-    labelField,
-    valueField,
-    disabledField,
-    childrenField,
-    numberToString,
-  } = props;
+  const { labelField, valueField, disabledField, childrenField, numberToString } = props;
 
   const refOptionsData = unref(refOptions);
 
@@ -237,25 +226,21 @@ watch(
 );
 
 function emitChange() {
-  if (
-    modelValue.value === undefined &&
-    props.autoSelect &&
-    unref(getOptions).length > 0
-  ) {
+  if (modelValue.value === undefined && props.autoSelect && unref(getOptions).length > 0) {
     let firstOption;
     if (isFunction(props.autoSelect)) {
       firstOption = props.autoSelect(unref(getOptions));
     } else {
       switch (props.autoSelect) {
-        case 'first': {
+        case "first": {
           firstOption = unref(getOptions)[0];
           break;
         }
-        case 'last': {
+        case "last": {
           firstOption = unref(getOptions)[unref(getOptions).length - 1];
           break;
         }
-        case 'one': {
+        case "one": {
           if (unref(getOptions).length === 1) {
             firstOption = unref(getOptions)[0];
           }
@@ -266,7 +251,7 @@ function emitChange() {
 
     if (firstOption) modelValue.value = firstOption.value;
   }
-  emit('optionsChange', unref(getOptions));
+  emit("optionsChange", unref(getOptions));
 }
 const componentRef = ref();
 defineExpose({
@@ -275,7 +260,7 @@ defineExpose({
   /** 获取当前值 */
   getValue: () => unref(modelValue),
   /** 获取被包装的组件实例 */
-  getComponentRef: <T = any,>() => componentRef.value as T,
+  getComponentRef: <T = any>() => componentRef.value as T,
   /** 更新Api参数 */
   updateParam(newParams: Record<string, any>) {
     innerParams.value = newParams;

@@ -20,9 +20,9 @@
 - **动态菜单**：支持动态菜单，可以根据权限配置显示菜单。
 - **Mock 数据**：基于 `Nitro` 的本地高性能 Mock 数据方案。
 - **组件丰富**：提供了丰富的组件，可以满足大部分的业务需求。
-- **规范**：代码规范，使用 `ESLint`、`Prettier`、`Stylelint`、`Publint`、`CSpell` 等工具保证代码质量。
-- **工程化**：使用 `Pnpm Monorepo`、`TurboRepo`、`Changeset` 等工具，提高开发效率。
-- **多UI库支持**：支持 `Ant Design Vue`、`Element Plus`、`Naive` 等主流 UI 库，不再限制于特定框架。
+- **规范**：代码规范，使用 `Oxfmt`、`Oxlint`、`ESLint`、`Stylelint`、`Publint`、`CSpell` 等工具保证代码质量。
+- **工程化**：使用 `Pnpm Monorepo`、`Turborepo`、`Changeset` 等工具，提高开发效率。
+- **多UI库支持**：支持 `Ant Design Vue`、`Ant Design Vue Next`、`Element Plus`、`Naive UI`、`TDesign` 等主流 UI 库，不再限制于特定框架。
 
 ## 浏览器支持
 
@@ -31,8 +31,8 @@
 - **生产环境**支持现代浏览器，不支持 IE。
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png" alt="IE" width="24px" height="24px"  />](http://godban.github.io/browsers-support-badges/)IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Safari |
-| :-: | :-: | :-: | :-: | :-: |
-| 不支持 | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                                                                  不支持                                                                                                                   |                                                                                          last 2 versions                                                                                          |                                                                                               last 2 versions                                                                                                |                                                                                             last 2 versions                                                                                              |                                                                                             last 2 versions                                                                                              |
 
 ## 贡献
 

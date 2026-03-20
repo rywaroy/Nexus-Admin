@@ -1,31 +1,33 @@
-import type { PluginOption } from 'vite';
+import type { PluginOption } from "vite";
 
 import type {
   ApplicationPluginOptions,
   CommonPluginOptions,
   ConditionPlugin,
   LibraryPluginOptions,
-} from '../typing';
+} from "../typing";
 
-import viteVueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
-import viteVue from '@vitejs/plugin-vue';
-import viteVueJsx from '@vitejs/plugin-vue-jsx';
-import { visualizer as viteVisualizerPlugin } from 'rollup-plugin-visualizer';
-import viteCompressPlugin from 'vite-plugin-compression';
-import viteDtsPlugin from 'vite-plugin-dts';
-import { createHtmlPlugin as viteHtmlPlugin } from 'vite-plugin-html';
-import { VitePWA } from 'vite-plugin-pwa';
-import viteVueDevTools from 'vite-plugin-vue-devtools';
+import viteVueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
+import tailwindcss from "@tailwindcss/vite";
+import viteVue from "@vitejs/plugin-vue";
+import viteVueJsx from "@vitejs/plugin-vue-jsx";
+import { visualizer as viteVisualizerPlugin } from "rollup-plugin-visualizer";
+import viteDtsPlugin from "unplugin-dts/vite";
+import viteCompressPlugin from "vite-plugin-compression";
+import { createHtmlPlugin as viteHtmlPlugin } from "vite-plugin-html";
+import { VitePWA } from "vite-plugin-pwa";
+import viteVueDevTools from "vite-plugin-vue-devtools";
 
-import { viteArchiverPlugin } from './archiver';
-import { viteExtraAppConfigPlugin } from './extra-app-config';
-import { viteImportMapPlugin } from './importmap';
-import { viteInjectAppLoadingPlugin } from './inject-app-loading';
-import { viteMetadataPlugin } from './inject-metadata';
-import { viteLicensePlugin } from './license';
-import { viteNitroMockPlugin } from './nitro-mock';
-import { vitePrintPlugin } from './print';
-import { viteVxeTableImportsPlugin } from './vxe-table';
+import { viteArchiverPlugin } from "./archiver";
+import { viteExtraAppConfigPlugin } from "./extra-app-config";
+import { viteImportMapPlugin } from "./importmap";
+import { viteInjectAppLoadingPlugin } from "./inject-app-loading";
+import { viteMetadataPlugin } from "./inject-metadata";
+import { viteLicensePlugin } from "./license";
+import { viteNitroMockPlugin } from "./nitro-mock";
+import { vitePrintPlugin } from "./print";
+import { viteTailwindReferencePlugin } from "./tailwind-reference";
+import { viteVxeTableImportsPlugin } from "./vxe-table";
 
 /**
  * 获取条件成立的 vite 插件
@@ -45,9 +47,7 @@ async function loadConditionPlugins(conditionPlugins: ConditionPlugin[]) {
 /**
  * 根据条件获取通用的vite插件
  */
-async function loadCommonPlugins(
-  options: CommonPluginOptions,
-): Promise<ConditionPlugin[]> {
+async function loadCommonPlugins(options: CommonPluginOptions): Promise<ConditionPlugin[]> {
   const { devtools, injectMetadata, isBuild, visualizer } = options;
   return [
     {
@@ -60,6 +60,8 @@ async function loadCommonPlugins(
           },
         }),
         viteVueJsx(),
+        viteTailwindReferencePlugin(),
+        tailwindcss(),
       ],
     },
 
@@ -73,11 +75,13 @@ async function loadCommonPlugins(
     },
     {
       condition: isBuild && !!visualizer,
-      plugins: () => [<PluginOption>viteVisualizerPlugin({
-          filename: './node_modules/.cache/visualizer/stats.html',
+      plugins: () => [
+        viteVisualizerPlugin({
+          filename: "./node_modules/.cache/visualizer/stats.html",
           gzipSize: true,
           open: true,
-        })],
+        }) as PluginOption,
+      ],
     },
   ];
 }
@@ -85,9 +89,7 @@ async function loadCommonPlugins(
 /**
  * 根据条件获取应用类型的vite插件
  */
-async function loadApplicationPlugins(
-  options: ApplicationPluginOptions,
-): Promise<PluginOption[]> {
+async function loadApplicationPlugins(options: ApplicationPluginOptions): Promise<PluginOption[]> {
   // 单独取，否则commonOptions拿不到
   const isBuild = options.isBuild;
   const env = options.env;
@@ -167,9 +169,9 @@ async function loadApplicationPlugins(
           },
           ...pwaOptions,
           manifest: {
-            display: 'standalone',
-            start_url: '/',
-            theme_color: '#ffffff',
+            display: "standalone",
+            start_url: "/",
+            theme_color: "#ffffff",
             ...pwaOptions?.manifest,
           },
         }),
@@ -178,15 +180,11 @@ async function loadApplicationPlugins(
       condition: isBuild && !!compress,
       plugins: () => {
         const compressPlugins: PluginOption[] = [];
-        if (compressTypes?.includes('brotli')) {
-          compressPlugins.push(
-            viteCompressPlugin({ deleteOriginFile: false, ext: '.br' }),
-          );
+        if (compressTypes?.includes("brotli")) {
+          compressPlugins.push(viteCompressPlugin({ deleteOriginFile: false, ext: ".br" }));
         }
-        if (compressTypes?.includes('gzip')) {
-          compressPlugins.push(
-            viteCompressPlugin({ deleteOriginFile: false, ext: '.gz' }),
-          );
+        if (compressTypes?.includes("gzip")) {
+          compressPlugins.push(viteCompressPlugin({ deleteOriginFile: false, ext: ".gz" }));
         }
         return compressPlugins;
       },
@@ -203,9 +201,7 @@ async function loadApplicationPlugins(
     },
     {
       condition: isBuild && extraAppConfig,
-      plugins: async () => [
-        await viteExtraAppConfigPlugin({ isBuild: true, root: process.cwd() }),
-      ],
+      plugins: async () => [await viteExtraAppConfigPlugin({ isBuild: true, root: process.cwd() })],
     },
     {
       condition: archiver,
@@ -219,18 +215,17 @@ async function loadApplicationPlugins(
 /**
  * 根据条件获取库类型的vite插件
  */
-async function loadLibraryPlugins(
-  options: LibraryPluginOptions,
-): Promise<PluginOption[]> {
+async function loadLibraryPlugins(options: LibraryPluginOptions): Promise<PluginOption[]> {
   // 单独取，否则commonOptions拿不到
   const isBuild = options.isBuild;
   const { dts, ...commonOptions } = options;
+  const dtsOptions = typeof dts === "object" ? dts : undefined;
   const commonPlugins = await loadCommonPlugins(commonOptions);
   return await loadConditionPlugins([
     ...commonPlugins,
     {
       condition: isBuild && !!dts,
-      plugins: () => [viteDtsPlugin({ logLevel: 'error' })],
+      plugins: () => [viteDtsPlugin(dtsOptions)],
     },
   ]);
 }

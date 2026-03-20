@@ -1,29 +1,40 @@
-import type {
-  FormItemDependencies,
-  FormSchemaRuleType,
-  MaybeComponentProps,
-} from '../types';
+import type { FormItemDependencies, FormSchemaRuleType, MaybeComponentProps } from "../types";
 
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from "vue";
 
-import { isBoolean, isFunction } from '@vben-core/shared/utils';
+import { get, isBoolean, isFunction } from "@vben-core/shared/utils";
 
-import { useFormValues } from 'vee-validate';
+import { useFormValues } from "vee-validate";
 
-import { injectRenderFormProps } from './context';
+import { injectRenderFormProps } from "./context";
 
-export default function useDependencies(
-  getDependencies: () => FormItemDependencies | undefined,
-) {
+/**
+ * 解析Nested Objects对应的字段值
+ * @param values 表单值
+ * @param fieldName 字段名
+ */
+function resolveValueByFieldName(values: Record<string, any>, fieldName: string) {
+  // vee-validate：[] 表示禁用嵌套
+  if (fieldName.startsWith("[") && fieldName.endsWith("]")) {
+    const rawKey = fieldName.slice(1, -1);
+    return values[rawKey];
+  }
+
+  return get(values, fieldName);
+}
+
+export default function useDependencies(getDependencies: () => FormItemDependencies | undefined) {
   const values = useFormValues();
 
   const formRenderProps = injectRenderFormProps();
+  const formApi = formRenderProps.form;
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const formApi = formRenderProps.form!;
+  if (!formApi) {
+    throw new Error("Form api is required in useDependencies");
+  }
 
   if (!values) {
-    throw new Error('useDependencies should be used within <VbenForm>');
+    throw new Error("useDependencies should be used within <VbenForm>");
   }
 
   const isIf = ref(true);
@@ -37,7 +48,7 @@ export default function useDependencies(
     // 该字段可能会被多个字段触发
     const triggerFields = getDependencies()?.triggerFields ?? [];
     return triggerFields.map((dep) => {
-      return values.value[dep];
+      return resolveValueByFieldName(values.value, dep);
     });
   });
 
@@ -57,15 +68,7 @@ export default function useDependencies(
         return;
       }
       resetConditionState();
-      const {
-        componentProps,
-        disabled,
-        if: whenIf,
-        required,
-        rules,
-        show,
-        trigger,
-      } = dependencies;
+      const { componentProps, disabled, if: whenIf, required, rules, show, trigger } = dependencies;
 
       // 1. 优先判断if，如果if为false，则不渲染dom，后续判断也不再执行
       const formValues = values.value;
@@ -82,10 +85,8 @@ export default function useDependencies(
       // 2. 判断show，如果show为false，则隐藏
       if (isFunction(show)) {
         isShow.value = !!(await show(formValues, formApi));
-        if (!isShow.value) return;
       } else if (isBoolean(show)) {
         isShow.value = show;
-        if (!isShow.value) return;
       }
 
       if (isFunction(componentProps)) {
@@ -107,7 +108,7 @@ export default function useDependencies(
       }
 
       if (isFunction(trigger)) {
-        await trigger(formValues, formApi);
+        trigger(formValues, formApi);
       }
     },
     { deep: true, immediate: true },

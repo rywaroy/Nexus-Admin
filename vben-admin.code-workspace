@@ -9,6 +9,10 @@
       "path": "apps/web-antd",
     },
     {
+      "name": "@vben/web-antdv-next",
+      "path": "apps/web-antdv-next",
+    },
+    {
       "name": "@vben/web-ele",
       "path": "apps/web-ele",
     },
@@ -33,8 +37,12 @@
       "path": "internal/lint-configs/eslint-config",
     },
     {
-      "name": "@vben/prettier-config",
-      "path": "internal/lint-configs/prettier-config",
+      "name": "@vben/oxfmt-config",
+      "path": "internal/lint-configs/oxfmt-config",
+    },
+    {
+      "name": "@vben/oxlint-config",
+      "path": "internal/lint-configs/oxlint-config",
     },
     {
       "name": "@vben/stylelint-config",

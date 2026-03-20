@@ -1,22 +1,19 @@
 <script lang="ts" setup>
-import type {
-  OnActionClickParams,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
+import type { OnActionClickParams, VxeTableGridOptions } from "#/adapter/vxe-table";
 
-import { Page, useVbenDrawer } from '@vben/common-ui';
-import { IconifyIcon, Plus } from '@vben/icons';
-import { $t } from '@vben/locales';
+import { Page, useVbenDrawer } from "@vben/common-ui";
+import { IconifyIcon, Plus } from "@vben/icons";
+import { $t } from "@vben/locales";
 
-import { MenuBadge } from '@vben-core/menu-ui';
+import { MenuBadge } from "@vben-core/menu-ui";
 
-import { Button, message } from 'ant-design-vue';
+import { Button, message } from "ant-design-vue";
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteMenu, getMenuList, SystemMenuApi } from '#/api/system/menu';
+import { useVbenVxeGrid } from "#/adapter/vxe-table";
+import { deleteMenu, getMenuList, SystemMenuApi } from "#/api/system/menu";
 
-import { useColumns } from './data';
-import Form from './modules/form.vue';
+import { useColumns } from "./data";
+import Form from "./modules/form.vue";
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -26,7 +23,7 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
 const [Grid, gridApi] = useVbenVxeGrid({
   gridOptions: {
     columns: useColumns(onActionClick),
-    height: 'auto',
+    height: "auto",
     keepSource: true,
     pagerConfig: {
       enabled: false,
@@ -39,7 +36,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       },
     },
     rowConfig: {
-      keyField: 'id',
+      keyField: "id",
     },
     toolbarConfig: {
       custom: true,
@@ -48,27 +45,24 @@ const [Grid, gridApi] = useVbenVxeGrid({
       zoom: true,
     },
     treeConfig: {
-      parentField: 'pid',
-      rowField: 'id',
+      parentField: "pid",
+      rowField: "id",
       transform: false,
     },
   } as VxeTableGridOptions,
 });
 
-function onActionClick({
-  code,
-  row,
-}: OnActionClickParams<SystemMenuApi.SystemMenu>) {
+function onActionClick({ code, row }: OnActionClickParams<SystemMenuApi.SystemMenu>) {
   switch (code) {
-    case 'append': {
+    case "append": {
       onAppend(row);
       break;
     }
-    case 'delete': {
+    case "delete": {
       onDelete(row);
       break;
     }
-    case 'edit': {
+    case "edit": {
       onEdit(row);
       break;
     }
@@ -93,15 +87,15 @@ function onAppend(row: SystemMenuApi.SystemMenu) {
 
 function onDelete(row: SystemMenuApi.SystemMenu) {
   const hideLoading = message.loading({
-    content: $t('ui.actionMessage.deleting', [row.name]),
+    content: $t("ui.actionMessage.deleting", [row.name]),
     duration: 0,
-    key: 'action_process_msg',
+    key: "action_process_msg",
   });
   deleteMenu(row.id)
     .then(() => {
       message.success({
-        content: $t('ui.actionMessage.deleteSuccess', [row.name]),
-        key: 'action_process_msg',
+        content: $t("ui.actionMessage.deleteSuccess", [row.name]),
+        key: "action_process_msg",
       });
       onRefresh();
     })
@@ -117,17 +111,13 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">
           <Plus class="size-5" />
-          {{ $t('ui.actionTitle.create', [$t('system.menu.name')]) }}
+          {{ $t("ui.actionTitle.create", [$t("system.menu.name")]) }}
         </Button>
       </template>
       <template #title="{ row }">
         <div class="flex w-full items-center gap-1">
-          <div class="size-5 flex-shrink-0">
-            <IconifyIcon
-              v-if="row.type === 'button'"
-              icon="carbon:security"
-              class="size-full"
-            />
+          <div class="size-5 shrink-0">
+            <IconifyIcon v-if="row.type === 'button'" icon="carbon:security" class="size-full" />
             <IconifyIcon
               v-else-if="row.meta?.icon"
               :icon="row.meta?.icon || 'carbon:circle-dash'"

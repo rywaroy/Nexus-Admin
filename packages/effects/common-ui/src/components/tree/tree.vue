@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { TreeProps } from '@vben-core/shadcn-ui';
+import type { TreeProps } from "@vben-core/shadcn-ui";
 
-import { Inbox } from '@vben/icons';
-import { $t } from '@vben/locales';
+import { Inbox } from "@vben/icons";
+import { $t } from "@vben/locales";
 
-import { treePropsDefaults, VbenTree } from '@vben-core/shadcn-ui';
+import { treePropsDefaults, VbenTree } from "@vben-core/shadcn-ui";
 
 const props = withDefaults(defineProps<TreeProps>(), treePropsDefaults());
 </script>
@@ -17,9 +17,9 @@ const props = withDefaults(defineProps<TreeProps>(), treePropsDefaults());
   </VbenTree>
   <div
     v-else
-    class="flex-col-center text-muted-foreground cursor-pointer rounded-lg border p-10 text-sm font-medium"
+    class="flex-col-center cursor-pointer rounded-lg border p-10 text-sm font-medium text-muted-foreground"
   >
     <Inbox class="size-10" />
-    <div class="mt-1">{{ $t('common.noData') }}</div>
+    <div class="mt-1">{{ $t("common.noData") }}</div>
   </div>
 </template>

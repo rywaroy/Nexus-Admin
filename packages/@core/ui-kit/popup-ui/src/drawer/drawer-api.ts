@@ -1,23 +1,18 @@
-import type { DrawerApiOptions, DrawerState } from './drawer';
+import type { DrawerApiOptions, DrawerState } from "./drawer";
 
-import { Store } from '@vben-core/shared/store';
-import { bindMethods, isFunction } from '@vben-core/shared/utils';
+import { Store } from "@vben-core/shared/store";
+import { bindMethods, isFunction } from "@vben-core/shared/utils";
 
 export class DrawerApi {
   // 共享数据
-  public sharedData: Record<'payload', any> = {
+  public sharedData: Record<"payload", any> = {
     payload: {},
   };
   public store: Store<DrawerState>;
 
   private api: Pick<
     DrawerApiOptions,
-    | 'onBeforeClose'
-    | 'onCancel'
-    | 'onClosed'
-    | 'onConfirm'
-    | 'onOpenChange'
-    | 'onOpened'
+    "onBeforeClose" | "onCancel" | "onClosed" | "onConfirm" | "onOpenChange" | "onOpened"
   >;
 
   // private prevState!: DrawerState;
@@ -36,43 +31,38 @@ export class DrawerApi {
     } = options;
 
     const defaultState: DrawerState = {
-      class: '',
+      class: "",
       closable: true,
-      closeIconPlacement: 'right',
+      closeIconPlacement: "right",
       closeOnClickModal: true,
       closeOnPressEscape: true,
       confirmLoading: false,
-      contentClass: '',
+      contentClass: "",
       footer: true,
       header: true,
       isOpen: false,
       loading: false,
       modal: true,
       openAutoFocus: false,
-      placement: 'right',
+      placement: "right",
       showCancelButton: true,
       showConfirmButton: true,
       submitting: false,
-      title: '',
+      title: "",
     };
 
-    this.store = new Store<DrawerState>(
-      {
-        ...defaultState,
-        ...storeState,
-      },
-      {
-        onUpdate: () => {
-          const state = this.store.state;
-          if (state?.isOpen === this.state?.isOpen) {
-            this.state = state;
-          } else {
-            this.state = state;
-            this.api.onOpenChange?.(!!state?.isOpen);
-          }
-        },
-      },
-    );
+    this.store = new Store<DrawerState>({
+      ...defaultState,
+      ...storeState,
+    });
+
+    this.store.subscribe((state) => {
+      const prevIsOpen = this.state?.isOpen;
+      this.state = state;
+      if (state?.isOpen !== prevIsOpen) {
+        this.api.onOpenChange?.(!!state?.isOpen);
+      }
+    });
     this.state = this.store.state;
     this.api = {
       onBeforeClose,
@@ -160,11 +150,7 @@ export class DrawerApi {
     return this;
   }
 
-  setState(
-    stateOrFn:
-      | ((prev: DrawerState) => Partial<DrawerState>)
-      | Partial<DrawerState>,
-  ) {
+  setState(stateOrFn: ((prev: DrawerState) => Partial<DrawerState>) | Partial<DrawerState>) {
     if (isFunction(stateOrFn)) {
       this.store.setState(stateOrFn);
     } else {

@@ -93,10 +93,10 @@ When executing `pnpm build` in the root directory of the monorepo, a `dist/_app.
 
 ```ts
 window._VBEN_ADMIN_PRO_APP_CONF_ = {
-  VITE_GLOB_API_URL: 'https://mock-napi.vben.pro/api',
+  VITE_GLOB_API_URL: "https://mock-napi.vben.pro/api",
 };
 Object.freeze(window._VBEN_ADMIN_PRO_APP_CONF_);
-Object.defineProperty(window, '_VBEN_ADMIN_PRO_APP_CONF_', {
+Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
   configurable: false,
   writable: false,
 });
@@ -141,10 +141,7 @@ To add a new dynamically modifiable configuration item, simply follow the steps 
 - In `packages/effects/hooks/src/use-app-config.ts`, add the corresponding configuration item, such as:
 
   ```ts
-  export function useAppConfig(
-    env: Record<string, any>,
-    isProduction: boolean,
-  ): ApplicationConfig {
+  export function useAppConfig(env: Record<string, any>, isProduction: boolean): ApplicationConfig {
     // In production environment, directly use the window._VBEN_ADMIN_PRO_APP_CONF_ global variable
     const config = isProduction
       ? window._VBEN_ADMIN_PRO_APP_CONF_
@@ -180,8 +177,8 @@ The project offers a wide range of preference settings for dynamically configuri
 If you cannot find documentation for a setting, you can try configuring it yourself and then click `Copy Preferences` to override the project defaults. The configuration file is located in the application directory under `preferences.ts`, where you can override the framework's default configurations to achieve custom settings.
 
 ```ts
-import { useAppConfig } from '@vben/hooks';
-import { defineOverridesPreferences } from '@vben/preferences';
+import { useAppConfig } from "@vben/hooks";
+import { defineOverridesPreferences } from "@vben/preferences";
 
 /**
  * @description Project configuration file
@@ -200,32 +197,32 @@ export const overridesPreferences = defineOverridesPreferences({
 ```ts
 const defaultPreferences: Preferences = {
   app: {
-    accessMode: 'frontend',
-    authPageLayout: 'panel-right',
+    accessMode: "frontend",
+    authPageLayout: "panel-right",
     checkUpdatesInterval: 1,
     colorGrayMode: false,
     colorWeakMode: false,
     compact: false,
-    contentCompact: 'wide',
+    contentCompact: "wide",
     contentCompactWidth: 1200,
     contentPadding: 0,
     contentPaddingBottom: 0,
     contentPaddingLeft: 0,
     contentPaddingRight: 0,
     contentPaddingTop: 0,
-    defaultAvatar:
-      'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp',
-    defaultHomePath: '/analytics',
+    defaultAvatar: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp",
+    defaultHomePath: "/analytics",
     dynamicTitle: true,
     enableCheckUpdates: true,
     enablePreferences: true,
+    enableCopyPreferences: true,
     enableRefreshToken: false,
     isMobile: false,
-    layout: 'sidebar-nav',
-    locale: 'zh-CN',
-    loginExpiredMode: 'page',
-    name: 'Vben Admin',
-    preferencesButtonPosition: 'auto',
+    layout: "sidebar-nav",
+    locale: "zh-CN",
+    loginExpiredMode: "page",
+    name: "Vben Admin",
+    preferencesButtonPosition: "auto",
     watermark: false,
     zIndex: 200,
   },
@@ -234,15 +231,15 @@ const defaultPreferences: Preferences = {
     hideOnlyOne: false,
     showHome: false,
     showIcon: true,
-    styleType: 'normal',
+    styleType: "normal",
   },
   copyright: {
-    companyName: 'Vben',
-    companySiteLink: 'https://www.vben.pro',
-    date: '2024',
+    companyName: "Vben",
+    companySiteLink: "https://www.vben.pro",
+    date: "2024",
     enable: true,
-    icp: '',
-    icpLink: '',
+    icp: "",
+    icpLink: "",
     settingShow: true,
   },
   footer: {
@@ -254,19 +251,19 @@ const defaultPreferences: Preferences = {
     enable: true,
     height: 50,
     hidden: false,
-    menuAlign: 'start',
-    mode: 'fixed',
+    menuAlign: "start",
+    mode: "fixed",
   },
   logo: {
     enable: true,
-    fit: 'contain',
-    source: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp',
+    fit: "contain",
+    source: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp",
     // sourceDark: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-dark.webp', // Optional: Dark theme logo
   },
   navigation: {
     accordion: true,
     split: true,
-    styleType: 'rounded',
+    styleType: "rounded",
   },
   shortcutKeys: {
     enable: true,
@@ -301,24 +298,24 @@ const defaultPreferences: Preferences = {
     showIcon: true,
     showMaximize: true,
     showMore: true,
-    styleType: 'chrome',
+    styleType: "chrome",
     wheelable: true,
   },
   theme: {
-    builtinType: 'default',
-    colorDestructive: 'hsl(348 100% 61%)',
-    colorPrimary: 'hsl(212 100% 45%)',
-    colorSuccess: 'hsl(144 57% 58%)',
-    colorWarning: 'hsl(42 84% 61%)',
-    mode: 'dark',
-    radius: '0.5',
+    builtinType: "default",
+    colorDestructive: "hsl(348 100% 61%)",
+    colorPrimary: "hsl(212 100% 45%)",
+    colorSuccess: "hsl(144 57% 58%)",
+    colorWarning: "hsl(42 84% 61%)",
+    mode: "dark",
+    radius: "0.5",
     semiDarkHeader: false,
     semiDarkSidebar: false,
   },
   transition: {
     enable: true,
     loading: true,
-    name: 'fade-slide',
+    name: "fade-slide",
     progress: true,
   },
   widget: {
@@ -376,6 +373,8 @@ interface AppPreferences {
   enableCheckUpdates: boolean;
   /** Whether to display preferences */
   enablePreferences: boolean;
+  /** Whether to display copy preferences button */
+  enableCopyPreferences: boolean;
   /**
    * @zh_CN Whether to enable refreshToken
    */
@@ -455,7 +454,7 @@ interface LogoPreferences {
   /** Whether the logo is visible */
   enable: boolean;
   /** Logo image fitting method */
-  fit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  fit: "contain" | "cover" | "fill" | "none" | "scale-down";
   /** Logo URL */
   source: string;
   /** Dark theme logo URL (optional, if not set, use source) */

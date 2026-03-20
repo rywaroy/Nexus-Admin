@@ -1,18 +1,10 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref } from "vue";
 
-import { ColPage } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
+import { ColPage } from "@vben/common-ui";
+import { IconifyIcon } from "@vben/icons";
 
-import {
-  Alert,
-  Button,
-  Card,
-  Checkbox,
-  Slider,
-  Tag,
-  Tooltip,
-} from 'ant-design-vue';
+import { Alert, Button, Card, Checkbox, Slider, Tag, Tooltip } from "ant-design-vue";
 
 const props = reactive({
   leftCollapsedWidth: 5,
@@ -42,11 +34,7 @@ const leftMaxWidth = ref(props.leftMaxWidth || 100);
     <template #left="{ isCollapsed, expand }">
       <div v-if="isCollapsed" @click="expand">
         <Tooltip title="点击展开左侧">
-          <Button
-            shape="circle"
-            type="primary"
-            class="flex items-center justify-center"
-          >
+          <Button shape="circle" type="primary" class="flex-center">
             <template #icon>
               <IconifyIcon class="text-2xl" icon="bi:arrow-right" />
             </template>
@@ -56,7 +44,7 @@ const leftMaxWidth = ref(props.leftMaxWidth || 100);
       <div
         v-else
         :style="{ minWidth: '200px' }"
-        class="mr-2 rounded-[var(--radius)] border border-border bg-card p-2"
+        class="mr-2 rounded-(--radius) border border-border bg-card p-2"
       >
         <p>这里是左侧内容</p>
         <p>这里是左侧内容</p>
@@ -79,7 +67,7 @@ const leftMaxWidth = ref(props.leftMaxWidth || 100);
             v-model:value="leftMinWidth"
             :max="props.leftMaxWidth - 1"
             :min="1"
-            style="width: 100px"
+            class="w-25"
             @after-change="(value) => (props.leftMinWidth = value as number)"
           />
           <span>左侧最大宽度百分比：</span>
@@ -87,7 +75,7 @@ const leftMaxWidth = ref(props.leftMaxWidth || 100);
             v-model:value="props.leftMaxWidth"
             :max="100"
             :min="leftMaxWidth + 1"
-            style="width: 100px"
+            class="w-25"
             @after-change="(value) => (props.leftMaxWidth = value as number)"
           />
         </div>

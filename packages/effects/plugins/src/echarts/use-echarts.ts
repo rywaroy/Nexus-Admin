@@ -1,14 +1,24 @@
-import type { EChartsOption } from 'echarts';
+import type { EChartsOption } from "echarts";
 
-import type { Ref } from 'vue';
+import type { Ref } from "vue";
 
-import type { Nullable } from '@vben/types';
+import type { Nullable } from "@vben/types";
 
-import type EchartsUI from './echarts-ui.vue';
+import type EchartsUI from "./echarts-ui.vue";
 
-import { computed, nextTick, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onActivated,
+  onBeforeUnmount,
+  onDeactivated,
+  onMounted,
+  ref,
+  unref,
+  watch,
+} from "vue";
 
-import { usePreferences } from '@vben/preferences';
+import { usePreferences } from "@vben/preferences";
 
 import {
   tryOnUnmounted,
@@ -16,17 +26,19 @@ import {
   useResizeObserver,
   useTimeoutFn,
   useWindowSize,
-} from '@vueuse/core';
+} from "@vueuse/core";
 
-import echarts from './echarts';
+import echarts from "./echarts";
 
 type EchartsUIType = typeof EchartsUI | undefined;
 
-type EchartsThemeType = 'dark' | 'light' | null;
+type EchartsThemeType = "dark" | "light" | null;
 
 function useEcharts(chartRef: Ref<EchartsUIType>) {
   let chartInstance: echarts.ECharts | null = null;
   let cacheOptions: EChartsOption = {};
+  // echarts是否处于激活状态
+  const isActiveRef = ref(false);
 
   const { isDark } = usePreferences();
   const { height, width } = useWindowSize();
@@ -42,6 +54,11 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     return maybeComponent.$el ?? null;
   };
 
+  onMounted(() => (isActiveRef.value = true));
+  onActivated(() => (isActiveRef.value = true));
+  onDeactivated(() => (isActiveRef.value = false));
+  onBeforeUnmount(() => (isActiveRef.value = false));
+
   const isElHidden = (el: HTMLElement | null): boolean => {
     if (!el) return true;
     return el.offsetHeight === 0 || el.offsetWidth === 0;
@@ -53,7 +70,7 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     }
 
     return {
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
     };
   });
 
@@ -62,7 +79,7 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     if (!el) {
       return;
     }
-    chartInstance = echarts.init(el, t || isDark.value ? 'dark' : null);
+    chartInstance = echarts.init(el, t || isDark.value ? "dark" : null);
 
     return chartInstance;
   };
@@ -71,6 +88,9 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     options: EChartsOption,
     clear = true,
   ): Promise<Nullable<echarts.ECharts>> => {
+    if (!unref(isActiveRef)) {
+      return Promise.resolve(null);
+    }
     cacheOptions = options;
     const currentOptions = {
       ...options,
@@ -92,14 +112,46 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
           return;
         }
         useTimeoutFn(() => {
-          if (!chartInstance) {
+          if (!chartInstance || chartInstance?.getDom() !== el) {
+            chartInstance?.dispose();
             const instance = initCharts();
             if (!instance) return;
+            chartInstance = instance;
           }
           clear && chartInstance?.clear();
           chartInstance?.setOption(currentOptions);
           resolve(chartInstance);
         }, 30);
+      });
+    });
+  };
+
+  const updateData = (
+    option: EChartsOption,
+    notMerge = false, // false = 合并（保留动画），true = 完全替换
+    lazyUpdate = false, // true 时不立即重绘，适合短时间内多次调用
+  ): Promise<echarts.ECharts | null> => {
+    return new Promise((resolve) => {
+      nextTick(() => {
+        if (!chartInstance) {
+          // 还没初始化 → 当作首次渲染
+          renderEcharts(option).then(resolve);
+          return;
+        }
+
+        // 合并你原有的全局配置（比如 backgroundColor）
+        const finalOption = {
+          ...option,
+          ...getOptions.value,
+        };
+
+        chartInstance.setOption(finalOption, {
+          notMerge,
+          lazyUpdate,
+          // silent: true,     // 如果追求极致性能可开启（关闭所有事件）
+        });
+
+        resolve(chartInstance);
       });
     });
   };
@@ -112,7 +164,7 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     chartInstance?.resize({
       animation: {
         duration: 300,
-        easing: 'quadraticIn',
+        easing: "quadraticIn",
       },
     });
   }
@@ -123,8 +175,8 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
 
   useResizeObserver(chartRef as never, resizeHandler);
 
-  watch(isDark, () => {
-    if (chartInstance) {
+  watch([isDark, isActiveRef], () => {
+    if (chartInstance && unref(isActiveRef)) {
       chartInstance.dispose();
       initCharts();
       renderEcharts(cacheOptions);
@@ -137,8 +189,10 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
     chartInstance?.dispose();
   });
   return {
+    isActive: isActiveRef,
     renderEcharts,
     resize,
+    updateData,
     getChartInstance: () => chartInstance,
   };
 }

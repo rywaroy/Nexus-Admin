@@ -3,27 +3,27 @@ import type {
   CaptchaVerifyPassingData,
   SliderCaptchaProps,
   SliderRotateVerifyPassingData,
-} from '../types';
+} from "../types";
 
-import { reactive, unref, useTemplateRef, watch, watchEffect } from 'vue';
+import { reactive, unref, useTemplateRef, watch, watchEffect } from "vue";
 
-import { $t } from '@vben/locales';
+import { $t } from "@vben/locales";
 
-import { cn } from '@vben-core/shared/utils';
+import { cn } from "@vben-core/shared/utils";
 
-import { useTimeoutFn } from '@vueuse/core';
+import { useTimeoutFn } from "@vueuse/core";
 
-import SliderCaptchaAction from './slider-captcha-action.vue';
-import SliderCaptchaBar from './slider-captcha-bar.vue';
-import SliderCaptchaContent from './slider-captcha-content.vue';
+import SliderCaptchaAction from "./slider-captcha-action.vue";
+import SliderCaptchaBar from "./slider-captcha-bar.vue";
+import SliderCaptchaContent from "./slider-captcha-content.vue";
 
 const props = withDefaults(defineProps<SliderCaptchaProps>(), {
   actionStyle: () => ({}),
   barStyle: () => ({}),
   contentStyle: () => ({}),
   isSlot: false,
-  successText: '',
-  text: '',
+  successText: "",
+  text: "",
   wrapperStyle: () => ({}),
 });
 
@@ -49,10 +49,10 @@ defineExpose({
   resume,
 });
 
-const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
-const barRef = useTemplateRef<typeof SliderCaptchaBar>('barRef');
-const contentRef = useTemplateRef<typeof SliderCaptchaContent>('contentRef');
-const actionRef = useTemplateRef<typeof SliderCaptchaAction>('actionRef');
+const wrapperRef = useTemplateRef<HTMLDivElement>("wrapperRef");
+const barRef = useTemplateRef<InstanceType<typeof SliderCaptchaBar>>("barRef");
+const contentRef = useTemplateRef<InstanceType<typeof SliderCaptchaContent>>("contentRef");
+const actionRef = useTemplateRef<InstanceType<typeof SliderCaptchaAction>>("actionRef");
 
 watch(
   () => state.isPassing,
@@ -60,7 +60,7 @@ watch(
     if (isPassing) {
       const { endTime, startTime } = state;
       const time = (endTime - startTime) / 1000;
-      emit('success', { isPassing, time: time.toFixed(1) });
+      emit("success", { isPassing, time: time.toFixed(1) });
       modelValue.value = isPassing;
     }
   },
@@ -71,9 +71,9 @@ watchEffect(() => {
 });
 
 function getEventPageX(e: MouseEvent | TouchEvent): number {
-  if ('pageX' in e) {
+  if ("pageX" in e) {
     return e.pageX;
-  } else if ('touches' in e && e.touches[0]) {
+  } else if ("touches" in e && e.touches[0]) {
     return e.touches[0].pageX;
   }
   return 0;
@@ -83,20 +83,18 @@ function handleDragStart(e: MouseEvent | TouchEvent) {
   if (state.isPassing) {
     return;
   }
-  if (!actionRef.value) return;
-  emit('start', e);
+  const actionEl = actionRef.value;
+  const actionStyle = actionEl?.getStyle();
+  if (!actionEl || !actionStyle) return;
+  emit("start", e);
 
   state.moveDistance =
-    getEventPageX(e) -
-    Number.parseInt(
-      actionRef.value.getStyle().left.replace('px', '') || '0',
-      10,
-    );
+    getEventPageX(e) - Number.parseInt(actionStyle.left.replace("px", "") || "0", 10);
   state.startTime = Date.now();
   state.isMoving = true;
 }
 
-function getOffset(actionEl: HTMLDivElement) {
+function getOffset(actionEl?: HTMLDivElement | null) {
   const wrapperWidth = wrapperRef.value?.offsetWidth ?? 220;
   const actionWidth = actionEl?.offsetWidth ?? 40;
   const offset = wrapperWidth - actionWidth - 6;
@@ -109,10 +107,12 @@ function handleDragMoving(e: MouseEvent | TouchEvent) {
     const actionEl = unref(actionRef);
     const barEl = unref(barRef);
     if (!actionEl || !barEl) return;
-    const { actionWidth, offset, wrapperWidth } = getOffset(actionEl.getEl());
+    const actionNode = actionEl.getEl();
+    if (!actionNode) return;
+    const { actionWidth, offset, wrapperWidth } = getOffset(actionNode);
     const moveX = getEventPageX(e) - moveDistance;
 
-    emit('move', {
+    emit("move", {
       event: e,
       moveDistance,
       moveX,
@@ -133,19 +133,23 @@ function handleDragMoving(e: MouseEvent | TouchEvent) {
 function handleDragOver(e: MouseEvent | TouchEvent) {
   const { isMoving, isPassing, moveDistance } = state;
   if (isMoving && !isPassing) {
-    emit('end', e);
+    emit("end", e);
     const actionEl = actionRef.value;
     const barEl = unref(barRef);
     if (!actionEl || !barEl) return;
     const moveX = getEventPageX(e) - moveDistance;
-    const { actionWidth, offset, wrapperWidth } = getOffset(actionEl.getEl());
+    const actionNode = actionEl.getEl();
+    if (!actionNode) return;
+    const { actionWidth, offset, wrapperWidth } = getOffset(actionNode);
     if (moveX < offset) {
       if (props.isSlot) {
         setTimeout(() => {
           if (modelValue.value) {
             const contentEl = unref(contentRef);
-            if (contentEl) {
-              contentEl.getEl().style.width = `${Number.parseInt(barEl.getEl().style.width)}px`;
+            const contentNode = contentEl?.getEl();
+            const barNode = barEl.getEl();
+            if (contentNode && barNode) {
+              contentNode.style.width = `${Number.parseInt(barNode.style.width || "0", 10)}px`;
             }
           } else {
             resume();
@@ -185,12 +189,15 @@ function resume() {
   const contentEl = unref(contentRef);
   if (!actionEl || !barEl || !contentEl) return;
 
-  contentEl.getEl().style.width = '100%';
+  const contentNode = contentEl.getEl();
+  if (!contentNode) return;
+
+  contentNode.style.width = "100%";
   state.toLeft = true;
   useTimeoutFn(() => {
     state.toLeft = false;
-    actionEl.setLeft('0');
-    barEl.setWidth('0');
+    actionEl.setLeft("0");
+    barEl.setWidth("0");
   }, 300);
 }
 </script>
@@ -200,7 +207,7 @@ function resume() {
     ref="wrapperRef"
     :class="
       cn(
-        'border-border bg-background-deep relative flex h-10 w-full items-center overflow-hidden rounded-md border text-center',
+        'relative flex h-10 w-full items-center overflow-hidden rounded-md border border-border bg-background-deep text-center',
         props.class,
       )
     "
@@ -211,11 +218,7 @@ function resume() {
     @touchend="handleDragOver"
     @touchmove="handleDragMoving"
   >
-    <SliderCaptchaBar
-      ref="barRef"
-      :bar-style="barStyle"
-      :to-left="state.toLeft"
-    />
+    <SliderCaptchaBar ref="barRef" :bar-style="barStyle" :to-left="state.toLeft" />
     <SliderCaptchaContent
       ref="contentRef"
       :content-style="contentStyle"

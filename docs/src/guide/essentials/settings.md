@@ -92,10 +92,10 @@ VITE_ARCHIVER=true
 
 ```ts
 window._VBEN_ADMIN_PRO_APP_CONF_ = {
-  VITE_GLOB_API_URL: 'https://mock-napi.vben.pro/api',
+  VITE_GLOB_API_URL: "https://mock-napi.vben.pro/api",
 };
 Object.freeze(window._VBEN_ADMIN_PRO_APP_CONF_);
-Object.defineProperty(window, '_VBEN_ADMIN_PRO_APP_CONF_', {
+Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
   configurable: false,
   writable: false,
 });
@@ -140,10 +140,7 @@ const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 - 在 `packages/effects/hooks/src/use-app-config.ts` 中，新增对应的配置项，如：
 
   ```ts
-  export function useAppConfig(
-    env: Record<string, any>,
-    isProduction: boolean,
-  ): ApplicationConfig {
+  export function useAppConfig(env: Record<string, any>, isProduction: boolean): ApplicationConfig {
     // 生产环境下，直接使用 window._VBEN_ADMIN_PRO_APP_CONF_ 全局变量
     const config = isProduction
       ? window._VBEN_ADMIN_PRO_APP_CONF_
@@ -179,8 +176,8 @@ const { otherApiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 如果你找不到文档说明，可以尝试自己配置好以后，点击`复制偏好设置`，覆盖项目默认即可。配置文件位于应用目录下的`preferences.ts`，在这里，你可以覆盖框架默认的配置，实现自定义配置。
 
 ```ts
-import { useAppConfig } from '@vben/hooks';
-import { defineOverridesPreferences } from '@vben/preferences';
+import { useAppConfig } from "@vben/hooks";
+import { defineOverridesPreferences } from "@vben/preferences";
 
 /**
  * @description 项目配置文件
@@ -199,32 +196,32 @@ export const overridesPreferences = defineOverridesPreferences({
 ```ts
 const defaultPreferences: Preferences = {
   app: {
-    accessMode: 'frontend',
-    authPageLayout: 'panel-right',
+    accessMode: "frontend",
+    authPageLayout: "panel-right",
     checkUpdatesInterval: 1,
     colorGrayMode: false,
     colorWeakMode: false,
     compact: false,
-    contentCompact: 'wide',
+    contentCompact: "wide",
     contentCompactWidth: 1200,
     contentPadding: 0,
     contentPaddingBottom: 0,
     contentPaddingLeft: 0,
     contentPaddingRight: 0,
     contentPaddingTop: 0,
-    defaultAvatar:
-      'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp',
-    defaultHomePath: '/analytics',
+    defaultAvatar: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp",
+    defaultHomePath: "/analytics",
     dynamicTitle: true,
     enableCheckUpdates: true,
     enablePreferences: true,
+    enableCopyPreferences: true,
     enableRefreshToken: false,
     isMobile: false,
-    layout: 'sidebar-nav',
-    locale: 'zh-CN',
-    loginExpiredMode: 'page',
-    name: 'Vben Admin',
-    preferencesButtonPosition: 'auto',
+    layout: "sidebar-nav",
+    locale: "zh-CN",
+    loginExpiredMode: "page",
+    name: "Vben Admin",
+    preferencesButtonPosition: "auto",
     watermark: false,
     zIndex: 200,
   },
@@ -233,15 +230,15 @@ const defaultPreferences: Preferences = {
     hideOnlyOne: false,
     showHome: false,
     showIcon: true,
-    styleType: 'normal',
+    styleType: "normal",
   },
   copyright: {
-    companyName: 'Vben',
-    companySiteLink: 'https://www.vben.pro',
-    date: '2024',
+    companyName: "Vben",
+    companySiteLink: "https://www.vben.pro",
+    date: "2024",
     enable: true,
-    icp: '',
-    icpLink: '',
+    icp: "",
+    icpLink: "",
     settingShow: true,
   },
   footer: {
@@ -253,19 +250,19 @@ const defaultPreferences: Preferences = {
     enable: true,
     height: 50,
     hidden: false,
-    menuAlign: 'start',
-    mode: 'fixed',
+    menuAlign: "start",
+    mode: "fixed",
   },
   logo: {
     enable: true,
-    fit: 'contain',
-    source: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp',
+    fit: "contain",
+    source: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp",
     // sourceDark: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-dark.webp', // 可选：暗色主题logo
   },
   navigation: {
     accordion: true,
     split: true,
-    styleType: 'rounded',
+    styleType: "rounded",
   },
   shortcutKeys: {
     enable: true,
@@ -300,24 +297,24 @@ const defaultPreferences: Preferences = {
     showIcon: true,
     showMaximize: true,
     showMore: true,
-    styleType: 'chrome',
+    styleType: "chrome",
     wheelable: true,
   },
   theme: {
-    builtinType: 'default',
-    colorDestructive: 'hsl(348 100% 61%)',
-    colorPrimary: 'hsl(212 100% 45%)',
-    colorSuccess: 'hsl(144 57% 58%)',
-    colorWarning: 'hsl(42 84% 61%)',
-    mode: 'dark',
-    radius: '0.5',
+    builtinType: "default",
+    colorDestructive: "hsl(348 100% 61%)",
+    colorPrimary: "hsl(212 100% 45%)",
+    colorSuccess: "hsl(144 57% 58%)",
+    colorWarning: "hsl(42 84% 61%)",
+    mode: "dark",
+    radius: "0.5",
     semiDarkHeader: false,
     semiDarkSidebar: false,
   },
   transition: {
     enable: true,
     loading: true,
-    name: 'fade-slide',
+    name: "fade-slide",
     progress: true,
   },
   widget: {
@@ -375,6 +372,8 @@ interface AppPreferences {
   enableCheckUpdates: boolean;
   /** 是否显示偏好设置 */
   enablePreferences: boolean;
+  /** 是否显示复制偏好设置按钮 */
+  enableCopyPreferences: boolean;
   /**
    * @zh_CN 是否开启refreshToken
    */
@@ -455,7 +454,7 @@ interface LogoPreferences {
   /** logo是否可见 */
   enable: boolean;
   /** logo图片适应方式 */
-  fit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  fit: "contain" | "cover" | "fill" | "none" | "scale-down";
   /** logo地址 */
   source: string;
   /** 暗色主题logo地址 (可选，若不设置则使用 source) */

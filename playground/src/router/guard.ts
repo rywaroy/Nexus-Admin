@@ -1,14 +1,14 @@
-import type { Router } from 'vue-router';
+import type { Router } from "vue-router";
 
-import { LOGIN_PATH } from '@vben/constants';
-import { preferences } from '@vben/preferences';
-import { useAccessStore, useUserStore } from '@vben/stores';
-import { startProgress, stopProgress } from '@vben/utils';
+import { LOGIN_PATH } from "@vben/constants";
+import { preferences } from "@vben/preferences";
+import { useAccessStore, useUserStore } from "@vben/stores";
+import { startProgress, stopProgress } from "@vben/utils";
 
-import { accessRoutes, coreRouteNames } from '#/router/routes';
-import { useAuthStore } from '#/store';
+import { accessRoutes, coreRouteNames } from "#/router/routes";
+import { useAuthStore } from "#/store";
 
-import { generateAccess } from './access';
+import { generateAccess } from "./access";
 
 /**
  * 通用守卫配置
@@ -108,9 +108,9 @@ function setupAccessGuard(router: Router) {
     let redirectPath: string;
     if (from.query.redirect) {
       redirectPath = from.query.redirect as string;
-    } else if (to.path === preferences.app.defaultHomePath) {
+    } else if (to.fullPath === preferences.app.defaultHomePath) {
       redirectPath = preferences.app.defaultHomePath;
-    } else if (userInfo.homePath && to.path === userInfo.homePath) {
+    } else if (userInfo.homePath && to.fullPath === userInfo.homePath) {
       redirectPath = userInfo.homePath;
     } else {
       redirectPath = to.fullPath;

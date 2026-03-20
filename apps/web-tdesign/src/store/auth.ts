@@ -1,19 +1,19 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type { Recordable, UserInfo } from "@vben/types";
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-import { LOGIN_PATH } from '@vben/constants';
-import { preferences } from '@vben/preferences';
-import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
+import { LOGIN_PATH } from "@vben/constants";
+import { preferences } from "@vben/preferences";
+import { resetAllStores, useAccessStore, useUserStore } from "@vben/stores";
 
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-import { notification } from '#/adapter/tdesign';
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { $t } from '#/locales';
+import { notification } from "#/adapter/tdesign";
+import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from "#/api";
+import { $t } from "#/locales";
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
   const router = useRouter();
@@ -25,10 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
    * Asynchronously handle the login process
    * @param params 登录表单数据
    */
-  async function authLogin(
-    params: Recordable<any>,
-    onSuccess?: () => Promise<void> | void,
-  ) {
+  async function authLogin(params: Recordable<any>, onSuccess?: () => Promise<void> | void) {
     // 异步处理用户登录操作并获取 accessToken
     let userInfo: null | UserInfo = null;
     try {
@@ -54,15 +51,13 @@ export const useAuthStore = defineStore('auth', () => {
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(
-                userInfo.homePath || preferences.app.defaultHomePath,
-              );
+            : await router.push(userInfo.homePath || preferences.app.defaultHomePath);
         }
 
         if (userInfo?.realName) {
           notification.success({
-            title: $t('authentication.loginSuccess'),
-            content: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+            title: $t("authentication.loginSuccess"),
+            content: `${$t("authentication.loginSuccessDesc")}:${userInfo?.realName}`,
             duration: 3000,
           });
         }
@@ -97,8 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchUserInfo() {
-    let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfoApi();
+    const userInfo = await getUserInfoApi();
     userStore.setUserInfo(userInfo);
     return userInfo;
   }

@@ -3,7 +3,7 @@ import type {
   LayoutHeaderModeType,
   LayoutType,
   ThemeModeType,
-} from '@vben-core/typings';
+} from "@vben-core/typings";
 
 interface VbenLayoutProps {
   /**
@@ -146,6 +146,11 @@ interface VbenLayoutProps {
    * @default dark
    */
   sidebarTheme?: ThemeModeType;
+  /**
+   * 侧边栏子栏
+   * @default dark
+   */
+  sidebarThemeSub?: ThemeModeType;
   /**
    * 侧边栏宽度
    * @default 210

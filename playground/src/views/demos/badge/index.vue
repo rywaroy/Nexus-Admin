@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import { reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import { reactive } from "vue";
+import { useRoute } from "vue-router";
 
-import { Page } from '@vben/common-ui';
-import { useAccessStore } from '@vben/stores';
+import { Page } from "@vben/common-ui";
+import { useAccessStore } from "@vben/stores";
 
-import { MenuBadge } from '@vben-core/menu-ui';
+import { MenuBadge } from "@vben-core/menu-ui";
 
-import { Button, Card, Radio, RadioGroup } from 'ant-design-vue';
+import { Button, Card, Radio, RadioGroup } from "ant-design-vue";
 
-import { useVbenForm } from '#/adapter/form';
+import { useVbenForm } from "#/adapter/form";
 
 const colors = [
-  { label: '预设：默认', value: 'default' },
-  { label: '预设：关键', value: 'destructive' },
-  { label: '预设：主要', value: 'primary' },
-  { label: '预设：成功', value: 'success' },
-  { label: '自定义', value: 'bg-gray-200 text-black' },
+  { label: "预设：默认", value: "default" },
+  { label: "预设：关键", value: "destructive" },
+  { label: "预设：主要", value: "primary" },
+  { label: "预设：成功", value: "success" },
+  { label: "自定义", value: "bg-gray-200 text-black" },
 ];
 
 const route = useRoute();
@@ -24,7 +24,7 @@ const accessStore = useAccessStore();
 const menu = accessStore.getMenuByPath(route.path);
 const badgeProps = reactive({
   badge: menu?.badge as string,
-  badgeType: menu?.badge ? 'normal' : (menu?.badgeType as 'dot' | 'normal'),
+  badgeType: menu?.badge ? "normal" : (menu?.badgeType as "dot" | "normal"),
   badgeVariants: menu?.badgeVariants as string,
 });
 
@@ -36,39 +36,39 @@ const [Form] = useVbenForm({
   },
   schema: [
     {
-      component: 'RadioGroup',
+      component: "RadioGroup",
       componentProps: {
-        buttonStyle: 'solid',
+        buttonStyle: "solid",
         options: [
-          { label: '点徽标', value: 'dot' },
-          { label: '文字徽标', value: 'normal' },
+          { label: "点徽标", value: "dot" },
+          { label: "文字徽标", value: "normal" },
         ],
-        optionType: 'button',
+        optionType: "button",
       },
       defaultValue: badgeProps.badgeType,
-      fieldName: 'badgeType',
-      label: '类型',
+      fieldName: "badgeType",
+      label: "类型",
     },
     {
-      component: 'Input',
+      component: "Input",
       componentProps: {
         maxLength: 4,
-        placeholder: '请输入徽标内容',
-        style: { width: '200px' },
+        placeholder: "请输入徽标内容",
+        style: { width: "200px" },
       },
       defaultValue: badgeProps.badge,
-      fieldName: 'badge',
-      label: '徽标内容',
+      fieldName: "badge",
+      label: "徽标内容",
     },
     {
-      component: 'RadioGroup',
+      component: "RadioGroup",
       defaultValue: badgeProps.badgeVariants,
-      fieldName: 'badgeVariants',
-      label: '颜色',
+      fieldName: "badgeVariants",
+      label: "颜色",
     },
     {
-      component: 'Input',
-      fieldName: 'action',
+      component: "Input",
+      fieldName: "action",
     },
   ],
   showDefaultActions: false,
@@ -84,26 +84,14 @@ function updateMenuBadge() {
 </script>
 
 <template>
-  <Page
-    description="菜单项上可以显示徽标，这些徽标可以主动更新"
-    title="菜单徽标"
-  >
+  <Page description="菜单项上可以显示徽标，这些徽标可以主动更新" title="菜单徽标">
     <Card title="徽标更新">
       <Form>
         <template #badgeVariants="slotProps">
           <RadioGroup v-bind="slotProps">
-            <Radio
-              v-for="color in colors"
-              :key="color.value"
-              :value="color.value"
-            >
-              <div
-                :title="color.label"
-                class="flex h-[14px] w-[50px] items-center justify-start"
-              >
-                <MenuBadge
-                  v-bind="{ ...badgeProps, badgeVariants: color.value }"
-                />
+            <Radio v-for="color in colors" :key="color.value" :value="color.value">
+              <div :title="color.label" class="flex h-3.5 w-12.5 items-center justify-start">
+                <MenuBadge v-bind="{ ...badgeProps, badgeVariants: color.value }" />
               </div>
             </Radio>
           </RadioGroup>

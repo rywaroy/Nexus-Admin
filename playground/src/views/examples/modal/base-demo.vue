@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from "@vben/common-ui";
 
-import { Button, message } from 'ant-design-vue';
+import { Button, message } from "ant-design-vue";
 
 const [Modal, modalApi] = useVbenModal({
   onCancel() {
     modalApi.close();
   },
   onClosed() {
-    message.info('onClosed：关闭动画结束');
+    message.info("onClosed：关闭动画结束");
   },
   onConfirm() {
-    message.info('onConfirm');
+    message.info("onConfirm");
     // modalApi.close();
   },
   onOpened() {
-    message.info('onOpened：打开动画结束');
+    message.info("onOpened：打开动画结束");
   },
 });
 
@@ -27,7 +27,7 @@ function lockModal() {
 }
 </script>
 <template>
-  <Modal class="w-[600px]" title="基础弹窗示例" title-tooltip="标题提示内容">
+  <Modal class="w-150" title="基础弹窗示例" title-tooltip="标题提示内容">
     base demo
     <Button type="primary" @click="lockModal">锁定弹窗</Button>
   </Modal>

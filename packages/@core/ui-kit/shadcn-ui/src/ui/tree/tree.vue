@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import type { Arrayable } from '@vueuse/core';
-import type { FlattenedItem } from 'reka-ui';
+import type { Arrayable } from "@vueuse/core";
+import type { FlattenedItem } from "reka-ui";
 
-import type { ClassType, Recordable } from '@vben-core/typings';
+import type { ClassType, Recordable } from "@vben-core/typings";
 
-import type { TreeProps } from './types';
+import type { TreeProps } from "./types";
 
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from "vue";
 
-import { ChevronRight, IconifyIcon } from '@vben-core/icons';
-import { cn, get } from '@vben-core/shared/utils';
+import { ChevronRight, IconifyIcon } from "@vben-core/icons";
+import { cn, get } from "@vben-core/shared/utils";
 
-import { TreeItem, TreeRoot } from 'reka-ui';
+import { TreeItem, TreeRoot } from "reka-ui";
 
-import { Checkbox } from '../checkbox';
-import { treePropsDefaults } from './types';
+import { Checkbox } from "../checkbox";
+import { treePropsDefaults } from "./types";
 
 const props = withDefaults(defineProps<TreeProps>(), treePropsDefaults());
 
@@ -34,7 +34,7 @@ interface InnerFlattenItem<T = Recordable<any>, P = number | string> {
 
 function flatten<T = Recordable<any>, P = number | string>(
   items: T[],
-  childrenField: string = 'children',
+  childrenField: string = "children",
   level = 0,
   parentId: null | P = null,
   parents: P[] = [],
@@ -53,9 +53,7 @@ function flatten<T = Recordable<any>, P = number | string>(
     };
     result.push(val);
     if (val.hasChildren)
-      result.push(
-        ...flatten(children, childrenField, level + 1, id, [...parents, id]),
-      );
+      result.push(...flatten(children, childrenField, level + 1, id, [...parents, id]));
   });
   return result;
 }
@@ -65,31 +63,36 @@ const modelValue = defineModel<Arrayable<number | string>>();
 const expanded = ref<Array<number | string>>(props.defaultExpandedKeys ?? []);
 
 const treeValue = ref();
+let lastTreeData: any = null;
 
 onMounted(() => {
   watchEffect(() => {
     flattenData.value = flatten(props.treeData, props.childrenField);
     updateTreeValue();
-    if (
-      props.defaultExpandedLevel !== undefined &&
-      props.defaultExpandedLevel > 0
-    )
-      expandToLevel(props.defaultExpandedLevel);
+
+    // 只在 treeData 变化时执行展开
+    const currentTreeData = JSON.stringify(props.treeData);
+    if (lastTreeData !== currentTreeData) {
+      lastTreeData = currentTreeData;
+      if (props.defaultExpandedLevel !== undefined && props.defaultExpandedLevel > 0) {
+        expandToLevel(props.defaultExpandedLevel);
+      }
+    }
   });
 });
 
 function getItemByValue(value: number | string) {
-  return flattenData.value.find(
-    (item) => get(item.value, props.valueField) === value,
-  )?.value;
+  return flattenData.value.find((item) => get(item.value, props.valueField) === value)?.value;
 }
 
 function updateTreeValue() {
   const val = modelValue.value;
   if (val === undefined) {
-    treeValue.value = undefined;
-  } else {
-    if (Array.isArray(val)) {
+    treeValue.value = props.multiple ? [] : undefined;
+  } else if (Array.isArray(val)) {
+    if (val.length === 0) {
+      treeValue.value = [];
+    } else {
       const filteredValues = val.filter((v) => {
         const item = getItemByValue(v);
         return item && !get(item, props.disabledField);
@@ -99,14 +102,14 @@ function updateTreeValue() {
       if (filteredValues.length !== val.length) {
         modelValue.value = filteredValues;
       }
+    }
+  } else {
+    const item = getItemByValue(val);
+    if (item && !get(item, props.disabledField)) {
+      treeValue.value = item;
     } else {
-      const item = getItemByValue(val);
-      if (item && !get(item, props.disabledField)) {
-        treeValue.value = item;
-      } else {
-        treeValue.value = undefined;
-        modelValue.value = undefined;
-      }
+      treeValue.value = props.multiple ? [] : undefined;
+      modelValue.value = props.multiple ? [] : undefined;
     }
   }
 }
@@ -181,24 +184,17 @@ function isNodeDisabled(item: FlattenedItem<Recordable<any>>) {
 }
 
 function onToggle(item: FlattenedItem<Recordable<any>>) {
-  emits('expand', item);
+  emits("expand", item);
 }
 function onSelect(item: FlattenedItem<Recordable<any>>, isSelected: boolean) {
   if (isNodeDisabled(item)) {
     return;
   }
 
-  if (
-    !props.checkStrictly &&
-    props.multiple &&
-    props.autoCheckParent &&
-    isSelected
-  ) {
+  if (!props.checkStrictly && props.multiple && props.autoCheckParent && isSelected) {
     flattenData.value
       .find((i) => {
-        return (
-          get(i.value, props.valueField) === get(item.value, props.valueField)
-        );
+        return get(i.value, props.valueField) === get(item.value, props.valueField);
       })
       ?.parents?.filter((item) => !get(item, props.disabledField))
       ?.forEach((p) => {
@@ -207,34 +203,22 @@ function onSelect(item: FlattenedItem<Recordable<any>>, isSelected: boolean) {
         }
       });
   }
-  if (
-    !props.checkStrictly &&
-    props.multiple &&
-    props.autoCheckParent &&
-    !isSelected
-  ) {
+  if (!props.checkStrictly && props.multiple && props.autoCheckParent && !isSelected) {
     flattenData.value
       .find((i) => {
-        return (
-          get(i.value, props.valueField) === get(item.value, props.valueField)
-        );
+        return get(i.value, props.valueField) === get(item.value, props.valueField);
       })
       ?.parents?.filter((item) => !get(item, props.disabledField))
       ?.toReversed()
       .forEach((p) => {
         const children = flattenData.value.filter((i) => {
           return (
-            i.parents.length > 0 &&
-            i.parents.includes(p) &&
-            i.id !== item._id &&
-            i.parentId === p
+            i.parents.length > 0 && i.parents.includes(p) && i.id !== item._id && i.parentId === p
           );
         });
         if (Array.isArray(modelValue.value)) {
           const hasSelectedChild = children.some((child) =>
-            (modelValue.value as unknown[]).includes(
-              get(child.value, props.valueField),
-            ),
+            (modelValue.value as unknown[]).includes(get(child.value, props.valueField)),
           );
           if (!hasSelectedChild) {
             const index = modelValue.value.indexOf(p);
@@ -246,7 +230,7 @@ function onSelect(item: FlattenedItem<Recordable<any>>, isSelected: boolean) {
       });
   }
   updateTreeValue();
-  emits('select', item);
+  emits("select", item);
 }
 
 defineExpose({
@@ -276,24 +260,20 @@ defineExpose({
     v-slot="{ flattenItems }"
     :class="
       cn(
-        'text-blackA11 container select-none list-none rounded-lg text-sm font-medium',
+        'text-blackA11 container list-none rounded-lg text-sm font-medium select-none',
         $attrs.class as unknown as ClassType,
         bordered ? 'border' : '',
       )
     "
   >
     <div
-      :class="
-        cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-b' : '')
-      "
+      :class="cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-b' : '')"
       v-if="$slots.header"
     >
       <slot name="header"> </slot>
     </div>
     <div
-      :class="
-        cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-b' : '')
-      "
+      :class="cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-b' : '')"
       v-if="treeData.length > 0"
     >
       <div
@@ -302,14 +282,13 @@ defineExpose({
       >
         <ChevronRight
           :class="{ 'rotate-90': expanded?.length > 0 }"
-          class="size-4 cursor-pointer text-foreground/80 transition hover:text-foreground"
+          class="text-foreground/80 hover:text-foreground size-4 cursor-pointer transition"
         />
         <Checkbox
           v-if="multiple"
           @click.stop
           @update:model-value="
-            (checked: boolean | 'indeterminate') =>
-              checked === true ? checkAll() : unCheckAll()
+            (checked: boolean | 'indeterminate') => (checked === true ? checkAll() : unCheckAll())
           "
         />
       </div>
@@ -317,19 +296,13 @@ defineExpose({
     <TransitionGroup :name="transition ? 'fade' : ''">
       <TreeItem
         v-for="item in flattenItems"
-        v-slot="{
-          isExpanded,
-          isSelected,
-          isIndeterminate,
-          handleSelect,
-          handleToggle,
-        }"
+        v-slot="{ isExpanded, isSelected, isIndeterminate, handleSelect, handleToggle }"
         :key="item._id"
         :style="{ 'margin-left': `${item.level - 1}rem` }"
         :class="
           cn('cursor-pointer', getNodeClass?.(item), {
             'data-[selected]:bg-accent': !multiple,
-            'cursor-not-allowed text-foreground/50': isNodeDisabled(item),
+            'text-foreground/50 cursor-not-allowed': isNodeDisabled(item),
           })
         "
         v-bind="
@@ -359,7 +332,7 @@ defineExpose({
             !isNodeDisabled(item) && onToggle(item);
           }
         "
-        class="tree-node focus:ring-grass8 my-0.5 flex items-center rounded p-1 outline-none focus:ring-2"
+        class="tree-node focus:ring-grass8 my-0.5 flex items-center rounded p-1 outline-hidden focus:ring-2"
       >
         <ChevronRight
           v-if="
@@ -367,7 +340,7 @@ defineExpose({
             Array.isArray(item.value[childrenField]) &&
             item.value[childrenField].length > 0
           "
-          class="size-4 cursor-pointer text-foreground/80 transition hover:text-foreground"
+          class="text-foreground/80 hover:text-foreground size-4 cursor-pointer transition"
           :class="{ 'rotate-90': isExpanded }"
           @click.stop="
             () => {
@@ -421,9 +394,7 @@ defineExpose({
       </TreeItem>
     </TransitionGroup>
     <div
-      :class="
-        cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-t' : '')
-      "
+      :class="cn('my-0.5 flex w-full items-center p-1', bordered ? 'border-t' : '')"
       v-if="$slots.footer"
     >
       <slot name="footer"> </slot>

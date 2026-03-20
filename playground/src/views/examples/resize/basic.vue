@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
-import { Page, VResize } from '@vben/common-ui';
+import { Page, VResize } from "@vben/common-ui";
 
-const colorMap = ['red', 'green', 'yellow', 'gray'];
+const colorMap = ["red", "green", "yellow", "gray"];
 
 type TSize = {
   height: number;
@@ -48,10 +48,7 @@ const resize = (size?: TSize, rect?: TSize) => {
         @dragging="(rect) => resize(sizeList[idx], rect)"
         @resizing="(rect) => resize(sizeList[idx], rect)"
       >
-        <div
-          :style="{ backgroundColor: colorMap[idx] }"
-          class="h-full w-full"
-        ></div>
+        <div :style="{ backgroundColor: colorMap[idx] }" class="size-full"></div>
       </VResize>
     </template>
   </Page>

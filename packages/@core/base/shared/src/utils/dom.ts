@@ -11,9 +11,7 @@ export interface VisibleDomRect {
  * 获取元素可见信息
  * @param element
  */
-export function getElementVisibleRect(
-  element?: HTMLElement | null | undefined,
-): VisibleDomRect {
+export function getElementVisibleRect(element?: HTMLElement | null | undefined): VisibleDomRect {
   if (!element) {
     return {
       bottom: 0,
@@ -25,21 +23,27 @@ export function getElementVisibleRect(
     };
   }
   const rect = element.getBoundingClientRect();
-  const viewHeight = Math.max(
-    document.documentElement.clientHeight,
-    window.innerHeight,
-  );
+  const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
 
   const top = Math.max(rect.top, 0);
   const bottom = Math.min(rect.bottom, viewHeight);
 
-  const viewWidth = Math.max(
-    document.documentElement.clientWidth,
-    window.innerWidth,
-  );
+  const viewWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
 
   const left = Math.max(rect.left, 0);
   const right = Math.min(rect.right, viewWidth);
+
+  // 如果元素完全不可见，则返回一个空的矩形
+  if (top >= viewHeight || bottom <= 0 || left >= viewWidth || right <= 0) {
+    return {
+      bottom: 0,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+    };
+  }
 
   return {
     bottom,
@@ -52,16 +56,16 @@ export function getElementVisibleRect(
 }
 
 export function getScrollbarWidth() {
-  const scrollDiv = document.createElement('div');
+  const scrollDiv = document.createElement("div");
 
-  scrollDiv.style.visibility = 'hidden';
-  scrollDiv.style.overflow = 'scroll';
-  scrollDiv.style.position = 'absolute';
-  scrollDiv.style.top = '-9999px';
+  scrollDiv.style.visibility = "hidden";
+  scrollDiv.style.overflow = "scroll";
+  scrollDiv.style.position = "absolute";
+  scrollDiv.style.top = "-9999px";
 
   document.body.append(scrollDiv);
 
-  const innerDiv = document.createElement('div');
+  const innerDiv = document.createElement("div");
   scrollDiv.append(innerDiv);
 
   const scrollbarWidth = scrollDiv.offsetWidth - innerDiv.offsetWidth;
@@ -78,7 +82,7 @@ export function needsScrollbar() {
   const overflowY = window.getComputedStyle(body).overflowY;
 
   // 如果明确设置了需要滚动条的样式
-  if (overflowY === 'scroll' || overflowY === 'auto') {
+  if (overflowY === "scroll" || overflowY === "auto") {
     return doc.scrollHeight > window.innerHeight;
   }
 
@@ -88,7 +92,7 @@ export function needsScrollbar() {
 
 export function triggerWindowResize(): void {
   // 创建一个新的 resize 事件
-  const resizeEvent = new Event('resize');
+  const resizeEvent = new Event("resize");
 
   // 触发 window 的 resize 事件
   window.dispatchEvent(resizeEvent);

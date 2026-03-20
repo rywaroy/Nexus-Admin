@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
-import { useVbenModal } from '@vben/common-ui';
+import { useVbenModal } from "@vben/common-ui";
 
-import { Button, message } from 'ant-design-vue';
+import { Button, message } from "ant-design-vue";
 
 const list = ref<number[]>([]);
 
@@ -12,7 +12,7 @@ const [Modal, modalApi] = useVbenModal({
     modalApi.close();
   },
   onConfirm() {
-    message.info('onConfirm');
+    message.info("onConfirm");
   },
   onOpenChange(isOpen) {
     if (isOpen) {
@@ -35,11 +35,7 @@ function handleUpdate(len?: number) {
 
 <template>
   <Modal title="自动计算高度">
-    <div
-      v-for="item in list"
-      :key="item"
-      class="flex-center h-[220px] w-full bg-muted even:bg-heavy"
-    >
+    <div v-for="item in list" :key="item" class="flex-center h-55 w-full bg-muted even:bg-heavy">
       {{ item }}
     </div>
     <template #prepend-footer>

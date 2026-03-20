@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import type { AlertDialogContentEmits, AlertDialogContentProps } from 'reka-ui';
+import type { AlertDialogContentEmits, AlertDialogContentProps } from "reka-ui";
 
-import type { ClassType } from '@vben-core/typings';
+import type { ClassType } from "@vben-core/typings";
 
-import { computed, ref } from 'vue';
+import { computed, ref } from "vue";
 
-import { cn } from '@vben-core/shared/utils';
+import { cn } from "@vben-core/shared/utils";
 
-import {
-  AlertDialogContent,
-  AlertDialogPortal,
-  useForwardPropsEmits,
-} from 'reka-ui';
+import { AlertDialogContent, AlertDialogPortal, useForwardPropsEmits } from "reka-ui";
 
-import AlertDialogOverlay from './AlertDialogOverlay.vue';
+import AlertDialogOverlay from "./AlertDialogOverlay.vue";
 
 const props = withDefaults(
   defineProps<
@@ -28,9 +24,7 @@ const props = withDefaults(
   >(),
   { modal: true },
 );
-const emits = defineEmits<
-  AlertDialogContentEmits & { close: []; closed: []; opened: [] }
->();
+const emits = defineEmits<AlertDialogContentEmits & { close: []; closed: []; opened: [] }>();
 
 const delegatedProps = computed(() => {
   const { class: _, modal: _modal, open: _open, ...delegated } = props;
@@ -45,9 +39,9 @@ function onAnimationEnd(event: AnimationEvent) {
   // 只有在 contentRef 的动画结束时才触发 opened/closed 事件
   if (event.target === contentRef.value?.$el) {
     if (props.open) {
-      emits('opened');
+      emits("opened");
     } else {
-      emits('closed');
+      emits("closed");
     }
   }
 }
@@ -64,8 +58,7 @@ defineExpose({
         :style="{
           ...(zIndex ? { zIndex } : {}),
           position: 'fixed',
-          backdropFilter:
-            overlayBlur && overlayBlur > 0 ? `blur(${overlayBlur}px)` : 'none',
+          backdropFilter: overlayBlur && overlayBlur > 0 ? `blur(${overlayBlur}px)` : 'none',
         }"
         @click="() => emits('close')"
       />
@@ -77,7 +70,7 @@ defineExpose({
       v-bind="forwarded"
       :class="
         cn(
-          'z-popup bg-background p-6 shadow-lg outline-none sm:rounded-xl',
+          'z-popup bg-background p-6 shadow-lg outline-hidden sm:rounded-xl',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
           {

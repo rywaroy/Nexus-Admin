@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import type { TabsEmits, TabsProps } from './types';
+import type { TabsEmits, TabsProps } from "./types";
 
-import { useForwardPropsEmits } from '@vben-core/composables';
-import { ChevronLeft, ChevronRight } from '@vben-core/icons';
-import { VbenScrollbar } from '@vben-core/shadcn-ui';
+import { useForwardPropsEmits } from "@vben-core/composables";
+import { ChevronsLeft, ChevronsRight } from "@vben-core/icons";
+import { VbenScrollbar } from "@vben-core/shadcn-ui";
 
-import { Tabs, TabsChrome } from './components';
-import { useTabsDrag } from './use-tabs-drag';
-import { useTabsViewScroll } from './use-tabs-view-scroll';
+import { Tabs, TabsChrome } from "./components";
+import { useTabsDrag } from "./use-tabs-drag";
+import { useTabsViewScroll } from "./use-tabs-view-scroll";
 
 interface Props extends TabsProps {}
 
 defineOptions({
-  name: 'TabsView',
+  name: "TabsView",
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  contentClass: 'vben-tabs-content',
+  contentClass: "vben-tabs-content",
   draggable: true,
-  styleType: 'chrome',
+  styleType: "chrome",
   wheelable: true,
 });
 
@@ -29,6 +29,7 @@ const forward = useForwardPropsEmits(props, emit);
 const {
   handleScrollAt,
   handleWheel,
+  // @ts-expect-error unused
   scrollbarRef,
   scrollDirection,
   scrollIsAtLeft,
@@ -59,12 +60,12 @@ useTabsDrag(props, emit);
       class="border-r px-2"
       @click="scrollDirection('left')"
     >
-      <ChevronLeft class="size-4 h-full" />
+      <ChevronsLeft class="size-4 h-full" />
     </span>
 
     <div
       :class="{
-        'pt-[3px]': styleType === 'chrome',
+        'pt-0.75': styleType === 'chrome',
       }"
       class="size-full flex-1 overflow-hidden"
     >
@@ -81,10 +82,7 @@ useTabsDrag(props, emit);
         @scroll-at="handleScrollAt"
         @wheel="onWheel"
       >
-        <TabsChrome
-          v-if="styleType === 'chrome'"
-          v-bind="{ ...forward, ...$attrs, ...$props }"
-        />
+        <TabsChrome v-if="styleType === 'chrome'" v-bind="{ ...forward, ...$attrs, ...$props }" />
 
         <Tabs v-else v-bind="{ ...forward, ...$attrs, ...$props }" />
       </VbenScrollbar>
@@ -100,7 +98,7 @@ useTabsDrag(props, emit);
       class="cursor-pointer border-l px-2 text-muted-foreground hover:bg-muted"
       @click="scrollDirection('right')"
     >
-      <ChevronRight class="size-4 h-full" />
+      <ChevronsRight class="size-4 h-full" />
     </span>
   </div>
 </template>

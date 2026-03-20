@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { ref, unref } from 'vue';
+import { ref, unref } from "vue";
 
-import { createIconifyIcon } from '@vben/icons';
-import { $t } from '@vben/locales';
-import { useTimezoneStore } from '@vben/stores';
+import { createIconifyIcon } from "@vben/icons";
+import { $t } from "@vben/locales";
+import { useTimezoneStore } from "@vben/stores";
 
-import { useVbenModal } from '@vben-core/popup-ui';
-import {
-  RadioGroup,
-  RadioGroupItem,
-  VbenIconButton,
-} from '@vben-core/shadcn-ui';
+import { useVbenModal } from "@vben-core/popup-ui";
+import { RadioGroup, RadioGroupItem, VbenIconButton } from "@vben-core/shadcn-ui";
 
-const TimezoneIcon = createIconifyIcon('fluent-mdl2:world-clock');
+const TimezoneIcon = createIconifyIcon("fluent-mdl2:world-clock");
 
 const timezoneStore = useTimezoneStore();
 
@@ -59,7 +55,7 @@ const handleClick = () => {
       class="hover:animate-[shrink_0.3s_ease-in-out]"
       @click="handleClick"
     >
-      <TimezoneIcon class="text-foreground size-4" />
+      <TimezoneIcon class="size-4 text-foreground" />
     </VbenIconButton>
     <Modal :title="$t('ui.widgets.timezone.setTimezone')">
       <div class="timezone-container">
@@ -70,9 +66,7 @@ const handleClick = () => {
             :key="`container${item.value}`"
           >
             <RadioGroupItem :id="item.value" :value="item.value" />
-            <label :for="item.value" class="cursor-pointer">{{
-              item.label
-            }}</label>
+            <label :for="item.value" class="cursor-pointer">{{ item.label }}</label>
           </div>
         </RadioGroup>
       </div>
@@ -82,6 +76,6 @@ const handleClick = () => {
 
 <style scoped>
 .timezone-container {
-  padding-left: 20px;
+  @apply pl-5;
 }
 </style>

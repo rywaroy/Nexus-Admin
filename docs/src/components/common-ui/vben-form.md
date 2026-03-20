@@ -25,40 +25,42 @@ outline: deep
 ::: details ant design vue 表单适配器
 
 ```ts
-import type {
-  VbenFormSchema as FormSchema,
-  VbenFormProps,
-} from '@vben/common-ui';
+import type { VbenFormSchema as FormSchema, VbenFormProps } from "@vben/common-ui";
 
-import type { ComponentType } from './component';
+import type { ComponentType } from "./component";
 
-import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
-import { $t } from '@vben/locales';
+import { setupVbenForm, useVbenForm as useForm, z } from "@vben/common-ui";
+import { $t } from "@vben/locales";
 
+import { initComponentAdapter } from "./component";
+
+initComponentAdapter();
 setupVbenForm<ComponentType>({
   config: {
     // ant design vue组件库默认都是 v-model:value
-    baseModelPropName: 'value',
+    baseModelPropName: "value",
+    // 一些组件库空值为 null，重置表单时需要和实际组件行为保持一致
+    emptyStateValue: null,
     // 一些组件是 v-model:checked 或者 v-model:fileList
     modelPropNameMap: {
-      Checkbox: 'checked',
-      Radio: 'checked',
-      Switch: 'checked',
-      Upload: 'fileList',
+      Checkbox: "checked",
+      Radio: "checked",
+      Switch: "checked",
+      Upload: "fileList",
     },
   },
   defineRules: {
     // 输入项目必填国际化适配
     required: (value, _params, ctx) => {
       if (value === undefined || value === null || value.length === 0) {
-        return $t('ui.formRules.required', [ctx.label]);
+        return $t("ui.formRules.required", [ctx.label]);
       }
       return true;
     },
     // 选择项目必填国际化适配
     selectRequired: (value, _params, ctx) => {
       if (value === undefined || value === null) {
-        return $t('ui.formRules.selectRequired', [ctx.label]);
+        return $t("ui.formRules.selectRequired", [ctx.label]);
       }
       return true;
     },
@@ -82,66 +84,40 @@ export type { VbenFormProps };
  * 可用于 vben-form、vben-modal、vben-drawer 等组件使用,
  */
 
-import type { BaseFormComponentType } from '@vben/common-ui';
+import type { BaseFormComponentType } from "@vben/common-ui";
 
-import type { Component, SetupContext } from 'vue';
-import { h } from 'vue';
+import type { Component, SetupContext } from "vue";
+import { h } from "vue";
 
-import { globalShareState, IconPicker } from '@vben/common-ui';
-import { $t } from '@vben/locales';
+import { globalShareState } from "@vben/common-ui";
+import { $t } from "@vben/locales";
+import {
+  AutoComplete,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  DatePicker,
+  Divider,
+  Input,
+  InputNumber,
+  InputPassword,
+  Mentions,
+  notification,
+  Radio,
+  RadioGroup,
+  RangePicker,
+  Rate,
+  Select,
+  Space,
+  Switch,
+  Textarea,
+  TimePicker,
+  TreeSelect,
+  Upload,
+} from "ant-design-vue";
 
-const AutoComplete = defineAsyncComponent(
-  () => import('ant-design-vue/es/auto-complete'),
-);
-const Button = defineAsyncComponent(() => import('ant-design-vue/es/button'));
-const Checkbox = defineAsyncComponent(
-  () => import('ant-design-vue/es/checkbox'),
-);
-const CheckboxGroup = defineAsyncComponent(() =>
-  import('ant-design-vue/es/checkbox').then((res) => res.CheckboxGroup),
-);
-const DatePicker = defineAsyncComponent(
-  () => import('ant-design-vue/es/date-picker'),
-);
-const Divider = defineAsyncComponent(() => import('ant-design-vue/es/divider'));
-const Input = defineAsyncComponent(() => import('ant-design-vue/es/input'));
-const InputNumber = defineAsyncComponent(
-  () => import('ant-design-vue/es/input-number'),
-);
-const InputPassword = defineAsyncComponent(() =>
-  import('ant-design-vue/es/input').then((res) => res.InputPassword),
-);
-const Mentions = defineAsyncComponent(
-  () => import('ant-design-vue/es/mentions'),
-);
-const Radio = defineAsyncComponent(() => import('ant-design-vue/es/radio'));
-const RadioGroup = defineAsyncComponent(() =>
-  import('ant-design-vue/es/radio').then((res) => res.RadioGroup),
-);
-const RangePicker = defineAsyncComponent(() =>
-  import('ant-design-vue/es/date-picker').then((res) => res.RangePicker),
-);
-const Rate = defineAsyncComponent(() => import('ant-design-vue/es/rate'));
-const Select = defineAsyncComponent(() => import('ant-design-vue/es/select'));
-const Space = defineAsyncComponent(() => import('ant-design-vue/es/space'));
-const Switch = defineAsyncComponent(() => import('ant-design-vue/es/switch'));
-const Textarea = defineAsyncComponent(() =>
-  import('ant-design-vue/es/input').then((res) => res.Textarea),
-);
-const TimePicker = defineAsyncComponent(
-  () => import('ant-design-vue/es/time-picker'),
-);
-const TreeSelect = defineAsyncComponent(
-  () => import('ant-design-vue/es/tree-select'),
-);
-const Upload = defineAsyncComponent(() => import('ant-design-vue/es/upload'));
-
-
-const withDefaultPlaceholder = <T extends Component>(
-  component: T,
-  type: 'input' | 'select',
-) => {
-  return (props: any, { attrs, slots }: Omit<SetupContext, 'expose'>) => {
+const withDefaultPlaceholder = <T extends Component>(component: T, type: "input" | "select") => {
+  return (props: any, { attrs, slots }: Omit<SetupContext, "expose">) => {
     const placeholder = props?.placeholder || $t(`ui.placeholder.${type}`);
     return h(component, { ...props, ...attrs, placeholder }, slots);
   };
@@ -149,29 +125,28 @@ const withDefaultPlaceholder = <T extends Component>(
 
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
-  | 'AutoComplete'
-  | 'Checkbox'
-  | 'CheckboxGroup'
-  | 'DatePicker'
-  | 'DefaultButton'
-  | 'Divider'
-  | 'Input'
-  | 'InputNumber'
-  | 'InputPassword'
-  | 'Mentions'
-  | 'PrimaryButton'
-  | 'Radio'
-  | 'RadioGroup'
-  | 'RangePicker'
-  | 'Rate'
-  | 'Select'
-  | 'Space'
-  | 'Switch'
-  | 'Textarea'
-  | 'TimePicker'
-  | 'TreeSelect'
-  | 'Upload'
-  | 'IconPicker';
+  | "AutoComplete"
+  | "Checkbox"
+  | "CheckboxGroup"
+  | "DatePicker"
+  | "DefaultButton"
+  | "Divider"
+  | "Input"
+  | "InputNumber"
+  | "InputPassword"
+  | "Mentions"
+  | "PrimaryButton"
+  | "Radio"
+  | "RadioGroup"
+  | "RangePicker"
+  | "Rate"
+  | "Select"
+  | "Space"
+  | "Switch"
+  | "Textarea"
+  | "TimePicker"
+  | "TreeSelect"
+  | "Upload"
   | BaseFormComponentType;
 
 async function initComponentAdapter() {
@@ -186,28 +161,27 @@ async function initComponentAdapter() {
     DatePicker,
     // 自定义默认按钮
     DefaultButton: (props, { attrs, slots }) => {
-      return h(Button, { ...props, attrs, type: 'default' }, slots);
+      return h(Button, { ...props, attrs, type: "default" }, slots);
     },
     Divider,
-    IconPicker,
-    Input: withDefaultPlaceholder(Input, 'input'),
-    InputNumber: withDefaultPlaceholder(InputNumber, 'input'),
-    InputPassword: withDefaultPlaceholder(InputPassword, 'input'),
-    Mentions: withDefaultPlaceholder(Mentions, 'input'),
+    Input: withDefaultPlaceholder(Input, "input"),
+    InputNumber: withDefaultPlaceholder(InputNumber, "input"),
+    InputPassword: withDefaultPlaceholder(InputPassword, "input"),
+    Mentions: withDefaultPlaceholder(Mentions, "input"),
     // 自定义主要按钮
     PrimaryButton: (props, { attrs, slots }) => {
-      return h(Button, { ...props, attrs, type: 'primary' }, slots);
+      return h(Button, { ...props, attrs, type: "primary" }, slots);
     },
     Radio,
     RadioGroup,
     RangePicker,
     Rate,
-    Select: withDefaultPlaceholder(Select, 'select'),
+    Select: withDefaultPlaceholder(Select, "select"),
     Space,
     Switch,
-    Textarea: withDefaultPlaceholder(Textarea, 'input'),
+    Textarea: withDefaultPlaceholder(Textarea, "input"),
     TimePicker,
-    TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
+    TreeSelect: withDefaultPlaceholder(TreeSelect, "select"),
     Upload,
   };
 
@@ -221,7 +195,7 @@ async function initComponentAdapter() {
       notification.success({
         description: content,
         message: title,
-        placement: 'bottomRight',
+        placement: "bottomRight",
       });
     },
   });
@@ -282,7 +256,7 @@ _注意_ 需要指定 `dependencies` 的 `triggerFields` 属性，设置由谁�
 
 ```vue
 <script setup lang="ts">
-import { useVbenForm } from '#/adapter/form';
+import { useVbenForm } from "#/adapter/form";
 
 // Form 为弹窗组件
 // formApi 为弹窗的方法
@@ -301,55 +275,55 @@ const [Form, formApi] = useVbenForm({
 
 useVbenForm 返回的第二个参数，是一个对象，包含了一些表单的方法。
 
-| 方法名 | 描述 | 类型 | 版本号 |
-| --- | --- | --- | --- |
-| submitForm | 提交表单 | `(e:Event)=>Promise<Record<string,any>>` | - |
-| validateAndSubmitForm | 提交并校验表单 | `(e:Event)=>Promise<Record<string,any>>` | - |
-| resetForm | 重置表单 | `()=>Promise<void>` | - |
-| setValues | 设置表单值, 默认会过滤不在schema中定义的field, 可通过filterFields形参关闭过滤 | `(fields: Record<string, any>, filterFields?: boolean, shouldValidate?: boolean) => Promise<void>` | - |
-| getValues | 获取表单值 | `(fields:Record<string, any>,shouldValidate: boolean = false)=>Promise<void>` | - |
-| validate | 表单校验 | `()=>Promise<void>` | - |
-| validateField | 校验指定字段 | `(fieldName: string)=>Promise<ValidationResult<unknown>>` | - |
-| isFieldValid | 检查某个字段是否已通过校验 | `(fieldName: string)=>Promise<boolean>` | - |
-| resetValidate | 重置表单校验 | `()=>Promise<void>` | - |
-| updateSchema | 更新formSchema | `(schema:FormSchema[])=>void` | - |
-| setFieldValue | 设置字段值 | `(field: string, value: any, shouldValidate?: boolean)=>Promise<void>` | - |
-| setState | 设置组件状态（props） | `(stateOrFn:\| ((prev: VbenFormProps) => Partial<VbenFormProps>)\| Partial<VbenFormProps>)=>Promise<void>` | - |
-| getState | 获取组件状态（props） | `()=>Promise<VbenFormProps>` | - |
-| form | 表单对象实例，可以操作表单，见 [useForm](https://vee-validate.logaretm.com/v4/api/use-form/) | - | - |
-| getFieldComponentRef | 获取指定字段的组件实例 | `<T=unknown>(fieldName: string)=>T` | >5.5.3 |
-| getFocusedField | 获取当前已获得焦点的字段 | `()=>string\|undefined` | >5.5.3 |
+| 方法名                | 描述                                                                                         | 类型                                                                                                       | 版本号 |
+| --------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------ |
+| submitForm            | 提交表单                                                                                     | `(e:Event)=>Promise<Record<string,any>>`                                                                   | -      |
+| validateAndSubmitForm | 提交并校验表单                                                                               | `(e:Event)=>Promise<Record<string,any>>`                                                                   | -      |
+| resetForm             | 重置表单                                                                                     | `()=>Promise<void>`                                                                                        | -      |
+| setValues             | 设置表单值, 默认会过滤不在schema中定义的field, 可通过filterFields形参关闭过滤                | `(fields: Record<string, any>, filterFields?: boolean, shouldValidate?: boolean) => Promise<void>`         | -      |
+| getValues             | 获取表单值                                                                                   | `(fields:Record<string, any>,shouldValidate: boolean = false)=>Promise<void>`                              | -      |
+| validate              | 表单校验                                                                                     | `()=>Promise<void>`                                                                                        | -      |
+| validateField         | 校验指定字段                                                                                 | `(fieldName: string)=>Promise<ValidationResult<unknown>>`                                                  | -      |
+| isFieldValid          | 检查某个字段是否已通过校验                                                                   | `(fieldName: string)=>Promise<boolean>`                                                                    | -      |
+| resetValidate         | 重置表单校验                                                                                 | `()=>Promise<void>`                                                                                        | -      |
+| updateSchema          | 更新formSchema                                                                               | `(schema:FormSchema[])=>void`                                                                              | -      |
+| setFieldValue         | 设置字段值                                                                                   | `(field: string, value: any, shouldValidate?: boolean)=>Promise<void>`                                     | -      |
+| setState              | 设置组件状态（props）                                                                        | `(stateOrFn:\| ((prev: VbenFormProps) => Partial<VbenFormProps>)\| Partial<VbenFormProps>)=>Promise<void>` | -      |
+| getState              | 获取组件状态（props）                                                                        | `()=>Promise<VbenFormProps>`                                                                               | -      |
+| form                  | 表单对象实例，可以操作表单，见 [useForm](https://vee-validate.logaretm.com/v4/api/use-form/) | -                                                                                                          | -      |
+| getFieldComponentRef  | 获取指定字段的组件实例                                                                       | `<T=unknown>(fieldName: string)=>T`                                                                        | >5.5.3 |
+| getFocusedField       | 获取当前已获得焦点的字段                                                                     | `()=>string\|undefined`                                                                                    | >5.5.3 |
 
 ## Props
 
 所有属性都可以传入 `useVbenForm` 的第一个参数中。
 
-| 属性名 | 描述 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| layout | 表单项布局 | `'horizontal' \| 'vertical'\| 'inline'` | `horizontal` |
-| showCollapseButton | 是否显示折叠按钮 | `boolean` | `false` |
-| wrapperClass | 表单的布局，基于tailwindcss | `any` | - |
-| actionWrapperClass | 表单操作区域class | `any` | - |
-| actionLayout | 表单操作按钮位置 | `'newLine' \| 'rowEnd' \| 'inline'` | `rowEnd` |
-| actionPosition | 表单操作按钮对齐方式 | `'left' \| 'center' \| 'right'` | `right` |
-| handleReset | 表单重置回调 | `(values: Record<string, any>,) => Promise<void> \| void` | - |
-| handleSubmit | 表单提交回调 | `(values: Record<string, any>,) => Promise<void> \| void` | - |
-| handleValuesChange | 表单值变化回调 | `(values: Record<string, any>, fieldsChanged: string[]) => void` | - |
-| handleCollapsedChange | 表单收起展开状态变化回调 | `(collapsed: boolean) => void` | - |
-| actionButtonsReverse | 调换操作按钮位置 | `boolean` | `false` |
-| resetButtonOptions | 重置按钮组件参数 | `ActionButtonOptions` | - |
-| submitButtonOptions | 提交按钮组件参数 | `ActionButtonOptions` | - |
-| showDefaultActions | 是否显示默认操作按钮 | `boolean` | `true` |
-| collapsed | 是否折叠，在`showCollapseButton`为`true`时生效 | `boolean` | `false` |
-| collapseTriggerResize | 折叠时，触发`resize`事件 | `boolean` | `false` |
-| collapsedRows | 折叠时保持的行数 | `number` | `1` |
-| fieldMappingTime | 用于将表单内的数组值映射成 2 个字段 | `[string, [string, string],Nullable<string>\|[string,string]\|((any,string)=>any)?][]` | - |
-| commonConfig | 表单项的通用配置，每个配置都会传递到每个表单项，表单项可覆盖 | `FormCommonConfig` | - |
-| schema | 表单项的每一项配置 | `FormSchema[]` | - |
-| submitOnEnter | 按下回车健时提交表单 | `boolean` | false |
-| submitOnChange | 字段值改变时提交表单(内部防抖，这个属性一般用于表格的搜索表单) | `boolean` | false |
-| compact | 是否紧凑模式(忽略为校验信息所预留的空间) | `boolean` | false |
-| scrollToFirstError | 表单验证失败时是否自动滚动到第一个错误字段 | `boolean` | false |
+| 属性名                | 描述                                                           | 类型                                                                                   | 默认值       |
+| --------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------ |
+| layout                | 表单项布局                                                     | `'horizontal' \| 'vertical'\| 'inline'`                                                | `horizontal` |
+| showCollapseButton    | 是否显示折叠按钮                                               | `boolean`                                                                              | `false`      |
+| wrapperClass          | 表单的布局，基于tailwindcss                                    | `any`                                                                                  | -            |
+| actionWrapperClass    | 表单操作区域class                                              | `any`                                                                                  | -            |
+| actionLayout          | 表单操作按钮位置                                               | `'newLine' \| 'rowEnd' \| 'inline'`                                                    | `rowEnd`     |
+| actionPosition        | 表单操作按钮对齐方式                                           | `'left' \| 'center' \| 'right'`                                                        | `right`      |
+| handleReset           | 表单重置回调                                                   | `(values: Record<string, any>,) => Promise<void> \| void`                              | -            |
+| handleSubmit          | 表单提交回调                                                   | `(values: Record<string, any>,) => Promise<void> \| void`                              | -            |
+| handleValuesChange    | 表单值变化回调                                                 | `(values: Record<string, any>, fieldsChanged: string[]) => void`                       | -            |
+| handleCollapsedChange | 表单收起展开状态变化回调                                       | `(collapsed: boolean) => void`                                                         | -            |
+| actionButtonsReverse  | 调换操作按钮位置                                               | `boolean`                                                                              | `false`      |
+| resetButtonOptions    | 重置按钮组件参数                                               | `ActionButtonOptions`                                                                  | -            |
+| submitButtonOptions   | 提交按钮组件参数                                               | `ActionButtonOptions`                                                                  | -            |
+| showDefaultActions    | 是否显示默认操作按钮                                           | `boolean`                                                                              | `true`       |
+| collapsed             | 是否折叠，在`showCollapseButton`为`true`时生效                 | `boolean`                                                                              | `false`      |
+| collapseTriggerResize | 折叠时，触发`resize`事件                                       | `boolean`                                                                              | `false`      |
+| collapsedRows         | 折叠时保持的行数                                               | `number`                                                                               | `1`          |
+| fieldMappingTime      | 用于将表单内的数组值映射成 2 个字段                            | `[string, [string, string],Nullable<string>\|[string,string]\|((any,string)=>any)?][]` | -            |
+| commonConfig          | 表单项的通用配置，每个配置都会传递到每个表单项，表单项可覆盖   | `FormCommonConfig`                                                                     | -            |
+| schema                | 表单项的每一项配置                                             | `FormSchema[]`                                                                         | -            |
+| submitOnEnter         | 按下回车健时提交表单                                           | `boolean`                                                                              | false        |
+| submitOnChange        | 字段值改变时提交表单(内部防抖，这个属性一般用于表格的搜索表单) | `boolean`                                                                              | false        |
+| compact               | 是否紧凑模式(忽略为校验信息所预留的空间)                       | `boolean`                                                                              | false        |
+| scrollToFirstError    | 表单验证失败时是否自动滚动到第一个错误字段                     | `boolean`                                                                              | false        |
 
 ::: tip handleValuesChange
 
@@ -525,12 +499,12 @@ rules的值可以是字符串（预定义的校验规则名称），也可以是
 ```ts
 // 表示字段必填，默认会根据适配器的required进行国际化
 {
-  rules: 'required';
+  rules: "required";
 }
 
 // 表示字段必填，默认会根据适配器的required进行国际化，用于下拉选择之类
 {
-  rules: 'selectRequired';
+  rules: "selectRequired";
 }
 ```
 
@@ -539,33 +513,33 @@ rules的值可以是字符串（预定义的校验规则名称），也可以是
 rules也支持 zod 的 schema，可以进行更复杂的校验，zod 的使用请查看 [zod文档](https://zod.dev/)。
 
 ```ts
-import { z } from '#/adapter/form';
+import { z } from "#/adapter/form";
 
 // 基础类型
 {
-  rules: z.string().min(1, { message: '请输入字符串' });
+  rules: z.string().min(1, { message: "请输入字符串" });
 }
 
 // 可选(可以是undefined)，并且携带默认值。注意zod的optional不包括空字符串''
 {
-  rules: z.string().default('默认值').optional();
+  rules: z.string().default("默认值").optional();
 }
 
 // 可以是空字符串、undefined或者一个邮箱地址(两种不同的用法)
 {
-  rules: z.union([z.string().email().optional(), z.literal('')]);
+  rules: z.union([z.string().email().optional(), z.literal("")]);
 }
 
 {
-  rules: z.string().email().or(z.literal('')).optional();
+  rules: z.string().email().or(z.literal("")).optional();
 }
 
 // 复杂校验
 {
   z.string()
-    .min(1, { message: '请输入' })
-    .refine((value) => value === '123', {
-      message: '值必须为123',
+    .min(1, { message: "请输入" })
+    .refine((value) => value === "123", {
+      message: "值必须为123",
     });
 }
 ```

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
-import { Page } from '@vben/common-ui';
+import { Page } from "@vben/common-ui";
 
 import {
   ElButton,
@@ -11,56 +11,51 @@ import {
   ElSegmented,
   ElSpace,
   ElTable,
-} from 'element-plus';
+} from "element-plus";
 
-type NotificationType = 'error' | 'info' | 'success' | 'warning';
+type NotificationType = "error" | "info" | "success" | "warning";
 
 function info() {
-  ElMessage.info('How many roads must a man walk down');
+  ElMessage.info("How many roads must a man walk down");
 }
 
 function error() {
   ElMessage.error({
     duration: 2500,
-    message: 'Once upon a time you dressed so fine',
+    message: "Once upon a time you dressed so fine",
   });
 }
 
 function warning() {
-  ElMessage.warning('How many roads must a man walk down');
+  ElMessage.warning("How many roads must a man walk down");
 }
 function success() {
-  ElMessage.success(
-    'Cause you walked hand in hand With another man in my place',
-  );
+  ElMessage.success("Cause you walked hand in hand With another man in my place");
 }
 
 function notify(type: NotificationType) {
   ElNotification({
     duration: 2500,
-    message: '说点啥呢',
+    message: "说点啥呢",
     type,
   });
 }
 const tableData = [
-  { prop1: '1', prop2: 'A' },
-  { prop1: '2', prop2: 'B' },
-  { prop1: '3', prop2: 'C' },
-  { prop1: '4', prop2: 'D' },
-  { prop1: '5', prop2: 'E' },
-  { prop1: '6', prop2: 'F' },
+  { prop1: "1", prop2: "A" },
+  { prop1: "2", prop2: "B" },
+  { prop1: "3", prop2: "C" },
+  { prop1: "4", prop2: "D" },
+  { prop1: "5", prop2: "E" },
+  { prop1: "6", prop2: "F" },
 ];
 
-const segmentedValue = ref('Mon');
+const segmentedValue = ref("Mon");
 
-const segmentedOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const segmentedOptions = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 </script>
 
 <template>
-  <Page
-    description="支持多语言，主题功能集成切换等"
-    title="Element Plus组件使用演示"
-  >
+  <Page description="支持多语言，主题功能集成切换等" title="Element Plus组件使用演示">
     <div class="flex flex-wrap gap-5">
       <ElCard class="mb-5 w-auto">
         <template #header> 按钮 </template>
@@ -94,17 +89,11 @@ const segmentedOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       </ElCard>
       <ElCard class="mb-5 w-auto">
         <template #header> Segmented </template>
-        <ElSegmented
-          v-model="segmentedValue"
-          :options="segmentedOptions"
-          size="large"
-        />
+        <ElSegmented v-model="segmentedValue" :options="segmentedOptions" size="large" />
       </ElCard>
       <ElCard class="mb-5 w-80">
         <template #header> V-Loading </template>
-        <div class="flex size-72 items-center justify-center" v-loading="true">
-          一些演示的内容
-        </div>
+        <div class="flex-center size-72" v-loading="true">一些演示的内容</div>
       </ElCard>
       <ElCard class="mb-5 w-80">
         <ElTable :data="tableData" stripe>

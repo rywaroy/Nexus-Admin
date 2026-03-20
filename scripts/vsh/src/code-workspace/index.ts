@@ -1,19 +1,19 @@
-import type { CAC } from 'cac';
+import type { CAC } from "cac";
 
-import { join, relative } from 'node:path';
+import { join, relative } from "node:path";
 
 import {
   colors,
   consola,
   findMonorepoRoot,
+  formatFile,
   getPackages,
   gitAdd,
   outputJSON,
-  prettierFormat,
   toPosixPath,
-} from '@vben/node-utils';
+} from "@vben/node-utils";
 
-const CODE_WORKSPACE_FILE = join('vben-admin.code-workspace');
+const CODE_WORKSPACE_FILE = join("vben-admin.code-workspace");
 
 interface CodeWorkspaceCommandOptions {
   autoCommit?: boolean;
@@ -40,16 +40,13 @@ async function createCodeWorkspace({
   const outputPath = join(monorepoRoot, CODE_WORKSPACE_FILE);
   await outputJSON(outputPath, { folders }, spaces);
 
-  await prettierFormat(outputPath);
+  await formatFile(outputPath);
   if (autoCommit) {
     await gitAdd(CODE_WORKSPACE_FILE, monorepoRoot);
   }
 }
 
-async function runCodeWorkspace({
-  autoCommit,
-  spaces,
-}: CodeWorkspaceCommandOptions) {
+async function runCodeWorkspace({ autoCommit, spaces }: CodeWorkspaceCommandOptions) {
   await createCodeWorkspace({
     autoCommit,
     spaces,
@@ -57,19 +54,19 @@ async function runCodeWorkspace({
   if (autoCommit) {
     return;
   }
-  consola.log('');
+  consola.log("");
   consola.success(colors.green(`${CODE_WORKSPACE_FILE} is updated!`));
-  consola.log('');
+  consola.log("");
 }
 
 function defineCodeWorkspaceCommand(cac: CAC) {
   cac
-    .command('code-workspace')
-    .usage('Update the `.code-workspace` file')
-    .option('--spaces [number]', '.code-workspace JSON file spaces.', {
+    .command("code-workspace")
+    .usage("Update the `.code-workspace` file")
+    .option("--spaces [number]", ".code-workspace JSON file spaces.", {
       default: 2,
     })
-    .option('--auto-commit', 'auto commit .code-workspace JSON file.', {
+    .option("--auto-commit", "auto commit .code-workspace JSON file.", {
       default: false,
     })
     .action(runCodeWorkspace);

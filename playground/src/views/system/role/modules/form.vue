@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import type { DataNode } from 'ant-design-vue/es/tree';
+import type { DataNode } from "ant-design-vue/es/tree";
 
-import type { Recordable } from '@vben/types';
+import type { Recordable } from "@vben/types";
 
-import type { SystemRoleApi } from '#/api/system/role';
+import type { SystemRoleApi } from "#/api/system/role";
 
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref } from "vue";
 
-import { Tree, useVbenDrawer } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
+import { Tree, useVbenDrawer } from "@vben/common-ui";
+import { IconifyIcon } from "@vben/icons";
 
-import { Spin } from 'ant-design-vue';
+import { Spin } from "ant-design-vue";
 
-import { useVbenForm } from '#/adapter/form';
-import { getMenuList } from '#/api/system/menu';
-import { createRole, updateRole } from '#/api/system/role';
-import { $t } from '#/locales';
+import { useVbenForm } from "#/adapter/form";
+import { getMenuList } from "#/api/system/menu";
+import { createRole, updateRole } from "#/api/system/role";
+import { $t } from "#/locales";
 
-import { useFormSchema } from '../data';
+import { useFormSchema } from "../data";
 
-const emits = defineEmits(['success']);
+const emits = defineEmits(["success"]);
 
 const formData = ref<SystemRoleApi.SystemRole>();
 
@@ -40,7 +40,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     drawerApi.lock();
     (id.value ? updateRole(id.value, values) : createRole(values))
       .then(() => {
-        emits('success');
+        emits("success");
         drawerApi.close();
       })
       .catch(() => {
@@ -84,17 +84,17 @@ async function loadPermissions() {
 
 const getDrawerTitle = computed(() => {
   return formData.value?.id
-    ? $t('common.edit', $t('system.role.name'))
-    : $t('common.create', $t('system.role.name'));
+    ? $t("common.edit", $t("system.role.name"))
+    : $t("common.create", $t("system.role.name"));
 });
 
 function getNodeClass(node: Recordable<any>) {
   const classes: string[] = [];
-  if (node.value?.type === 'button') {
-    classes.push('inline-flex');
+  if (node.value?.type === "button") {
+    classes.push("inline-flex");
   }
 
-  return classes.join(' ');
+  return classes.join(" ");
 }
 </script>
 <template>
@@ -126,17 +126,13 @@ function getNodeClass(node: Recordable<any>) {
 <style lang="css" scoped>
 :deep(.ant-tree-title) {
   .tree-actions {
-    display: none;
-    margin-left: 20px;
+    @apply ml-5 hidden;
   }
 }
 
 :deep(.ant-tree-title:hover) {
   .tree-actions {
-    display: flex;
-    flex: auto;
-    justify-content: flex-end;
-    margin-left: 20px;
+    @apply ml-5 flex flex-auto justify-end;
   }
 }
 </style>

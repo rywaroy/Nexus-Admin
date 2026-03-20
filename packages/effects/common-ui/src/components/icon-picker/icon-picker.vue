@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { VNode } from 'vue';
+import type { VNode } from "vue";
 
-import { computed, ref, useAttrs, watch, watchEffect } from 'vue';
+import { computed, ref, useAttrs, watch, watchEffect } from "vue";
 
-import { usePagination } from '@vben/hooks';
-import { EmptyIcon, Grip, listIcons } from '@vben/icons';
-import { $t } from '@vben/locales';
+import { usePagination } from "@vben/hooks";
+import { EmptyIcon, Grip, listIcons } from "@vben/icons";
+import { $t } from "@vben/locales";
 
 import {
   Button,
@@ -21,12 +21,12 @@ import {
   VbenIcon,
   VbenIconButton,
   VbenPopover,
-} from '@vben-core/shadcn-ui';
-import { isFunction } from '@vben-core/shared/utils';
+} from "@vben-core/shadcn-ui";
+import { isFunction } from "@vben-core/shared/utils";
 
-import { objectOmit, refDebounced, watchDebounced } from '@vueuse/core';
+import { objectOmit, refDebounced, watchDebounced } from "@vueuse/core";
 
-import { fetchIconsData } from './icons';
+import { fetchIconsData } from "./icons";
 
 interface Props {
   pageSize?: number;
@@ -46,19 +46,19 @@ interface Props {
   modelValueProp?: string;
   /** 图标样式 */
   iconClass?: string;
-  type?: 'icon' | 'input';
+  type?: "icon" | "input";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  prefix: 'ant-design',
+  prefix: "ant-design",
   pageSize: 36,
   icons: () => [],
-  iconSlot: 'default',
-  iconClass: 'size-4',
+  iconSlot: "default",
+  iconClass: "size-4",
   autoFetchApi: true,
-  modelValueProp: 'modelValue',
+  modelValueProp: "modelValue",
   inputComponent: undefined,
-  type: 'input',
+  type: "input",
 });
 
 const emit = defineEmits<{
@@ -67,18 +67,18 @@ const emit = defineEmits<{
 
 const attrs = useAttrs();
 
-const modelValue = defineModel({ default: '', type: String });
+const modelValue = defineModel({ default: "", type: String });
 
 const visible = ref(false);
-const currentSelect = ref('');
-const keyword = ref('');
+const currentSelect = ref("");
+const keyword = ref("");
 const keywordDebounce = refDebounced(keyword, 300);
 const innerIcons = ref<string[]>([]);
 
 watchDebounced(
   () => props.prefix,
   async (prefix) => {
-    if (prefix && prefix !== 'svg' && props.autoFetchApi) {
+    if (prefix && prefix !== "svg" && props.autoFetchApi) {
       innerIcons.value = await fetchIconsData(prefix);
     }
   },
@@ -88,14 +88,10 @@ watchDebounced(
 const currentList = computed(() => {
   try {
     if (props.prefix) {
-      if (
-        props.prefix !== 'svg' &&
-        props.autoFetchApi &&
-        props.icons.length === 0
-      ) {
+      if (props.prefix !== "svg" && props.autoFetchApi && props.icons.length === 0) {
         return innerIcons.value;
       }
-      const icons = listIcons('', props.prefix);
+      const icons = listIcons("", props.prefix);
       if (icons.length === 0) {
         console.warn(`No icons found for prefix: ${props.prefix}`);
       }
@@ -104,15 +100,13 @@ const currentList = computed(() => {
       return props.icons;
     }
   } catch (error) {
-    console.error('Failed to load icons:', error);
+    console.error("Failed to load icons:", error);
     return [];
   }
 });
 
 const showList = computed(() => {
-  return currentList.value.filter((item) =>
-    item.includes(keywordDebounce.value),
-  );
+  return currentList.value.filter((item) => item.includes(keywordDebounce.value));
 });
 
 const { paginationList, total, setCurrentPage, currentPage } = usePagination(
@@ -127,7 +121,7 @@ watchEffect(() => {
 watch(
   () => currentSelect.value,
   (v) => {
-    emit('change', v);
+    emit("change", v);
   },
 );
 
@@ -159,10 +153,10 @@ function onKeywordChange(v: string) {
 
 const searchInputProps = computed(() => {
   return {
-    placeholder: $t('ui.iconPicker.search'),
+    placeholder: $t("ui.iconPicker.search"),
     [props.modelValueProp]: keyword.value,
     [`onUpdate:${props.modelValueProp}`]: onKeywordChange,
-    class: 'mx-2',
+    class: "mx-2",
   };
 });
 
@@ -200,11 +194,7 @@ defineExpose({ toggleOpenState, open, close });
           v-bind="getBindAttrs"
         >
           <template #[iconSlot]>
-            <VbenIcon
-              :icon="currentSelect || Grip"
-              class="size-4"
-              aria-hidden="true"
-            />
+            <VbenIcon :icon="currentSelect || Grip" class="size-4" aria-hidden="true" />
           </template>
         </component>
         <div class="relative w-full" v-else>
@@ -219,24 +209,15 @@ defineExpose({ toggleOpenState, open, close });
           />
           <VbenIcon
             :icon="currentSelect || Grip"
-            class="absolute right-1 top-1 size-6"
+            class="absolute top-1 right-1 size-6"
             aria-hidden="true"
           />
         </div>
       </template>
-      <VbenIcon
-        :icon="currentSelect || Grip"
-        v-else
-        class="size-4"
-        v-bind="$attrs"
-      />
+      <VbenIcon :icon="currentSelect || Grip" v-else class="size-4" v-bind="$attrs" />
     </template>
     <div class="mb-2 flex w-full">
-      <component
-        v-if="inputComponent"
-        :is="inputComponent"
-        v-bind="searchInputProps"
-      />
+      <component v-if="inputComponent" :is="inputComponent" v-bind="searchInputProps" />
       <Input
         v-else
         class="mx-2 h-8 w-full"
@@ -246,7 +227,7 @@ defineExpose({ toggleOpenState, open, close });
     </div>
 
     <template v-if="paginationList.length > 0">
-      <div class="grid max-h-[360px] w-full grid-cols-6 justify-items-center">
+      <div class="grid max-h-90 w-full grid-cols-6 justify-items-center">
         <VbenIconButton
           v-for="(item, index) in paginationList"
           :key="index"
@@ -274,10 +255,7 @@ defineExpose({ toggleOpenState, open, close });
           size="small"
           @update:page="handlePageChange"
         >
-          <PaginationList
-            v-slot="{ items }"
-            class="flex w-full items-center gap-1"
-          >
+          <PaginationList v-slot="{ items }" class="flex w-full items-center gap-1">
             <PaginationFirst class="size-5" />
             <PaginationPrev class="size-5" />
             <template v-for="(item, index) in items">
@@ -294,12 +272,7 @@ defineExpose({ toggleOpenState, open, close });
                   {{ item.value }}
                 </Button>
               </PaginationListItem>
-              <PaginationEllipsis
-                v-else
-                :key="item.type"
-                :index="index"
-                class="size-5"
-              />
+              <PaginationEllipsis v-else :key="item.type" :index="index" class="size-5" />
             </template>
             <PaginationNext class="size-5" />
             <PaginationLast class="size-5" />
@@ -309,9 +282,9 @@ defineExpose({ toggleOpenState, open, close });
     </template>
 
     <template v-else>
-      <div class="flex-col-center text-muted-foreground min-h-[150px] w-full">
+      <div class="flex-col-center min-h-37.5 w-full text-muted-foreground">
         <EmptyIcon class="size-10" />
-        <div class="mt-1 text-sm">{{ $t('common.noData') }}</div>
+        <div class="mt-1 text-sm">{{ $t("common.noData") }}</div>
       </div>
     </template>
   </VbenPopover>

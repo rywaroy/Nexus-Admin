@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { VbenAvatar } from '@vben-core/shadcn-ui';
+import { VbenAvatar } from "@vben-core/shadcn-ui";
 
 interface Props {
   avatar?: string;
 }
 
 defineOptions({
-  name: 'WorkbenchHeader',
+  name: "WorkbenchHeader",
 });
 
 withDefaults(defineProps<Props>(), {
-  avatar: '',
+  avatar: "",
 });
 </script>
 <template>
@@ -18,12 +18,12 @@ withDefaults(defineProps<Props>(), {
     <VbenAvatar :src="avatar" class="size-20" />
     <div
       v-if="$slots.title || $slots.description"
-      class="flex flex-col justify-center md:ml-6 md:mt-0"
+      class="flex flex-col justify-center md:mt-0 md:ml-6"
     >
       <h1 v-if="$slots.title" class="text-md font-semibold md:text-xl">
         <slot name="title"></slot>
       </h1>
-      <span v-if="$slots.description" class="text-foreground/80 mt-1">
+      <span v-if="$slots.description" class="mt-1 text-foreground/80">
         <slot name="description"></slot>
       </span>
     </div>

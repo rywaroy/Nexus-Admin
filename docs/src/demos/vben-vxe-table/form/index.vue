@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { VbenFormProps } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { VbenFormProps } from "#/adapter/form";
+import type { VxeGridProps } from "#/adapter/vxe-table";
 
-import { message } from 'ant-design-vue';
+import { message } from "ant-design-vue";
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { useVbenVxeGrid } from "#/adapter/vxe-table";
 
-import { getExampleTableApi } from '../mock-api';
+import { getExampleTableApi } from "../mock-api";
 
 interface RowType {
   category: string;
@@ -22,59 +22,59 @@ const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
     {
-      component: 'Input',
+      component: "Input",
       componentProps: {
-        placeholder: 'Please enter category',
+        placeholder: "Please enter category",
       },
-      defaultValue: '1',
-      fieldName: 'category',
-      label: 'Category',
+      defaultValue: "1",
+      fieldName: "category",
+      label: "Category",
     },
     {
-      component: 'Input',
+      component: "Input",
       componentProps: {
-        placeholder: 'Please enter productName',
+        placeholder: "Please enter productName",
       },
-      fieldName: 'productName',
-      label: 'ProductName',
+      fieldName: "productName",
+      label: "ProductName",
     },
     {
-      component: 'Input',
+      component: "Input",
       componentProps: {
-        placeholder: 'Please enter price',
+        placeholder: "Please enter price",
       },
-      fieldName: 'price',
-      label: 'Price',
+      fieldName: "price",
+      label: "Price",
     },
     {
-      component: 'Select',
+      component: "Select",
       componentProps: {
         allowClear: true,
         options: [
           {
-            label: 'Color1',
-            value: '1',
+            label: "Color1",
+            value: "1",
           },
           {
-            label: 'Color2',
-            value: '2',
+            label: "Color2",
+            value: "2",
           },
         ],
-        placeholder: '请选择',
+        placeholder: "请选择",
       },
-      fieldName: 'color',
-      label: 'Color',
+      fieldName: "color",
+      label: "Color",
     },
     {
-      component: 'DatePicker',
-      fieldName: 'datePicker',
-      label: 'Date',
+      component: "DatePicker",
+      fieldName: "datePicker",
+      label: "Date",
     },
   ],
   // 控制表单是否显示折叠按钮
   showCollapseButton: true,
   submitButtonOptions: {
-    content: '查询',
+    content: "查询",
   },
   // 是否在字段值改变时提交表单
   submitOnChange: false,
@@ -85,16 +85,16 @@ const formOptions: VbenFormProps = {
 const gridOptions: VxeGridProps<RowType> = {
   checkboxConfig: {
     highlight: true,
-    labelField: 'name',
+    labelField: "name",
   },
   columns: [
-    { title: '序号', type: 'seq', width: 50 },
-    { align: 'left', title: 'Name', type: 'checkbox', width: 100 },
-    { field: 'category', title: 'Category' },
-    { field: 'color', title: 'Color' },
-    { field: 'productName', title: 'Product Name' },
-    { field: 'price', title: 'Price' },
-    { field: 'releaseDate', formatter: 'formatDateTime', title: 'Date' },
+    { title: "序号", type: "seq", width: 50 },
+    { align: "left", title: "Name", type: "checkbox", width: 100 },
+    { field: "category", title: "Category" },
+    { field: "color", title: "Color" },
+    { field: "productName", title: "Product Name" },
+    { field: "price", title: "Price" },
+    { field: "releaseDate", formatter: "formatDateTime", title: "Date" },
   ],
   keepSource: true,
   pagerConfig: {},
@@ -112,7 +112,7 @@ const gridOptions: VxeGridProps<RowType> = {
   },
   toolbarConfig: {
     // 是否显示搜索表单控制按钮
-    // @ts-ignore 正式环境时有完整的类型声明
+    // @ts-ignore - 正式环境时有完整的类型声明
     search: true,
   },
 };

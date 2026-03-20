@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { Input, Select } from 'ant-design-vue';
+import { Input, Select } from "ant-design-vue";
 
-const emit = defineEmits(['blur', 'change']);
+const emit = defineEmits(["blur", "change"]);
 
 const modelValue = defineModel<[string, string]>({
   default: () => [undefined, undefined],
 });
 
 function onChange() {
-  emit('change', modelValue.value);
+  emit("change", modelValue.value);
 }
 </script>
 <template>
   <div class="flex w-full gap-1">
     <Select
       v-model:value="modelValue[0]"
-      class="w-[80px]"
+      class="w-20"
       placeholder="类型"
       allow-clear
       :class="{ 'valid-success': !!modelValue[0] }"

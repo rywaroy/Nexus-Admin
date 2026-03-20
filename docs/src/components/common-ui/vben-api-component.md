@@ -14,84 +14,84 @@ outline: deep
 
 ## 基础用法
 
-通过 `component` 传入其它组件的定义，并配置相关的其它属性（主要是一些名称映射）。包装组件将通过`api`获取数据（`beforerFetch`、`afterFetch`将分别在`api`运行前、运行后被调用），使用`resultField`从中提取数组，使用`valueField`、`labelField`等来从数据中提取value和label（如果提供了`childrenField`，会将其作为树形结构递归处理每一级数据），之后将处理好的数据通过`optionsPropName`指定的属性传递给目标组件。
+通过 `component` 传入其它组件的定义，并配置相关的其它属性（主要是一些名称映射）。包装组件将通过 `api` 获取数据（`beforeFetch`、`afterFetch` 将分别在 `api` 运行前、运行后被调用），使用 `resultField` 从中提取数组，使用 `valueField`、`labelField` 等来从数据中提取 value 和 label（如果提供了 `childrenField`，会将其作为树形结构递归处理每一级数据），之后将处理好的数据通过 `optionsPropName` 指定的属性传递给目标组件。
 
 ::: details 包装级联选择器,点击下拉时开始加载远程数据
 
 ```vue
 <script lang="ts" setup>
-import { ApiComponent } from '@vben/common-ui';
+import { ApiComponent } from "@vben/common-ui";
 
-import { Cascader } from 'ant-design-vue';
+import { Cascader } from "ant-design-vue";
 
 const treeData: Record<string, any> = [
   {
-    label: '浙江',
-    value: 'zhejiang',
+    label: "浙江",
+    value: "zhejiang",
     children: [
       {
-        value: 'hangzhou',
-        label: '杭州',
+        value: "hangzhou",
+        label: "杭州",
         children: [
           {
-            value: 'xihu',
-            label: '西湖',
+            value: "xihu",
+            label: "西湖",
           },
           {
-            value: 'sudi',
-            label: '苏堤',
+            value: "sudi",
+            label: "苏堤",
           },
         ],
       },
       {
-        value: 'jiaxing',
-        label: '嘉兴',
+        value: "jiaxing",
+        label: "嘉兴",
         children: [
           {
-            value: 'wuzhen',
-            label: '乌镇',
+            value: "wuzhen",
+            label: "乌镇",
           },
           {
-            value: 'meihuazhou',
-            label: '梅花洲',
+            value: "meihuazhou",
+            label: "梅花洲",
           },
         ],
       },
       {
-        value: 'zhoushan',
-        label: '舟山',
+        value: "zhoushan",
+        label: "舟山",
         children: [
           {
-            value: 'putuoshan',
-            label: '普陀山',
+            value: "putuoshan",
+            label: "普陀山",
           },
           {
-            value: 'taohuadao',
-            label: '桃花岛',
+            value: "taohuadao",
+            label: "桃花岛",
           },
         ],
       },
     ],
   },
   {
-    label: '江苏',
-    value: 'jiangsu',
+    label: "江苏",
+    value: "jiangsu",
     children: [
       {
-        value: 'nanjing',
-        label: '南京',
+        value: "nanjing",
+        label: "南京",
         children: [
           {
-            value: 'zhonghuamen',
-            label: '中华门',
+            value: "zhonghuamen",
+            label: "中华门",
           },
           {
-            value: 'zijinshan',
-            label: '紫金山',
+            value: "zijinshan",
+            label: "紫金山",
           },
           {
-            value: 'yuhuatai',
-            label: '雨花台',
+            value: "yuhuatai",
+            label: "雨花台",
           },
         ],
       },
@@ -131,27 +131,27 @@ function fetchApi(): Promise<Record<string, any>> {
 
 ### Props
 
-| 属性名 | 描述 | 类型 | 默认值 | 版本要求 |
-| --- | --- | --- | --- | --- |
-| modelValue(v-model) | 当前值 | `any` | - | - |
-| component | 欲包装的组件（以下称为目标组件） | `Component` | - | - |
-| numberToString | 是否将value从数字转为string | `boolean` | `false` | - |
-| api | 获取数据的函数 | `(arg?: any) => Promise<OptionsItem[] \| Record<string, any>>` | - | - |
-| params | 传递给api的参数 | `Record<string, any>` | - | - |
-| resultField | 从api返回的结果中提取options数组的字段名 | `string` | - | - |
-| labelField | label字段名 | `string` | `label` | - |
-| childrenField | 子级数据字段名，需要层级数据的组件可用 | `string` | `` | - |
-| valueField | value字段名 | `string` | `value` | - |
-| optionsPropName | 目标组件接收options数据的属性名称 | `string` | `options` | - |
-| modelPropName | 目标组件的双向绑定属性名，默认为modelValue。部分组件可能为value | `string` | `modelValue` | - |
-| immediate | 是否立即调用api | `boolean` | `true` | - |
-| alwaysLoad | 每次`visibleEvent`事件发生时都重新请求数据 | `boolean` | `false` | - |
-| beforeFetch | 在api请求之前的回调函数 | `AnyPromiseFunction<any, any>` | - | - |
-| afterFetch | 在api请求之后的回调函数 | `AnyPromiseFunction<any, any>` | - | - |
-| options | 直接传入选项数据，也作为api返回空数据时的后备数据 | `OptionsItem[]` | - | - |
-| visibleEvent | 触发重新请求数据的事件名 | `string` | - | - |
-| loadingSlot | 目标组件的插槽名称，用来显示一个"加载中"的图标 | `string` | - | - |
-| autoSelect | 自动设置选项 | `'first' \| 'last' \| 'one'\| ((item: OptionsItem[]) => OptionsItem) \| false` | `false` | >5.5.4 |
+| 属性名              | 描述                                                            | 类型                                                                           | 默认值       | 版本要求 |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------ | -------- |
+| modelValue(v-model) | 当前值                                                          | `any`                                                                          | -            | -        |
+| component           | 欲包装的组件（以下称为目标组件）                                | `Component`                                                                    | -            | -        |
+| numberToString      | 是否将value从数字转为string                                     | `boolean`                                                                      | `false`      | -        |
+| api                 | 获取数据的函数                                                  | `(arg?: any) => Promise<OptionsItem[] \| Record<string, any>>`                 | -            | -        |
+| params              | 传递给api的参数                                                 | `Record<string, any>`                                                          | -            | -        |
+| resultField         | 从api返回的结果中提取options数组的字段名                        | `string`                                                                       | -            | -        |
+| labelField          | label字段名                                                     | `string`                                                                       | `label`      | -        |
+| childrenField       | 子级数据字段名，需要层级数据的组件可用                          | `string`                                                                       | ``           | -        |
+| valueField          | value字段名                                                     | `string`                                                                       | `value`      | -        |
+| optionsPropName     | 目标组件接收options数据的属性名称                               | `string`                                                                       | `options`    | -        |
+| modelPropName       | 目标组件的双向绑定属性名，默认为modelValue。部分组件可能为value | `string`                                                                       | `modelValue` | -        |
+| immediate           | 是否立即调用api                                                 | `boolean`                                                                      | `true`       | -        |
+| alwaysLoad          | 每次`visibleEvent`事件发生时都重新请求数据                      | `boolean`                                                                      | `false`      | -        |
+| beforeFetch         | 在api请求之前的回调函数                                         | `AnyPromiseFunction<any, any>`                                                 | -            | -        |
+| afterFetch          | 在api请求之后的回调函数                                         | `AnyPromiseFunction<any, any>`                                                 | -            | -        |
+| options             | 直接传入选项数据，也作为api返回空数据时的后备数据               | `OptionsItem[]`                                                                | -            | -        |
+| visibleEvent        | 触发重新请求数据的事件名                                        | `string`                                                                       | -            | -        |
+| loadingSlot         | 目标组件的插槽名称，用来显示一个"加载中"的图标                  | `string`                                                                       | -            | -        |
+| autoSelect          | 自动设置选项                                                    | `'first' \| 'last' \| 'one'\| ((item: OptionsItem[]) => OptionsItem) \| false` | `false`      | >5.5.4   |
 
 #### autoSelect 自动设置选项
 
@@ -165,9 +165,9 @@ function fetchApi(): Promise<Record<string, any>> {
 
 ### Methods
 
-| 方法 | 描述 | 类型 | 版本要求 |
-| --- | --- | --- | --- |
-| getComponentRef | 获取被包装的组件的实例 | ()=>T | >5.5.4 |
-| updateParam | 设置接口请求参数（将与params属性合并） | (newParams: Record<string, any>)=>void | >5.5.4 |
-| getOptions | 获取已加载的选项数据 | ()=>OptionsItem[] | >5.5.4 |
-| getValue | 获取当前值 | ()=>any | >5.5.4 |
+| 方法            | 描述                                   | 类型                                   | 版本要求 |
+| --------------- | -------------------------------------- | -------------------------------------- | -------- |
+| getComponentRef | 获取被包装的组件的实例                 | ()=>T                                  | >5.5.4   |
+| updateParam     | 设置接口请求参数（将与params属性合并） | (newParams: Record<string, any>)=>void | >5.5.4   |
+| getOptions      | 获取已加载的选项数据                   | ()=>OptionsItem[]                      | >5.5.4   |
+| getValue        | 获取当前值                             | ()=>any                                | >5.5.4   |

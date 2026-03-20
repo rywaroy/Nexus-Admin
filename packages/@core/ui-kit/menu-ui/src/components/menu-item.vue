@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-import type { MenuItemProps, MenuItemRegistered } from '../types';
+import type { MenuItemProps, MenuItemRegistered } from "../types";
 
-import { computed, onBeforeUnmount, onMounted, reactive, useSlots } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, useSlots } from "vue";
 
-import { useNamespace } from '@vben-core/composables';
-import { VbenIcon, VbenTooltip } from '@vben-core/shadcn-ui';
+import { useNamespace } from "@vben-core/composables";
+import { VbenIcon, VbenTooltip } from "@vben-core/shadcn-ui";
 
-import { MenuBadge } from '../components';
-import { useMenu, useMenuContext, useSubMenuContext } from '../hooks';
+import qs from "qs";
+
+import { MenuBadge } from "../components";
+import { useMenu, useMenuContext, useSubMenuContext } from "../hooks";
 
 interface Props extends MenuItemProps {}
 
-defineOptions({ name: 'MenuItem' });
+defineOptions({ name: "MenuItem" });
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
@@ -20,31 +22,24 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{ click: [MenuItemRegistered] }>();
 
 const slots = useSlots();
-const { b, e, is } = useNamespace('menu-item');
-const nsMenu = useNamespace('menu');
+const { b, e, is } = useNamespace("menu-item");
+const nsMenu = useNamespace("menu");
 const rootMenu = useMenuContext();
 const subMenu = useSubMenuContext();
 const { parentMenu, parentPaths } = useMenu();
 
 const active = computed(() => props.path === rootMenu?.activePath);
-const menuIcon = computed(() =>
-  active.value ? props.activeIcon || props.icon : props.icon,
-);
+const menuIcon = computed(() => (active.value ? props.activeIcon || props.icon : props.icon));
 
-const isTopLevelMenuItem = computed(
-  () => parentMenu.value?.type.name === 'Menu',
-);
+const isTopLevelMenuItem = computed(() => parentMenu.value?.type.name === "Menu");
 
 const collapseShowTitle = computed(
-  () =>
-    rootMenu.props?.collapseShowTitle &&
-    isTopLevelMenuItem.value &&
-    rootMenu.props.collapse,
+  () => rootMenu.props?.collapseShowTitle && isTopLevelMenuItem.value && rootMenu.props.collapse,
 );
 
 const showTooltip = computed(
   () =>
-    rootMenu.props.mode === 'vertical' &&
+    rootMenu.props.mode === "vertical" &&
     isTopLevelMenuItem.value &&
     rootMenu.props?.collapse &&
     slots.title,
@@ -53,7 +48,8 @@ const showTooltip = computed(
 const item: MenuItemRegistered = reactive({
   active,
   parentPaths: parentPaths.value,
-  path: props.path || '',
+  path: props.path || "",
+  query: props.query,
 });
 
 /**
@@ -67,7 +63,7 @@ function handleClick() {
     parentPaths: parentPaths.value,
     path: props.path,
   });
-  emit('click', item);
+  emit("click", item);
 }
 
 onMounted(() => {
@@ -81,42 +77,39 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <li
-    :class="[
-      rootMenu.theme,
-      b(),
-      is('active', active),
-      is('disabled', disabled),
-      is('collapse-show-title', collapseShowTitle),
-    ]"
-    role="menuitem"
-    @click.stop="handleClick"
+  <a
+    :href="(item.parentPaths.at(-1) ?? '') + (item?.query ? `?${qs.stringify(item?.query)}` : '')"
+    @click.prevent.stop="handleClick"
   >
-    <VbenTooltip
-      v-if="showTooltip"
-      :content-class="[rootMenu.theme]"
-      side="right"
+    <li
+      :class="[
+        rootMenu.theme,
+        b(),
+        is('active', active),
+        is('disabled', disabled),
+        is('collapse-show-title', collapseShowTitle),
+      ]"
+      role="menuitem"
     >
-      <template #trigger>
-        <div :class="[nsMenu.be('tooltip', 'trigger')]">
-          <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" fallback />
-          <slot></slot>
-          <span v-if="collapseShowTitle" :class="nsMenu.e('name')">
-            <slot name="title"></slot>
-          </span>
-        </div>
-      </template>
-      <slot name="title"></slot>
-    </VbenTooltip>
-    <div v-show="!showTooltip" :class="[e('content')]">
-      <MenuBadge
-        v-if="rootMenu.props.mode !== 'horizontal'"
-        class="right-2"
-        v-bind="props"
-      />
-      <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" />
-      <slot></slot>
-      <slot name="title"></slot>
-    </div>
-  </li>
+      <!-- -->
+      <VbenTooltip v-if="showTooltip" :content-class="[rootMenu.theme]" side="right">
+        <template #trigger>
+          <div :class="[nsMenu.be('tooltip', 'trigger')]">
+            <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" fallback />
+            <slot></slot>
+            <span v-if="collapseShowTitle" :class="nsMenu.e('name')">
+              <slot name="title"></slot>
+            </span>
+          </div>
+        </template>
+        <slot name="title"></slot>
+      </VbenTooltip>
+      <div v-show="!showTooltip" :class="[e('content')]">
+        <MenuBadge v-if="rootMenu.props.mode !== 'horizontal'" class="right-2" v-bind="props" />
+        <VbenIcon :class="nsMenu.e('icon')" :icon="menuIcon" />
+        <slot></slot>
+        <slot name="title"></slot>
+      </div>
+    </li>
+  </a>
 </template>

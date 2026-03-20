@@ -20,9 +20,9 @@
 - **Dynamic Menu**: Supports dynamic menus that can display based on permissions.
 - **Mock Data**: High-performance local Mock data solution based on `Nitro`.
 - **Rich Components**: Provides a wide range of components to meet most business needs.
-- **Standardization**: Code quality is ensured with tools like `ESLint`, `Prettier`, `Stylelint`, `Publint`, and `CSpell`.
-- **Engineering**: Development efficiency is improved with tools like `Pnpm Monorepo`, `TurboRepo`, and `Changeset`.
-- **Multi-UI Library Support**: Supports mainstream UI libraries like `Ant Design Vue`, `Element Plus`, and `Vuetify`, without being restricted to a specific framework.
+- **Standardization**: Code quality is ensured with tools like `Oxfmt`, `Oxlint`, `ESLint`, `Stylelint`, `Publint`, and `CSpell`.
+- **Engineering**: Development efficiency is improved with tools like `Pnpm Monorepo`, `Turborepo`, and `Changeset`.
+- **Multi-UI Library Support**: Supports mainstream UI libraries like `Ant Design Vue`, `Ant Design Vue Next`, `Element Plus`, `Naive UI`, and `TDesign`, without being restricted to a specific framework.
 
 ## Browser Support
 
@@ -31,8 +31,8 @@
 - **Production environment** supports modern browsers, IE is not supported.
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png" alt="IE" width="24px" height="24px"  />](http://godban.github.io/browsers-support-badges/)IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)Safari |
-| :-: | :-: | :-: | :-: | :-: |
-| not support | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                                                                not support                                                                                                                |                                                                                          last 2 versions                                                                                          |                                                                                               last 2 versions                                                                                                |                                                                                             last 2 versions                                                                                              |                                                                                             last 2 versions                                                                                              |
 
 ## Contribution
 

@@ -1,85 +1,100 @@
-import type { Linter } from 'eslint';
+import type { Linter } from "eslint";
 
-import { interopDefault } from '../util';
+import { interopDefault } from "../util";
 
 export async function perfectionist(): Promise<Linter.Config[]> {
-  const perfectionistPlugin = await interopDefault(
-    import('eslint-plugin-perfectionist'),
-  );
+  const perfectionistPlugin = await interopDefault(import("eslint-plugin-perfectionist"));
 
   return [
-    perfectionistPlugin.configs['recommended-natural'],
+    perfectionistPlugin.configs["recommended-natural"],
     {
       rules: {
-        'perfectionist/sort-exports': [
-          'error',
+        "perfectionist/sort-exports": [
+          "error",
           {
-            order: 'asc',
-            type: 'natural',
+            order: "asc",
+            type: "natural",
           },
         ],
-        'perfectionist/sort-imports': [
-          'error',
+        "perfectionist/sort-imports": [
+          "error",
           {
-            customGroups: {
-              type: {
-                'vben-core-type': ['^@vben-core/.+'],
-                'vben-type': ['^@vben/.+'],
-                'vue-type': ['^vue$', '^vue-.+', '^@vue/.+'],
+            customGroups: [
+              {
+                selector: "type",
+                groupName: "vben-core-type",
+                elementNamePattern: "^@vben-core/.+",
               },
-              value: {
-                vben: ['^@vben/.+'],
-                'vben-core': ['^@vben-core/.+'],
-                vue: ['^vue$', '^vue-.+', '^@vue/.+'],
+              {
+                selector: "type",
+                groupName: "vben-type",
+                elementNamePattern: "^@vben/.+",
               },
-            },
-            environment: 'node',
-            groups: [
-              ['external-type', 'builtin-type', 'type'],
-              'vue-type',
-              'vben-type',
-              'vben-core-type',
-              ['parent-type', 'sibling-type', 'index-type'],
-              ['internal-type'],
-              'builtin',
-              'vue',
-              'vben',
-              'vben-core',
-              'external',
-              'internal',
-              ['parent', 'sibling', 'index'],
-              'side-effect',
-              'side-effect-style',
-              'style',
-              'object',
-              'unknown',
+              {
+                selector: "type",
+                groupName: "vue-type",
+                elementNamePattern: ["^vue$", "^vue-.+", "^@vue/.+"],
+              },
+              {
+                groupName: "vben",
+                elementNamePattern: "^@vben/.+",
+              },
+              {
+                groupName: "vben-core",
+                elementNamePattern: "^@vben-core/.+",
+              },
+              {
+                groupName: "vue",
+                elementNamePattern: ["^vue$", "^vue-.+", "^@vue/.+"],
+              },
             ],
-            internalPattern: ['^#/.+'],
-            newlinesBetween: 'always',
-            order: 'asc',
-            type: 'natural',
+            environment: "node",
+            groups: [
+              ["type-external", "type-builtin", "type-import"],
+              "vue-type",
+              "vben-type",
+              "vben-core-type",
+              ["type-parent", "type-sibling", "type-index"],
+              ["type-internal"],
+              "value-builtin",
+              "vue",
+              "vben",
+              "vben-core",
+              "value-external",
+              "value-internal",
+              ["value-parent", "value-sibling", "value-index"],
+              "side-effect",
+              "side-effect-style",
+              "style",
+              "ts-equals-import",
+              "unknown",
+            ],
+            internalPattern: ["^#/.+"],
+            newlinesBetween: 1,
+            order: "asc",
+            type: "natural",
           },
         ],
-        'perfectionist/sort-modules': 'off',
-        'perfectionist/sort-named-exports': [
-          'error',
+        "perfectionist/sort-modules": "off",
+        "perfectionist/sort-named-exports": [
+          "error",
           {
-            order: 'asc',
-            type: 'natural',
+            order: "asc",
+            type: "natural",
           },
         ],
-        'perfectionist/sort-objects': [
-          'off',
+        "perfectionist/sort-objects": [
+          "off",
           {
             customGroups: {
-              items: 'items',
-              list: 'list',
-              children: 'children',
+              items: "items",
+              list: "list",
+              children: "children",
             },
-            groups: ['unknown', 'items', 'list', 'children'],
-            ignorePattern: ['children'],
-            order: 'asc',
-            type: 'natural',
+            groups: ["unknown", "items", "list", "children"],
+            ignorePattern: ["children"],
+            order: "asc",
+            type: "natural",
           },
         ],
       },

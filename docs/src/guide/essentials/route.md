@@ -35,7 +35,7 @@ outline: deep
 ```ts
 // 有需要可以自行打开注释，并创建文件夹
 // const externalRouteFiles = import.meta.glob('./external/**/*.ts', { eager: true }); // [!code --]
-const staticRouteFiles = import.meta.glob('./static/**/*.ts', { eager: true }); // [!code ++]
+const staticRouteFiles = import.meta.glob("./static/**/*.ts", { eager: true }); // [!code ++]
 /** 动态路由 */
 const dynamicRoutes: RouteRecordRaw[] = mergeRouteModules(dynamicRouteFiles);
 
@@ -58,34 +58,34 @@ const externalRoutes: RouteRecordRaw[] = mergeRouteModules(externalRouteFiles); 
 ::: details 二级路由示例代码
 
 ```ts
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from "vue-router";
 
-import { VBEN_LOGO_URL } from '@vben/constants';
+import { VBEN_LOGO_URL } from "@vben/constants";
 
-import { $t } from '#/locales';
+import { $t } from "#/locales";
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      badgeType: 'dot',
-      badgeVariants: 'destructive',
+      badgeType: "dot",
+      badgeVariants: "destructive",
       icon: VBEN_LOGO_URL,
       order: 9999,
-      title: $t('page.vben.title'),
+      title: $t("page.vben.title"),
     },
-    name: 'VbenProject',
-    path: '/vben-admin',
-    redirect: '/vben-admin/about',
+    name: "VbenProject",
+    path: "/vben-admin",
+    redirect: "/vben-admin/about",
     children: [
       {
-        name: 'VbenAbout',
-        path: '/vben-admin/about',
-        component: () => import('#/views/_core/about/index.vue'),
+        name: "VbenAbout",
+        path: "/vben-admin/about",
+        component: () => import("#/views/_core/about/index.vue"),
         meta: {
-          badgeType: 'dot',
-          badgeVariants: 'destructive',
-          icon: 'lucide:copyright',
-          title: $t('page.vben.about'),
+          badgeType: "dot",
+          badgeVariants: "destructive",
+          icon: "lucide:copyright",
+          title: $t("page.vben.about"),
         },
       },
     ],
@@ -108,101 +108,100 @@ export default routes;
 ::: details 多级路由示例代码
 
 ```ts
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from "vue-router";
 
-import { $t } from '#/locales';
+import { $t } from "#/locales";
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      icon: 'ic:baseline-view-in-ar',
+      icon: "ic:baseline-view-in-ar",
       keepAlive: true,
       order: 1000,
-      title: $t('demos.title'),
+      title: $t("demos.title"),
     },
-    name: 'Demos',
-    path: '/demos',
-    redirect: '/demos/access',
+    name: "Demos",
+    path: "/demos",
+    redirect: "/demos/access",
     children: [
       // 嵌套菜单
       {
         meta: {
-          icon: 'ic:round-menu',
-          title: $t('demos.nested.title'),
+          icon: "ic:round-menu",
+          title: $t("demos.nested.title"),
         },
-        name: 'NestedDemos',
-        path: '/demos/nested',
-        redirect: '/demos/nested/menu1',
+        name: "NestedDemos",
+        path: "/demos/nested",
+        redirect: "/demos/nested/menu1",
         children: [
           {
-            name: 'Menu1Demo',
-            path: '/demos/nested/menu1',
-            component: () => import('#/views/demos/nested/menu-1.vue'),
+            name: "Menu1Demo",
+            path: "/demos/nested/menu1",
+            component: () => import("#/views/demos/nested/menu-1.vue"),
             meta: {
-              icon: 'ic:round-menu',
+              icon: "ic:round-menu",
               keepAlive: true,
-              title: $t('demos.nested.menu1'),
+              title: $t("demos.nested.menu1"),
             },
           },
           {
-            name: 'Menu2Demo',
-            path: '/demos/nested/menu2',
+            name: "Menu2Demo",
+            path: "/demos/nested/menu2",
             meta: {
-              icon: 'ic:round-menu',
+              icon: "ic:round-menu",
               keepAlive: true,
-              title: $t('demos.nested.menu2'),
+              title: $t("demos.nested.menu2"),
             },
-            redirect: '/demos/nested/menu2/menu2-1',
+            redirect: "/demos/nested/menu2/menu2-1",
             children: [
               {
-                name: 'Menu21Demo',
-                path: '/demos/nested/menu2/menu2-1',
-                component: () => import('#/views/demos/nested/menu-2-1.vue'),
+                name: "Menu21Demo",
+                path: "/demos/nested/menu2/menu2-1",
+                component: () => import("#/views/demos/nested/menu-2-1.vue"),
                 meta: {
-                  icon: 'ic:round-menu',
+                  icon: "ic:round-menu",
                   keepAlive: true,
-                  title: $t('demos.nested.menu2_1'),
+                  title: $t("demos.nested.menu2_1"),
                 },
               },
             ],
           },
           {
-            name: 'Menu3Demo',
-            path: '/demos/nested/menu3',
+            name: "Menu3Demo",
+            path: "/demos/nested/menu3",
             meta: {
-              icon: 'ic:round-menu',
-              title: $t('demos.nested.menu3'),
+              icon: "ic:round-menu",
+              title: $t("demos.nested.menu3"),
             },
-            redirect: '/demos/nested/menu3/menu3-1',
+            redirect: "/demos/nested/menu3/menu3-1",
             children: [
               {
-                name: 'Menu31Demo',
-                path: 'menu3-1',
-                component: () => import('#/views/demos/nested/menu-3-1.vue'),
+                name: "Menu31Demo",
+                path: "menu3-1",
+                component: () => import("#/views/demos/nested/menu-3-1.vue"),
                 meta: {
-                  icon: 'ic:round-menu',
+                  icon: "ic:round-menu",
                   keepAlive: true,
-                  title: $t('demos.nested.menu3_1'),
+                  title: $t("demos.nested.menu3_1"),
                 },
               },
               {
-                name: 'Menu32Demo',
-                path: 'menu3-2',
+                name: "Menu32Demo",
+                path: "menu3-2",
                 meta: {
-                  icon: 'ic:round-menu',
-                  title: $t('demos.nested.menu3_2'),
+                  icon: "ic:round-menu",
+                  title: $t("demos.nested.menu3_2"),
                 },
-                redirect: '/demos/nested/menu3/menu3-2/menu3-2-1',
+                redirect: "/demos/nested/menu3/menu3-2/menu3-2-1",
                 children: [
                   {
-                    name: 'Menu321Demo',
-                    path: '/demos/nested/menu3/menu3-2/menu3-2-1',
-                    component: () =>
-                      import('#/views/demos/nested/menu-3-2-1.vue'),
+                    name: "Menu321Demo",
+                    path: "/demos/nested/menu3/menu3-2/menu3-2-1",
+                    component: () => import("#/views/demos/nested/menu-3-2-1.vue"),
                     meta: {
-                      icon: 'ic:round-menu',
+                      icon: "ic:round-menu",
                       keepAlive: true,
-                      title: $t('demos.nested.menu3_2_1'),
+                      title: $t("demos.nested.menu3_2_1"),
                     },
                   },
                 ],
@@ -229,29 +228,29 @@ export default routes;
 在对应的路由文件中添加一个路由对象，如下：
 
 ```ts
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from "vue-router";
 
-import { VBEN_LOGO_URL } from '@vben/constants';
+import { VBEN_LOGO_URL } from "@vben/constants";
 
-import { $t } from '#/locales';
+import { $t } from "#/locales";
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      icon: 'mdi:home',
-      title: $t('page.home.title'),
+      icon: "mdi:home",
+      title: $t("page.home.title"),
     },
-    name: 'Home',
-    path: '/home',
-    redirect: '/home/index',
+    name: "Home",
+    path: "/home",
+    redirect: "/home/index",
     children: [
       {
-        name: 'HomeIndex',
-        path: '/home/index',
-        component: () => import('#/views/home/index.vue'),
+        name: "HomeIndex",
+        path: "/home/index",
+        component: () => import("#/views/home/index.vue"),
         meta: {
-          icon: 'mdi:home',
-          title: $t('page.home.index'),
+          icon: "mdi:home",
+          title: $t("page.home.index"),
         },
       },
     ],
@@ -284,11 +283,11 @@ export default routes;
 ```ts {5-8}
 const routes = [
   {
-    name: 'HomeIndex',
-    path: '/home/index',
+    name: "HomeIndex",
+    path: "/home/index",
     meta: {
-      icon: 'mdi:home',
-      title: $t('page.home.index'),
+      icon: "mdi:home",
+      title: $t("page.home.index"),
     },
   },
 ];
@@ -328,17 +327,11 @@ interface RouteMeta {
   /**
    * 徽标类型
    */
-  badgeType?: 'dot' | 'normal';
+  badgeType?: "dot" | "normal";
   /**
    * 徽标颜色
    */
-  badgeVariants?:
-    | 'default'
-    | 'destructive'
-    | 'primary'
-    | 'success'
-    | 'warning'
-    | string;
+  badgeVariants?: "default" | "destructive" | "primary" | "success" | "warning" | string;
   /**
    * 路由的完整路径作为key（默认true）
    */
@@ -599,13 +592,20 @@ _注意:_ 排序仅针对一级菜单有效，二级菜单的排序需要在对�
 
 用于配置当前路由不使用基础布局，仅在顶级时生效。默认情况下，所有的路由都会被包裹在基础布局中（包含顶部以及侧边等导航部件），如果你的页面不需要这些部件，可以设置 `noBasicLayout` 为 `true`。
 
+### domCached
+
+- 类型：`boolean`
+- 默认值：`false`
+
+用于配置当前路由是否要将route对应dom元素缓存起来。对于一些复杂页面切换tab浏览器回流/重绘会导致卡顿， `domCached` 设为 `true`可解决该问题，但是也有代价：1、内存占用升高 2、vue的部分生命周期不会触发
+
 ## 路由刷新
 
 路由刷新方式如下：
 
 ```vue
 <script setup lang="ts">
-import { useRefresh } from '@vben/hooks';
+import { useRefresh } from "@vben/hooks";
 
 const { refresh } = useRefresh();
 

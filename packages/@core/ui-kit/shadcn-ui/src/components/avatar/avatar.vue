@@ -1,24 +1,20 @@
 <script setup lang="ts">
-import type {
-  AvatarFallbackProps,
-  AvatarImageProps,
-  AvatarRootProps,
-} from 'reka-ui';
+import type { AvatarFallbackProps, AvatarImageProps, AvatarRootProps } from "reka-ui";
 
-import type { CSSProperties } from 'vue';
+import type { CSSProperties } from "vue";
 
-import type { ClassType } from '@vben-core/typings';
+import type { ClassType } from "@vben-core/typings";
 
-import { computed } from 'vue';
+import { computed } from "vue";
 
-import { Avatar, AvatarFallback, AvatarImage } from '../../ui';
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui";
 
 interface Props extends AvatarFallbackProps, AvatarImageProps, AvatarRootProps {
   alt?: string;
   class?: ClassType;
   dot?: boolean;
   dotClass?: ClassType;
-  fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   size?: number;
 }
 
@@ -27,11 +23,11 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  alt: 'avatar',
-  as: 'button',
+  alt: "avatar",
+  as: "button",
   dot: false,
-  dotClass: 'bg-green-500',
-  fit: 'cover',
+  dotClass: "bg-green-500",
+  fit: "cover",
 });
 
 const imageStyle = computed<CSSProperties>(() => {
@@ -57,11 +53,7 @@ const rootStyle = computed(() => {
 </script>
 
 <template>
-  <div
-    :class="props.class"
-    :style="rootStyle"
-    class="relative flex flex-shrink-0 items-center"
-  >
+  <div :class="props.class" :style="rootStyle" class="relative flex shrink-0 items-center">
     <Avatar :class="props.class" class="size-full">
       <AvatarImage :alt="alt" :src="src" :style="imageStyle" />
       <AvatarFallback>{{ text }}</AvatarFallback>
@@ -69,7 +61,7 @@ const rootStyle = computed(() => {
     <span
       v-if="dot"
       :class="dotClass"
-      class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-background"
+      class="border-background absolute right-0 bottom-0 size-3 rounded-full border-2"
     >
     </span>
   </div>

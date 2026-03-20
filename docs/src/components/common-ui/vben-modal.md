@@ -69,7 +69,7 @@ Modal 内的内容一般业务中，会比较复杂，所以我们可以将 moda
 
 - `VbenModal` 组件对与参数的处理优先级是 `slot` > `props` > `state`(通过api更新的状态以及useVbenModal参数)。如果你已经传入了 `slot` 或者 `props`，那么 `setState` 将不会生效，这种情况下你可以通过 `slot` 或者 `props` 来更新状态。
 - 如果你使用到了 `connectedComponent` 参数，那么会存在 2 个`useVbenModal`, 此时，如果同时设置了相同的参数，那么以内部为准（也就是没有设置 connectedComponent 的代码）。比如 同时设置了 `onConfirm`，那么以内部的 `onConfirm` 为准。`onOpenChange`事件除外，内外都会触发。另外，如果设置了`destroyOnClose`，内部Modal及其子组件会在被关闭后<b>完全销毁</b>。
-- 如果弹窗的默认行为不符合你的预期，可以在`src\bootstrap.ts`中修改`setDefaultModalProps`的参数来设置默认的属性，如默认隐藏全屏按钮，修改默认ZIndex等。
+- 如果弹窗的默认行为不符合你的预期，可以在对应应用的 `apps/<app>/src/bootstrap.ts` 中修改 `setDefaultModalProps` 的参数来设置默认属性，例如默认隐藏全屏按钮、修改默认 `zIndex` 等。
 
 :::
 
@@ -88,41 +88,41 @@ const [Modal, modalApi] = useVbenModal({
 
 所有属性都可以传入 `useVbenModal` 的第一个参数中。
 
-| 属性名 | 描述 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| appendToMain | 是否挂载到内容区域（默认挂载到body） | `boolean` | `false` |
-| connectedComponent | 连接另一个Modal组件 | `Component` | - |
-| destroyOnClose | 关闭时销毁 | `boolean` | `false` |
-| title | 标题 | `string\|slot` | - |
-| titleTooltip | 标题提示信息 | `string\|slot` | - |
-| description | 描述信息 | `string\|slot` | - |
-| isOpen | 弹窗打开状态 | `boolean` | `false` |
-| loading | 弹窗加载状态 | `boolean` | `false` |
-| fullscreen | 全屏显示 | `boolean` | `false` |
-| fullscreenButton | 显示全屏按钮 | `boolean` | `true` |
-| draggable | 可拖拽 | `boolean` | `false` |
-| closable | 显示关闭按钮 | `boolean` | `true` |
-| centered | 居中显示 | `boolean` | `false` |
-| modal | 显示遮罩 | `boolean` | `true` |
-| header | 显示header | `boolean` | `true` |
-| footer | 显示footer | `boolean\|slot` | `true` |
-| confirmDisabled | 禁用确认按钮 | `boolean` | `false` |
-| confirmLoading | 确认按钮loading状态 | `boolean` | `false` |
-| closeOnClickModal | 点击遮罩关闭弹窗 | `boolean` | `true` |
-| closeOnPressEscape | esc 关闭弹窗 | `boolean` | `true` |
-| confirmText | 确认按钮文本 | `string\|slot` | `确认` |
-| cancelText | 取消按钮文本 | `string\|slot` | `取消` |
-| showCancelButton | 显示取消按钮 | `boolean` | `true` |
-| showConfirmButton | 显示确认按钮 | `boolean` | `true` |
-| class | modal的class，宽度通过这个配置 | `string` | - |
-| contentClass | modal内容区域的class | `string` | - |
-| footerClass | modal底部区域的class | `string` | - |
-| headerClass | modal顶部区域的class | `string` | - |
-| bordered | 是否显示border | `boolean` | `false` |
-| zIndex | 弹窗的ZIndex层级 | `number` | `1000` |
-| overlayBlur | 遮罩模糊度 | `number` | - |
-| animationType | 动画类型 | `'slide' \| 'scale'` | `'slide'` |
-| submitting | 标记为提交中，锁定弹窗当前状态 | `boolean` | `false` |
+| 属性名             | 描述                                 | 类型                 | 默认值    |
+| ------------------ | ------------------------------------ | -------------------- | --------- |
+| appendToMain       | 是否挂载到内容区域（默认挂载到body） | `boolean`            | `false`   |
+| connectedComponent | 连接另一个Modal组件                  | `Component`          | -         |
+| destroyOnClose     | 关闭时销毁                           | `boolean`            | `false`   |
+| title              | 标题                                 | `string\|slot`       | -         |
+| titleTooltip       | 标题提示信息                         | `string\|slot`       | -         |
+| description        | 描述信息                             | `string\|slot`       | -         |
+| isOpen             | 弹窗打开状态                         | `boolean`            | `false`   |
+| loading            | 弹窗加载状态                         | `boolean`            | `false`   |
+| fullscreen         | 全屏显示                             | `boolean`            | `false`   |
+| fullscreenButton   | 显示全屏按钮                         | `boolean`            | `true`    |
+| draggable          | 可拖拽                               | `boolean`            | `false`   |
+| closable           | 显示关闭按钮                         | `boolean`            | `true`    |
+| centered           | 居中显示                             | `boolean`            | `false`   |
+| modal              | 显示遮罩                             | `boolean`            | `true`    |
+| header             | 显示header                           | `boolean`            | `true`    |
+| footer             | 显示footer                           | `boolean\|slot`      | `true`    |
+| confirmDisabled    | 禁用确认按钮                         | `boolean`            | `false`   |
+| confirmLoading     | 确认按钮loading状态                  | `boolean`            | `false`   |
+| closeOnClickModal  | 点击遮罩关闭弹窗                     | `boolean`            | `true`    |
+| closeOnPressEscape | esc 关闭弹窗                         | `boolean`            | `true`    |
+| confirmText        | 确认按钮文本                         | `string\|slot`       | `确认`    |
+| cancelText         | 取消按钮文本                         | `string\|slot`       | `取消`    |
+| showCancelButton   | 显示取消按钮                         | `boolean`            | `true`    |
+| showConfirmButton  | 显示确认按钮                         | `boolean`            | `true`    |
+| class              | modal的class，宽度通过这个配置       | `string`             | -         |
+| contentClass       | modal内容区域的class                 | `string`             | -         |
+| footerClass        | modal底部区域的class                 | `string`             | -         |
+| headerClass        | modal顶部区域的class                 | `string`             | -         |
+| bordered           | 是否显示border                       | `boolean`            | `false`   |
+| zIndex             | 弹窗的ZIndex层级                     | `number`             | `1000`    |
+| overlayBlur        | 遮罩模糊度                           | `number`             | -         |
+| animationType      | 动画类型                             | `'slide' \| 'scale'` | `'slide'` |
+| submitting         | 标记为提交中，锁定弹窗当前状态       | `boolean`            | `false`   |
 
 ::: info appendToMain
 
@@ -134,14 +134,14 @@ const [Modal, modalApi] = useVbenModal({
 
 以下事件，只有在 `useVbenModal({onCancel:()=>{}})` 中传入才会生效。
 
-| 事件名 | 描述 | 类型 | 版本号 |
-| --- | --- | --- | --- |
+| 事件名        | 描述                                             | 类型                            | 版本号            |
+| ------------- | ------------------------------------------------ | ------------------------------- | ----------------- |
 | onBeforeClose | 关闭前触发，返回 `false`或者被`reject`则禁止关闭 | `()=>Promise<boolean>\|boolean` | >5.5.2支持Promise |
-| onCancel | 点击取消按钮触发 | `()=>void` |  |
-| onClosed | 关闭动画播放完毕时触发 | `()=>void` | >5.4.3 |
-| onConfirm | 点击确认按钮触发 | `()=>void` |  |
-| onOpenChange | 关闭或者打开弹窗时触发 | `(isOpen:boolean)=>void` |  |
-| onOpened | 打开动画播放完毕时触发 | `()=>void` | >5.4.3 |
+| onCancel      | 点击取消按钮触发                                 | `()=>void`                      |                   |
+| onClosed      | 关闭动画播放完毕时触发                           | `()=>void`                      | >5.4.3            |
+| onConfirm     | 点击确认按钮触发                                 | `()=>void`                      |                   |
+| onOpenChange  | 关闭或者打开弹窗时触发                           | `(isOpen:boolean)=>void`        |                   |
+| onOpened      | 打开动画播放完毕时触发                           | `()=>void`                      | >5.4.3            |
 
 ### Slots
 
@@ -156,16 +156,16 @@ const [Modal, modalApi] = useVbenModal({
 
 ### modalApi
 
-| 方法 | 描述 | 类型 | 版本 |
-| --- | --- | --- | --- |
-| setState | 动态设置弹窗状态属性 | `(((prev: ModalState) => Partial<ModalState>)\| Partial<ModalState>)=>modalApi` | - |
-| open | 打开弹窗 | `()=>void` | - |
-| close | 关闭弹窗 | `()=>void` | - |
-| setData | 设置共享数据 | `<T>(data:T)=>modalApi` | - |
-| getData | 获取共享数据 | `<T>()=>T` | - |
-| useStore | 获取可响应式状态 | - | - |
-| lock | 将弹窗标记为提交中，锁定当前状态 | `(isLock:boolean)=>modalApi` | >5.5.2 |
-| unlock | lock方法的反操作，解除弹窗的锁定状态，也是lock(false)的别名 | `()=>modalApi` | >5.5.3 |
+| 方法     | 描述                                                        | 类型                                                                            | 版本   |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- | ------ |
+| setState | 动态设置弹窗状态属性                                        | `(((prev: ModalState) => Partial<ModalState>)\| Partial<ModalState>)=>modalApi` | -      |
+| open     | 打开弹窗                                                    | `()=>void`                                                                      | -      |
+| close    | 关闭弹窗                                                    | `()=>void`                                                                      | -      |
+| setData  | 设置共享数据                                                | `<T>(data:T)=>modalApi`                                                         | -      |
+| getData  | 获取共享数据                                                | `<T>()=>T`                                                                      | -      |
+| useStore | 获取可响应式状态                                            | -                                                                               | -      |
+| lock     | 将弹窗标记为提交中，锁定当前状态                            | `(isLock:boolean)=>modalApi`                                                    | >5.5.2 |
+| unlock   | lock方法的反操作，解除弹窗的锁定状态，也是lock(false)的别名 | `()=>modalApi`                                                                  | >5.5.3 |
 
 ::: info lock
 

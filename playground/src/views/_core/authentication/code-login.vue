@@ -1,62 +1,61 @@
 <script lang="ts" setup>
-import type { VbenFormSchema } from '@vben/common-ui';
-import type { Recordable } from '@vben/types';
+import type { VbenFormSchema } from "@vben/common-ui";
+import type { Recordable } from "@vben/types";
 
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from "vue";
 
-import { AuthenticationCodeLogin, z } from '@vben/common-ui';
-import { $t } from '@vben/locales';
+import { AuthenticationCodeLogin, z } from "@vben/common-ui";
+import { $t } from "@vben/locales";
 
-import { message } from 'ant-design-vue';
+import { message } from "ant-design-vue";
 
-defineOptions({ name: 'CodeLogin' });
+defineOptions({ name: "CodeLogin" });
 
 const loading = ref(false);
 const CODE_LENGTH = 6;
-const loginRef =
-  useTemplateRef<InstanceType<typeof AuthenticationCodeLogin>>('loginRef');
+const loginRef = useTemplateRef<InstanceType<typeof AuthenticationCodeLogin>>("loginRef");
 function sendCodeApi(phoneNumber: string) {
   message.loading({
-    content: $t('page.auth.sendingCode'),
+    content: $t("page.auth.sendingCode"),
     duration: 0,
-    key: 'sending-code',
+    key: "sending-code",
   });
   return new Promise((resolve) => {
     setTimeout(() => {
       message.success({
-        content: $t('page.auth.codeSentTo', [phoneNumber]),
+        content: $t("page.auth.codeSentTo", [phoneNumber]),
         duration: 3,
-        key: 'sending-code',
+        key: "sending-code",
       });
-      resolve({ code: '123456', phoneNumber });
+      resolve({ code: "123456", phoneNumber });
     }, 3000);
   });
 }
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {
-      component: 'VbenInput',
+      component: "VbenInput",
       componentProps: {
-        placeholder: $t('authentication.mobile'),
+        placeholder: $t("authentication.mobile"),
       },
-      fieldName: 'phoneNumber',
-      label: $t('authentication.mobile'),
+      fieldName: "phoneNumber",
+      label: $t("authentication.mobile"),
       rules: z
         .string()
-        .min(1, { message: $t('authentication.mobileTip') })
+        .min(1, { message: $t("authentication.mobileTip") })
         .refine((v) => /^\d{11}$/.test(v), {
-          message: $t('authentication.mobileErrortip'),
+          message: $t("authentication.mobileErrortip"),
         }),
     },
     {
-      component: 'VbenPinInput',
+      component: "VbenPinInput",
       componentProps: {
         codeLength: CODE_LENGTH,
         createText: (countdown: number) => {
           const text =
             countdown > 0
-              ? $t('authentication.sendText', [countdown])
-              : $t('authentication.sendCode');
+              ? $t("authentication.sendText", [countdown])
+              : $t("authentication.sendCode");
           return text;
         },
         handleSendCode: async () => {
@@ -66,24 +65,24 @@ const formSchema = computed((): VbenFormSchema[] => {
           const formApi = loginRef.value?.getFormApi();
           if (!formApi) {
             loading.value = false;
-            throw new Error('formApi is not ready');
+            throw new Error("formApi is not ready");
           }
-          await formApi.validateField('phoneNumber');
-          const isPhoneReady = await formApi.isFieldValid('phoneNumber');
+          await formApi.validateField("phoneNumber");
+          const isPhoneReady = await formApi.isFieldValid("phoneNumber");
           if (!isPhoneReady) {
             loading.value = false;
-            throw new Error('Phone number is not Ready');
+            throw new Error("Phone number is not Ready");
           }
           const { phoneNumber } = await formApi.getValues();
           await sendCodeApi(phoneNumber);
           loading.value = false;
         },
-        placeholder: $t('authentication.code'),
+        placeholder: $t("authentication.code"),
       },
-      fieldName: 'code',
-      label: $t('authentication.code'),
+      fieldName: "code",
+      label: $t("authentication.code"),
       rules: z.string().length(CODE_LENGTH, {
-        message: $t('authentication.codeTip', [CODE_LENGTH]),
+        message: $t("authentication.codeTip", [CODE_LENGTH]),
       }),
     },
   ];
@@ -94,8 +93,7 @@ const formSchema = computed((): VbenFormSchema[] => {
  * @param values 登录表单数据
  */
 async function handleLogin(values: Recordable<any>) {
-  // eslint-disable-next-line no-console
-  console.log(values);
+  void values;
 }
 </script>
 

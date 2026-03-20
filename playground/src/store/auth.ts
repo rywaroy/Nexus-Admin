@@ -1,19 +1,19 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type { Recordable, UserInfo } from "@vben/types";
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-import { LOGIN_PATH } from '@vben/constants';
-import { preferences } from '@vben/preferences';
-import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
+import { LOGIN_PATH } from "@vben/constants";
+import { preferences } from "@vben/preferences";
+import { resetAllStores, useAccessStore, useUserStore } from "@vben/stores";
 
-import { notification } from 'ant-design-vue';
-import { defineStore } from 'pinia';
+import { notification } from "ant-design-vue";
+import { defineStore } from "pinia";
 
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { $t } from '#/locales';
+import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from "#/api";
+import { $t } from "#/locales";
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
   const router = useRouter();
@@ -26,10 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
    * @param params 登录表单数据
    * @param onSuccess 成功之后的回调函数
    */
-  async function authLogin(
-    params: Recordable<any>,
-    onSuccess?: () => Promise<void> | void,
-  ) {
+  async function authLogin(params: Recordable<any>, onSuccess?: () => Promise<void> | void) {
     // 异步处理用户登录操作并获取 accessToken
     let userInfo: null | UserInfo = null;
     try {
@@ -56,16 +53,14 @@ export const useAuthStore = defineStore('auth', () => {
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(
-                userInfo.homePath || preferences.app.defaultHomePath,
-              );
+            : await router.push(userInfo.homePath || preferences.app.defaultHomePath);
         }
 
         if (userInfo?.realName) {
           notification.success({
-            description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+            description: `${$t("authentication.loginSuccessDesc")}:${userInfo?.realName}`,
             duration: 3,
-            message: $t('authentication.loginSuccess'),
+            message: $t("authentication.loginSuccess"),
           });
         }
       }
@@ -78,15 +73,22 @@ export const useAuthStore = defineStore('auth', () => {
     };
   }
 
+  const isLoggingOut = ref(false); // 正在 logout 标识, 防止 /logout 死循环.
+
   async function logout(redirect: boolean = true) {
+    if (isLoggingOut.value) return; // 正在登出中, 说明已进入循环, 直接返回.
+    isLoggingOut.value = true; // 设置 标识
+
     try {
       await logoutApi();
     } catch {
       // 不做任何处理
-    }
+    } finally {
+      isLoggingOut.value = false; // 重置 标识
 
-    resetAllStores();
-    accessStore.setLoginExpired(false);
+      resetAllStores();
+      accessStore.setLoginExpired(false);
+    }
 
     // 回登录页带上当前路由地址
     await router.replace({
@@ -100,8 +102,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchUserInfo() {
-    let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfoApi();
+    const userInfo = await getUserInfoApi();
     userStore.setUserInfo(userInfo);
     return userInfo;
   }

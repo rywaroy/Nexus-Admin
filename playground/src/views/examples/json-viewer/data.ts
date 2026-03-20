@@ -1,34 +1,34 @@
 export const json1 = {
   additionalInfo: {
-    author: 'Your Name',
+    author: "Your Name",
     debug: true,
-    version: '1.3.10',
+    version: "1.3.10",
     versionCode: 132,
   },
-  additionalNotes: 'This JSON is used for demonstration purposes',
+  additionalNotes: "This JSON is used for demonstration purposes",
   tools: [
     {
-      description: 'Description of Tool 1',
-      name: 'Tool 1',
+      description: "Description of Tool 1",
+      name: "Tool 1",
     },
     {
-      description: 'Description of Tool 2',
-      name: 'Tool 2',
+      description: "Description of Tool 2",
+      name: "Tool 2",
     },
     {
-      description: 'Description of Tool 3',
-      name: 'Tool 3',
+      description: "Description of Tool 3",
+      name: "Tool 3",
     },
     {
-      description: 'Description of Tool 4',
-      name: 'Tool 4',
+      description: "Description of Tool 4",
+      name: "Tool 4",
     },
   ],
 };
 
 export const json2 = JSON.parse(`
   {
-	"id": "chatcmpl-123",
+	"id": "chatgpt-123",
 	"object": "chat.completion",
 	"created": 1677652288,
 	"model": "gpt-3.5-turbo-0613",

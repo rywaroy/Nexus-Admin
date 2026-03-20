@@ -1,6 +1,6 @@
-import type { Component, Ref } from 'vue';
+import type { Component, Ref } from "vue";
 
-import type { MenuRecordBadgeRaw, ThemeModeType } from '@vben-core/typings';
+import type { MenuRecordBadgeRaw, Recordable, ThemeModeType } from "@vben-core/typings";
 
 interface MenuProps {
   /**
@@ -34,7 +34,7 @@ interface MenuProps {
    * @zh_CN 菜单模式
    * @default vertical
    */
-  mode?: 'horizontal' | 'vertical';
+  mode?: "horizontal" | "vertical";
 
   /**
    * @zh_CN 是否圆润风格
@@ -91,12 +91,17 @@ interface MenuItemProps extends MenuRecordBadgeRaw {
    * @zh_CN menuitem 名称
    */
   path: string;
+  /**
+   * @zh_CN 菜单所携带的参数
+   */
+  query?: Recordable<any>;
 }
 
 interface MenuItemRegistered {
   active: boolean;
   parentPaths: string[];
   path: string;
+  query?: Recordable<any>;
 }
 
 interface MenuItemClicked {

@@ -1,114 +1,127 @@
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from "vue-router";
 
 import {
   VBEN_ANT_PREVIEW_URL,
+  VBEN_ANTDV_NEXT_PREVIEW_URL,
   VBEN_DOC_URL,
   VBEN_ELE_PREVIEW_URL,
   VBEN_GITHUB_URL,
   VBEN_LOGO_URL,
   VBEN_NAIVE_PREVIEW_URL,
   VBEN_TD_PREVIEW_URL,
-} from '@vben/constants';
-import { SvgAntdvLogoIcon, SvgTDesignIcon } from '@vben/icons';
+} from "@vben/constants";
+import { SvgAntdvLogoIcon, SvgAntdvNextLogoIcon, SvgTDesignIcon } from "@vben/icons";
 
-import { IFrameView } from '#/layouts';
-import { $t } from '#/locales';
+import { IFrameView } from "#/layouts";
+import { $t } from "#/locales";
 
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      badgeType: 'dot',
+      badgeType: "dot",
       icon: VBEN_LOGO_URL,
       order: 9998,
-      title: $t('demos.vben.title'),
+      title: $t("demos.vben.title"),
     },
-    name: 'VbenProject',
-    path: '/vben-admin',
+    name: "VbenProject",
+    path: "/vben-admin",
     children: [
       {
-        name: 'VbenDocument',
-        path: '/vben-admin/document',
+        name: "VbenDocument",
+        path: "/vben-admin/document",
         component: IFrameView,
         meta: {
-          icon: 'lucide:book-open-text',
+          icon: "lucide:book-open-text",
           link: VBEN_DOC_URL,
-          title: $t('demos.vben.document'),
+          title: $t("demos.vben.document"),
         },
       },
       {
-        name: 'VbenGithub',
-        path: '/vben-admin/github',
+        name: "VbenGithub",
+        path: "/vben-admin/github",
         component: IFrameView,
         meta: {
-          icon: 'mdi:github',
+          icon: "mdi:github",
           link: VBEN_GITHUB_URL,
-          title: 'Github',
+          title: "Github",
         },
       },
       {
-        name: 'VbenAntdv',
-        path: '/vben-admin/antdv',
+        name: "VbenAntdv",
+        path: "/vben-admin/antdv",
         component: IFrameView,
         meta: {
-          badgeType: 'dot',
+          badgeType: "dot",
           icon: SvgAntdvLogoIcon,
           link: VBEN_ANT_PREVIEW_URL,
-          title: $t('demos.vben.antdv'),
+          title: $t("demos.vben.antdv"),
         },
       },
       {
-        name: 'VbenNaive',
-        path: '/vben-admin/naive',
+        name: "VbenAntdVNext",
+        path: "/vben-admin/antdv-next",
         component: IFrameView,
         meta: {
-          badgeType: 'dot',
-          icon: 'logos:naiveui',
+          badgeType: "dot",
+          icon: SvgAntdvNextLogoIcon,
+          link: VBEN_ANTDV_NEXT_PREVIEW_URL,
+          title: $t("demos.vben.antdv-next"),
+        },
+      },
+
+      {
+        name: "VbenNaive",
+        path: "/vben-admin/naive",
+        component: IFrameView,
+        meta: {
+          badgeType: "dot",
+          icon: "logos:naiveui",
           link: VBEN_NAIVE_PREVIEW_URL,
-          title: $t('demos.vben.naive-ui'),
+          title: $t("demos.vben.naive-ui"),
         },
       },
       {
-        name: 'VbenElementPlus',
-        path: '/vben-admin/ele',
+        name: "VbenElementPlus",
+        path: "/vben-admin/ele",
         component: IFrameView,
         meta: {
-          badgeType: 'dot',
-          icon: 'logos:element',
+          badgeType: "dot",
+          icon: "logos:element",
           link: VBEN_ELE_PREVIEW_URL,
-          title: $t('demos.vben.element-plus'),
+          title: $t("demos.vben.element-plus"),
         },
       },
       {
-        name: 'VbenTDesign',
-        path: '/vben-admin/tdesign',
+        name: "VbenTDesign",
+        path: "/vben-admin/tdesign",
         component: IFrameView,
         meta: {
-          badgeType: 'dot',
+          badgeType: "dot",
           icon: SvgTDesignIcon,
           link: VBEN_TD_PREVIEW_URL,
-          title: $t('demos.vben.tdesign'),
+          title: $t("demos.vben.tdesign"),
         },
       },
     ],
   },
   {
-    component: () => import('#/views/_core/about/index.vue'),
+    component: () => import("#/views/_core/about/index.vue"),
     meta: {
-      icon: 'lucide:copyright',
+      icon: "lucide:copyright",
       order: 9999,
-      title: $t('demos.vben.about'),
+      title: $t("demos.vben.about"),
     },
-    name: 'VbenAbout',
-    path: '/vben-admin/about',
+    name: "VbenAbout",
+    path: "/vben-admin/about",
   },
   {
-    name: 'Profile',
-    path: '/profile',
-    component: () => import('#/views/_core/profile/index.vue'),
+    name: "Profile",
+    path: "/profile",
+    component: () => import("#/views/_core/profile/index.vue"),
     meta: {
-      icon: 'lucide:user',
+      icon: "lucide:user",
       hideInMenu: true,
-      title: $t('page.auth.profile'),
+      title: $t("page.auth.profile"),
     },
   },
 ];

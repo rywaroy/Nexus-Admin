@@ -29,6 +29,7 @@ export {
   FoldHorizontal,
   Fullscreen,
   Github,
+  Grid,
   Grip,
   GripVertical,
   Menu as IconDefault,
@@ -37,6 +38,7 @@ export {
   InspectionPanel,
   Key,
   Languages,
+  LayoutGrid,
   LoaderCircle,
   LockKeyhole,
   LogOut,
@@ -67,4 +69,4 @@ export {
   SwatchBook,
   UserRoundPen,
   X,
-} from 'lucide-vue-next';
+} from "lucide-vue-next";

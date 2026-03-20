@@ -1,26 +1,26 @@
-import type { FieldOptions, FormContext, GenericObject } from 'vee-validate';
-import type { ZodTypeAny } from 'zod';
+import type { FieldOptions, FormContext, GenericObject } from "vee-validate";
+import type { ZodTypeAny } from "zod";
 
-import type { Component, HtmlHTMLAttributes, Ref } from 'vue';
+import type { Component, HtmlHTMLAttributes, Ref } from "vue";
 
-import type { VbenButtonProps } from '@vben-core/shadcn-ui';
-import type { ClassType, MaybeComputedRef } from '@vben-core/typings';
+import type { VbenButtonProps } from "@vben-core/shadcn-ui";
+import type { ClassType, MaybeComputedRef } from "@vben-core/typings";
 
-import type { FormApi } from './form-api';
+import type { FormApi } from "./form-api";
 
-export type FormLayout = 'horizontal' | 'inline' | 'vertical';
+export type FormLayout = "horizontal" | "inline" | "vertical";
 
 export type BaseFormComponentType =
-  | 'DefaultButton'
-  | 'PrimaryButton'
-  | 'VbenCheckbox'
-  | 'VbenInput'
-  | 'VbenInputPassword'
-  | 'VbenPinInput'
-  | 'VbenSelect'
+  | "DefaultButton"
+  | "PrimaryButton"
+  | "VbenCheckbox"
+  | "VbenInput"
+  | "VbenInputPassword"
+  | "VbenPinInput"
+  | "VbenSelect"
   | (Record<never, never> & string);
 
-type Breakpoints = '2xl:' | '3xl:' | '' | 'lg:' | 'md:' | 'sm:' | 'xl:';
+type Breakpoints = "2xl:" | "3xl:" | "" | "lg:" | "md:" | "sm:" | "xl:";
 
 type GridCols = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
@@ -29,9 +29,9 @@ export type WrapperClassType =
   | (Record<never, never> & string);
 
 export type FormItemClassType =
-  | `${Breakpoints}cols-end-${'auto' | GridCols}`
-  | `${Breakpoints}cols-span-${'auto' | 'full' | GridCols}`
-  | `${Breakpoints}cols-start-${'auto' | GridCols}`
+  | `${Breakpoints}cols-end-${"auto" | GridCols}`
+  | `${Breakpoints}cols-span-${"auto" | "full" | GridCols}`
+  | `${Breakpoints}cols-start-${"auto" | GridCols}`
   | (Record<never, never> & string)
   | WrapperClassType;
 
@@ -55,9 +55,9 @@ export interface FormShape {
 }
 
 export type MaybeComponentPropKey =
-  | 'options'
-  | 'placeholder'
-  | 'title'
+  | "options"
+  | "placeholder"
+  | "title"
   | keyof HtmlHTMLAttributes
   | (Record<never, never> & string);
 
@@ -68,8 +68,8 @@ export type FormActions = FormContext<GenericObject>;
 export type CustomRenderType = (() => Component | string) | string;
 
 export type FormSchemaRuleType =
-  | 'required'
-  | 'selectRequired'
+  | "required"
+  | "selectRequired"
   | null
   | (Record<never, never> & string)
   | ZodTypeAny;
@@ -130,10 +130,7 @@ export interface FormItemDependencies {
 }
 
 type ComponentProps =
-  | ((
-      value: Partial<Record<string, any>>,
-      actions: FormActions,
-    ) => MaybeComponentProps)
+  | ((value: Partial<Record<string, any>>, actions: FormActions) => MaybeComponentProps)
   | MaybeComponentProps;
 
 export interface FormCommonConfig {
@@ -213,23 +210,14 @@ type RenderComponentContentType = (
   api: FormActions,
 ) => Record<string, any>;
 
-export type HandleSubmitFn = (
-  values: Record<string, any>,
-) => Promise<void> | void;
+export type HandleSubmitFn = (values: Record<string, any>) => Promise<void> | void;
 
-export type HandleResetFn = (
-  values: Record<string, any>,
-) => Promise<void> | void;
+export type HandleResetFn = (values: Record<string, any>) => Promise<void> | void;
 
 export type FieldMappingTime = [
   string,
   [string, string],
-  (
-    | ((value: any, fieldName: string) => any)
-    | [string, string]
-    | null
-    | string
-  )?,
+  (((value: any, fieldName: string) => any) | [string, string] | null | string)?,
 ][];
 
 export type ArrayToStringFields = Array<
@@ -271,9 +259,7 @@ export interface FormFieldProps extends FormSchema {
   required?: boolean;
 }
 
-export interface FormRenderProps<
-  T extends BaseFormComponentType = BaseFormComponentType,
-> {
+export interface FormRenderProps<T extends BaseFormComponentType = BaseFormComponentType> {
   /**
    * 表单字段数组映射字符串配置 默认使用","
    */
@@ -349,10 +335,7 @@ export interface ActionButtonOptions extends VbenButtonProps {
 
 export interface VbenFormProps<
   T extends BaseFormComponentType = BaseFormComponentType,
-> extends Omit<
-    FormRenderProps<T>,
-    'componentBindEventMap' | 'componentMap' | 'form'
-  > {
+> extends Omit<FormRenderProps<T>, "componentBindEventMap" | "componentMap" | "form"> {
   /**
    * 操作按钮是否反转（提交按钮前置）
    */
@@ -361,11 +344,11 @@ export interface VbenFormProps<
    * 操作按钮组的样式
    * newLine: 在新行显示。rowEnd: 在行内显示，靠右对齐（默认）。inline: 使用grid默认样式
    */
-  actionLayout?: 'inline' | 'newLine' | 'rowEnd';
+  actionLayout?: "inline" | "newLine" | "rowEnd";
   /**
    * 操作按钮组显示位置，默认靠右显示
    */
-  actionPosition?: 'center' | 'left' | 'right';
+  actionPosition?: "center" | "left" | "right";
   /**
    * 表单操作区域class
    */
@@ -394,10 +377,7 @@ export interface VbenFormProps<
   /**
    * 表单值变化回调
    */
-  handleValuesChange?: (
-    values: Record<string, any>,
-    fieldsChanged: string[],
-  ) => void;
+  handleValuesChange?: (values: Record<string, any>, fieldsChanged: string[]) => void;
   /**
    * 重置按钮参数
    */
@@ -439,9 +419,7 @@ export type ExtendedFormApi = FormApi & {
   ) => Readonly<Ref<T>>;
 };
 
-export interface VbenFormAdapterOptions<
-  T extends BaseFormComponentType = BaseFormComponentType,
-> {
+export interface VbenFormAdapterOptions<T extends BaseFormComponentType = BaseFormComponentType> {
   config?: {
     baseModelPropName?: string;
     disabledOnChangeListener?: boolean;
@@ -450,15 +428,7 @@ export interface VbenFormAdapterOptions<
     modelPropNameMap?: Partial<Record<T, string>>;
   };
   defineRules?: {
-    required?: (
-      value: any,
-      params: any,
-      ctx: Record<string, any>,
-    ) => boolean | string;
-    selectRequired?: (
-      value: any,
-      params: any,
-      ctx: Record<string, any>,
-    ) => boolean | string;
+    required?: (value: any, params: any, ctx: Record<string, any>) => boolean | string;
+    selectRequired?: (value: any, params: any, ctx: Record<string, any>) => boolean | string;
   };
 }
