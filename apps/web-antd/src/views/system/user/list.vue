@@ -1,28 +1,26 @@
 <script lang="ts" setup>
-import type {
-  OnActionClickParams,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
-import type { SystemDeptApi } from '#/api/system/dept';
-import type { SystemUserApi } from '#/api/system/user';
-import type { TreeProps } from 'ant-design-vue/es/tree';
+import type { TreeProps } from "ant-design-vue/es/tree";
 
-import { computed, onMounted, ref } from 'vue';
+import type { OnActionClickParams, VxeTableGridOptions } from "#/adapter/vxe-table";
+import type { SystemDeptApi } from "#/api/system/dept";
+import type { SystemUserApi } from "#/api/system/user";
 
-import { useAccess } from '@vben/access';
-import { Page, useVbenDrawer } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { computed, onMounted, ref } from "vue";
 
-import { Button, Card, message, Modal, Spin, Tree } from 'ant-design-vue';
+import { useAccess } from "@vben/access";
+import { Page, useVbenDrawer } from "@vben/common-ui";
+import { Plus } from "@vben/icons";
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getDeptTree } from '#/api/system/dept';
-import { deleteUser, getUserList, updateUserStatus } from '#/api/system/user';
-import { $t } from '#/locales';
+import { Button, Card, message, Modal, Spin, Tree } from "ant-design-vue";
 
-import { PERMISSION_CODES, useColumns, useGridFormSchema } from './data';
-import Form from './modules/form.vue';
-import ResetPasswordForm from './modules/reset-password.vue';
+import { useVbenVxeGrid } from "#/adapter/vxe-table";
+import { getDeptTree } from "#/api/system/dept";
+import { deleteUser, getUserList, updateUserStatus } from "#/api/system/user";
+import { $t } from "#/locales";
+
+import { PERMISSION_CODES, useColumns, useGridFormSchema } from "./data";
+import Form from "./modules/form.vue";
+import ResetPasswordForm from "./modules/reset-password.vue";
 
 const { hasAccessByCodes } = useAccess();
 type TreeKey = number | string;
@@ -42,8 +40,8 @@ const deptTree = ref<SystemDeptApi.SystemDept[]>([]);
 const loadingDept = ref(false);
 const selectedDeptId = ref<string>();
 const expandedKeys = ref<TreeKey[]>([]);
-const deptTreeData = computed<TreeProps['treeData']>(
-  () => deptTree.value as unknown as TreeProps['treeData'],
+const deptTreeData = computed<TreeProps["treeData"]>(
+  () => deptTree.value as unknown as TreeProps["treeData"],
 );
 
 // 加载部门树
@@ -55,7 +53,7 @@ const loadDeptTree = async () => {
     // 默认展开所有节点
     expandedKeys.value = getAllDeptIds(res);
   } catch {
-    message.error($t('ui.actionMessage.operationFailed'));
+    message.error($t("ui.actionMessage.operationFailed"));
   } finally {
     loadingDept.value = false;
   }
@@ -95,7 +93,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   },
   gridOptions: {
     columns: useColumns(onActionClick, onStatusChange, hasAccessByCodes),
-    height: 'auto',
+    height: "auto",
     keepSource: true,
     proxyConfig: {
       ajax: {
@@ -114,7 +112,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       },
     },
     rowConfig: {
-      keyField: 'id',
+      keyField: "id",
     },
     toolbarConfig: {
       custom: true,
@@ -128,15 +126,15 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 function onActionClick(e: OnActionClickParams<SystemUserApi.SystemUser>) {
   switch (e.code) {
-    case 'delete': {
+    case "delete": {
       onDelete(e.row);
       break;
     }
-    case 'edit': {
+    case "edit": {
       onEdit(e.row);
       break;
     }
-    case 'resetPassword': {
+    case "resetPassword": {
       onResetPassword(e.row);
       break;
     }
@@ -151,7 +149,7 @@ const confirm = (content: string, title: string) =>
     Modal.confirm({
       content,
       onCancel() {
-        reject(new Error('cancelled'));
+        reject(new Error("cancelled"));
       },
       onOk() {
         resolve(true);
@@ -163,26 +161,21 @@ const confirm = (content: string, title: string) =>
 /**
  * 状态切换处理
  */
-async function onStatusChange(
-  newStatus: number,
-  row: SystemUserApi.SystemUser,
-) {
+async function onStatusChange(newStatus: number, row: SystemUserApi.SystemUser) {
   const statusText =
-    newStatus === 0
-      ? $t('system.user.statusEnabled')
-      : $t('system.user.statusDisabled');
+    newStatus === 0 ? $t("system.user.statusEnabled") : $t("system.user.statusDisabled");
   try {
     await confirm(
-      $t('system.user.switchStatusConfirm', [row.username, statusText]),
-      $t('system.user.switchStatus'),
+      $t("system.user.switchStatusConfirm", [row.username, statusText]),
+      $t("system.user.switchStatus"),
     );
     await updateUserStatus(row.id, newStatus as 0 | 1);
     return true;
   } catch (error) {
-    if (error instanceof Error && error.message === 'cancelled') {
+    if (error instanceof Error && error.message === "cancelled") {
       return false;
     }
-    message.error($t('ui.actionMessage.operationFailed'));
+    message.error($t("ui.actionMessage.operationFailed"));
     return false;
   }
 }
@@ -200,23 +193,23 @@ function onResetPassword(row: SystemUserApi.SystemUser) {
  */
 async function onDelete(row: SystemUserApi.SystemUser) {
   const hideLoading = message.loading({
-    content: $t('ui.actionMessage.deleting', [row.username]),
+    content: $t("ui.actionMessage.deleting", [row.username]),
     duration: 0,
-    key: 'action_process_msg',
+    key: "action_process_msg",
   });
 
   try {
     await deleteUser(row.id);
     message.success({
-      content: $t('ui.actionMessage.deleteSuccess', [row.username]),
-      key: 'action_process_msg',
+      content: $t("ui.actionMessage.deleteSuccess", [row.username]),
+      key: "action_process_msg",
     });
     onRefresh();
   } catch (error: any) {
     hideLoading();
     message.error({
-      content: error?.response?.data?.message || $t('system.user.deleteFailed'),
-      key: 'action_process_msg',
+      content: error?.response?.data?.message || $t("system.user.deleteFailed"),
+      key: "action_process_msg",
     });
   }
 }
@@ -241,20 +234,12 @@ onMounted(() => {
 
     <div class="flex h-full gap-4">
       <!-- 左侧部门树 -->
-      <Card
-        class="w-64 shrink-0 overflow-auto"
-        :body-style="{ padding: '12px' }"
-      >
+      <Card class="w-64 shrink-0 overflow-auto" :body-style="{ padding: '12px' }">
         <template #title>
           <div class="flex items-center justify-between">
-            <span>{{ $t('system.user.deptTree') }}</span>
-            <Button
-              v-if="selectedDeptId"
-              type="link"
-              size="small"
-              @click="onClearDeptFilter"
-            >
-              {{ $t('common.clear') }}
+            <span>{{ $t("system.user.deptTree") }}</span>
+            <Button v-if="selectedDeptId" type="link" size="small" @click="onClearDeptFilter">
+              {{ $t("common.clear") }}
             </Button>
           </div>
         </template>
@@ -269,7 +254,7 @@ onMounted(() => {
             @select="onDeptSelect"
           />
           <div v-else class="py-4 text-center text-gray-400">
-            {{ $t('common.noData') }}
+            {{ $t("common.noData") }}
           </div>
         </Spin>
       </Card>
@@ -278,13 +263,9 @@ onMounted(() => {
       <div class="flex-1 overflow-hidden">
         <Grid :table-title="$t('system.user.list')">
           <template #toolbar-tools>
-            <Button
-              v-access:code="PERMISSION_CODES.create"
-              type="primary"
-              @click="onCreate"
-            >
+            <Button v-access:code="PERMISSION_CODES.create" type="primary" @click="onCreate">
               <Plus class="size-5" />
-              {{ $t('ui.actionTitle.create', [$t('system.user.name')]) }}
+              {{ $t("ui.actionTitle.create", [$t("system.user.name")]) }}
             </Button>
           </template>
         </Grid>

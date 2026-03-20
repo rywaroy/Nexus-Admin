@@ -1,4 +1,4 @@
-import { requestClient } from '#/api/request';
+import { requestClient } from "#/api/request";
 
 /**
  * 用户管理 API 命名空间
@@ -87,16 +87,14 @@ export namespace SystemUserApi {
   }
 
   /** 更新用户请求（不含用户名和密码） */
-  export type UpdateUserRequest = Partial<
-    Omit<CreateUserRequest, 'password' | 'username'>
-  >;
+  export type UpdateUserRequest = Partial<Omit<CreateUserRequest, "password" | "username">>;
 }
 
 /**
  * 获取用户列表
  */
 export const getUserList = (params?: SystemUserApi.QueryUserRequest) => {
-  return requestClient.get<SystemUserApi.UserListResult>('/system/user/list', {
+  return requestClient.get<SystemUserApi.UserListResult>("/system/user/list", {
     params,
   });
 };
@@ -112,20 +110,14 @@ export const getUser = (id: string) => {
  * 创建用户
  */
 export const createUser = (data: SystemUserApi.CreateUserRequest) => {
-  return requestClient.post<SystemUserApi.SystemUser>('/system/user', data);
+  return requestClient.post<SystemUserApi.SystemUser>("/system/user", data);
 };
 
 /**
  * 更新用户
  */
-export const updateUser = (
-  id: string,
-  data: SystemUserApi.UpdateUserRequest,
-) => {
-  return requestClient.put<SystemUserApi.SystemUser>(
-    `/system/user/${id}`,
-    data,
-  );
+export const updateUser = (id: string, data: SystemUserApi.UpdateUserRequest) => {
+  return requestClient.put<SystemUserApi.SystemUser>(`/system/user/${id}`, data);
 };
 
 /**
@@ -139,10 +131,7 @@ export const deleteUser = (id: string) => {
  * 更新用户状态
  */
 export const updateUserStatus = (id: string, status: 0 | 1) => {
-  return requestClient.put<SystemUserApi.SystemUser>(
-    `/system/user/${id}/status`,
-    { status },
-  );
+  return requestClient.put<SystemUserApi.SystemUser>(`/system/user/${id}/status`, { status });
 };
 
 /**

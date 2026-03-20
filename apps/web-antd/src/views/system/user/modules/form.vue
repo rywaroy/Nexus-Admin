@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import type { SystemDeptApi } from '#/api/system/dept';
-import type { SystemUserApi } from '#/api/system/user';
+import type { SystemDeptApi } from "#/api/system/dept";
+import type { SystemUserApi } from "#/api/system/user";
 
-import { computed, nextTick, reactive, ref } from 'vue';
+import { computed, nextTick, reactive, ref } from "vue";
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { useVbenDrawer } from "@vben/common-ui";
 
-import { message } from 'ant-design-vue';
+import { message } from "ant-design-vue";
 
-import { useVbenForm } from '#/adapter/form';
-import { getDeptTree } from '#/api/system/dept';
-import { createUser, updateUser } from '#/api/system/user';
-import { $t } from '#/locales';
+import { useVbenForm } from "#/adapter/form";
+import { getDeptTree } from "#/api/system/dept";
+import { createUser, updateUser } from "#/api/system/user";
+import { $t } from "#/locales";
 
-import { useFormSchema } from '../data';
+import { useFormSchema } from "../data";
 
 const emit = defineEmits<{
   success: [];
@@ -47,14 +47,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
       await (formData.value?.id
         ? updateUser(formData.value.id, values)
         : createUser(values as SystemUserApi.CreateUserRequest));
-      message.success($t('ui.actionMessage.operationSuccess'));
-      emit('success');
+      message.success($t("ui.actionMessage.operationSuccess"));
+      emit("success");
       drawerApi.close();
     } catch (error: any) {
-      message.error(
-        error?.response?.data?.message ||
-          $t('ui.actionMessage.operationFailed'),
-      );
+      message.error(error?.response?.data?.message || $t("ui.actionMessage.operationFailed"));
     } finally {
       drawerApi.unlock();
     }
@@ -95,14 +92,14 @@ const loadOptions = async () => {
   try {
     deptTree.value = await getDeptTree({ status: 0 });
   } catch {
-    message.error($t('ui.actionMessage.operationFailed'));
+    message.error($t("ui.actionMessage.operationFailed"));
   }
 };
 
 const getDrawerTitle = computed(() =>
   formData.value?.id
-    ? $t('ui.actionTitle.edit', [$t('system.user.name')])
-    : $t('ui.actionTitle.create', [$t('system.user.name')]),
+    ? $t("ui.actionTitle.edit", [$t("system.user.name")])
+    : $t("ui.actionTitle.create", [$t("system.user.name")]),
 );
 </script>
 
