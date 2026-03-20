@@ -46,6 +46,19 @@ export const useGridFormSchema = (): VbenFormSchema[] => [
     component: 'ApiSelect',
     componentProps: {
       allowClear: true,
+      api: () => getRoleList({ status: 0, pageSize: 1000 }),
+      labelField: 'name',
+      valueField: 'id',
+      resultField: 'list',
+      placeholder: $t('system.user.rolesPlaceholder'),
+    },
+    fieldName: 'roleId',
+    label: $t('system.user.roles'),
+  },
+  {
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
       api: () => getPostList({ status: 0, pageSize: 1000 }),
       labelField: 'postName',
       valueField: 'id',

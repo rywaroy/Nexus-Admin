@@ -5,8 +5,9 @@ import type {
 } from '#/adapter/vxe-table';
 import type { SystemDeptApi } from '#/api/system/dept';
 import type { SystemUserApi } from '#/api/system/user';
+import type { TreeProps } from 'ant-design-vue/es/tree';
 
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
@@ -24,6 +25,7 @@ import Form from './modules/form.vue';
 import ResetPasswordForm from './modules/reset-password.vue';
 
 const { hasAccessByCodes } = useAccess();
+type TreeKey = number | string;
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -39,7 +41,10 @@ const [ResetPasswordDrawer, resetPasswordDrawerApi] = useVbenDrawer({
 const deptTree = ref<SystemDeptApi.SystemDept[]>([]);
 const loadingDept = ref(false);
 const selectedDeptId = ref<string>();
-const expandedKeys = ref<string[]>([]);
+const expandedKeys = ref<TreeKey[]>([]);
+const deptTreeData = computed<TreeProps['treeData']>(
+  () => deptTree.value as unknown as TreeProps['treeData'],
+);
 
 // 加载部门树
 const loadDeptTree = async () => {
@@ -72,8 +77,8 @@ const getAllDeptIds = (list: SystemDeptApi.SystemDept[]): string[] => {
 };
 
 // 部门树选中处理
-const onDeptSelect = (selectedKeys: string[]) => {
-  selectedDeptId.value = selectedKeys[0];
+const onDeptSelect = (selectedKeys: TreeKey[]) => {
+  selectedDeptId.value = selectedKeys[0] as string | undefined;
   gridApi.query();
 };
 
@@ -257,7 +262,7 @@ onMounted(() => {
           <Tree
             v-if="deptTree.length > 0"
             v-model:expanded-keys="expandedKeys"
-            :tree-data="deptTree"
+            :tree-data="deptTreeData"
             :field-names="{ title: 'name', key: 'id', children: 'children' }"
             :selected-keys="selectedDeptId ? [selectedDeptId] : []"
             block-node

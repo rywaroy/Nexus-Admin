@@ -2,7 +2,7 @@
 import type { SystemDeptApi } from '#/api/system/dept';
 import type { SystemUserApi } from '#/api/system/user';
 
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, reactive, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 
@@ -28,10 +28,12 @@ const formOptions = computed(() => ({
   deptTree: deptTree.value,
 }));
 
-const [Form, formApi] = useVbenForm({
-  schema: computed(() => useFormSchema(isEdit.value, formOptions.value)),
-  showDefaultActions: false,
-});
+const [Form, formApi] = useVbenForm(
+  reactive({
+    schema: computed(() => useFormSchema(isEdit.value, formOptions.value)),
+    showDefaultActions: false,
+  }),
+);
 
 const [Drawer, drawerApi] = useVbenDrawer({
   async onConfirm() {

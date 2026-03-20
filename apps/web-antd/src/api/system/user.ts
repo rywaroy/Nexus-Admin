@@ -56,6 +56,8 @@ export namespace SystemUserApi {
     deptId?: string;
     /** 岗位ID */
     postId?: string;
+    /** 角色ID */
+    roleId?: string;
   }
 
   /** 创建用户请求 */
