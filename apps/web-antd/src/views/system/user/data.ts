@@ -1,3 +1,5 @@
+import type { Ref } from "vue";
+
 import type { VbenFormSchema } from "#/adapter/form";
 import type { OnActionClickFn, VxeTableGridOptions } from "#/adapter/vxe-table";
 import type { SystemDeptApi } from "#/api/system/dept";
@@ -23,10 +25,32 @@ interface FormSchemaOptions {
   deptTree: SystemDeptApi.SystemDept[];
 }
 
+interface GridFormSchemaOptions {
+  deptTree: Ref<SystemDeptApi.SystemDept[]>;
+}
+
 /**
  * 用户列表筛选表单 Schema
  */
-export const useGridFormSchema = (): VbenFormSchema[] => [
+export const useGridFormSchema = (options: GridFormSchemaOptions): VbenFormSchema[] => [
+  {
+    component: "TreeSelect",
+    componentProps: () => ({
+      allowClear: true,
+      fieldNames: {
+        children: "children",
+        label: "name",
+        value: "id",
+      },
+      placeholder: $t("system.user.deptPlaceholder"),
+      showSearch: true,
+      style: { width: "100%" },
+      treeData: options.deptTree.value,
+      treeDefaultExpandAll: true,
+    }),
+    fieldName: "deptId",
+    label: $t("system.user.dept"),
+  },
   {
     component: "Input",
     fieldName: "username",
