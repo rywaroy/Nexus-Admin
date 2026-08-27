@@ -1,24 +1,24 @@
 <script lang="ts" setup>
 // import type { NotificationItem } from '@vben/layouts';
 
-import { computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, watch } from "vue";
+import { useRouter } from "vue-router";
 
-import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
-import { useWatermark } from '@vben/hooks';
-import { Key } from '@vben/icons';
+import { AuthenticationLoginExpiredModal } from "@vben/common-ui";
+import { useWatermark } from "@vben/hooks";
+import { Key } from "@vben/icons";
 import {
   BasicLayout,
   LockScreen,
   // Notification,
   UserDropdown,
-} from '@vben/layouts';
-import { $t } from '@vben/locales';
-import { preferences } from '@vben/preferences';
-import { useAccessStore, useUserStore } from '@vben/stores';
+} from "@vben/layouts";
+import { $t } from "@vben/locales";
+import { preferences } from "@vben/preferences";
+import { useAccessStore, useUserStore } from "@vben/stores";
 
-import { useAuthStore } from '#/store';
-import LoginForm from '#/views/_core/authentication/login.vue';
+import { useAuthStore } from "#/store";
+import LoginForm from "#/views/_core/authentication/login.vue";
 
 // const notifications = ref<NotificationItem[]>([
 //   {
@@ -86,10 +86,10 @@ const { destroyWatermark, updateWatermark } = useWatermark();
 const menus = computed(() => [
   {
     handler: () => {
-      router.push('/auth/change-password');
+      router.push("/auth/change-password");
     },
     icon: Key,
-    text: $t('authentication.changePassword'),
+    text: $t("authentication.changePassword"),
   },
   // {
   //   handler: () => {
@@ -154,9 +154,7 @@ watch(
   async ({ enable, content }) => {
     if (enable) {
       await updateWatermark({
-        content:
-          content ||
-          `${userStore.userInfo?.username} - ${userStore.userInfo?.realName}`,
+        content: content || `${userStore.userInfo?.username} - ${userStore.userInfo?.realName}`,
       });
     } else {
       destroyWatermark();
@@ -174,7 +172,7 @@ watch(
       <UserDropdown
         :avatar
         :menus
-        :text="userStore.userInfo?.username"
+        :text="userStore.userInfo?.nickName"
         :description="userStore.userInfo?.email"
         :tag-text="userStore.userInfo?.roles?.[0]"
         @logout="handleLogout"
@@ -191,10 +189,7 @@ watch(
       />
     </template> -->
     <template #extra>
-      <AuthenticationLoginExpiredModal
-        v-model:open="accessStore.loginExpired"
-        :avatar
-      >
+      <AuthenticationLoginExpiredModal v-model:open="accessStore.loginExpired" :avatar>
         <LoginForm />
       </AuthenticationLoginExpiredModal>
     </template>
