@@ -1,7 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
 import { LOGIN_PATH } from '@vben/constants';
-import { preferences } from '@vben/preferences';
 
 import { $t } from '#/locales';
 
@@ -35,8 +34,18 @@ const coreRoutes: RouteRecordRaw[] = [
     },
     name: 'Root',
     path: '/',
-    redirect: preferences.app.defaultHomePath,
-    children: [],
+    children: [
+      {
+        name: 'NoAccess',
+        path: '/403',
+        component: () => import('#/views/_core/fallback/no-access.vue'),
+        meta: {
+          hideInMenu: true,
+          hideInTab: true,
+          title: $t('page.noAccess.title'),
+        },
+      },
+    ],
   },
   {
     component: AuthPageLayout,

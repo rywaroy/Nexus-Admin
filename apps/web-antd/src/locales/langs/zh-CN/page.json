@@ -8,6 +8,10 @@
     "changePassword": "修改密码",
     "profile": "个人中心"
   },
+  "noAccess": {
+    "title": "暂无访问权限",
+    "description": "当前账号没有可访问的页面，请联系管理员分配菜单权限。"
+  },
   "dashboard": {
     "title": "概览",
     "analytics": "分析页",

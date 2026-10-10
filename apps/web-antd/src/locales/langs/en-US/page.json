@@ -8,6 +8,10 @@
     "changePassword": "Change Password",
     "profile": "Profile"
   },
+  "noAccess": {
+    "title": "No accessible pages",
+    "description": "Your account has no accessible pages. Please contact an administrator to assign menu permissions."
+  },
   "dashboard": {
     "title": "Dashboard",
     "analytics": "Analytics",

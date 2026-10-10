@@ -10,6 +10,7 @@ import { accessRoutes, coreRouteNames } from '#/router/routes';
 import { useAuthStore } from '#/store';
 
 import { generateAccess } from './access';
+import { createLandingPageResolver } from './landing';
 
 /**
  * 通用守卫配置
@@ -52,13 +53,9 @@ function setupAccessGuard(router: Router) {
     const authStore = useAuthStore();
 
     // 基本路由，这些路由不需要进入权限拦截
-    if (coreRouteNames.includes(to.name as string)) {
+    if (to.path !== '/' && coreRouteNames.includes(to.name as string)) {
       if (to.path === LOGIN_PATH && accessStore.accessToken) {
-        return decodeURIComponent(
-          (to.query?.redirect as string) ||
-            userStore.userInfo?.homePath ||
-            preferences.app.defaultHomePath,
-        );
+        return { path: '/', query: to.query, replace: true };
       }
       return true;
     }
@@ -76,7 +73,7 @@ function setupAccessGuard(router: Router) {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
           query:
-            to.fullPath === preferences.app.defaultHomePath
+            to.path === '/'
               ? {}
               : { redirect: encodeURIComponent(to.fullPath) },
           // 携带当前跳转的页面，登录后重新跳转该页面
@@ -86,46 +83,50 @@ function setupAccessGuard(router: Router) {
       return to;
     }
 
-    // 是否已经生成过动态路由
-    if (accessStore.isAccessChecked) {
-      return true;
+    const needsAccessCheck = !accessStore.isAccessChecked;
+    if (needsAccessCheck) {
+      const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
+      const { accessibleMenus, accessibleRoutes } = await generateAccess({
+        roles: userInfo.roles ?? [],
+        router,
+        routes: accessRoutes,
+      });
+
+      // 获取并设置权限码（用于按钮级权限控制）
+      try {
+        const accessCodes = await getAccessCodesApi();
+        accessStore.setAccessCodes(accessCodes);
+      } catch {
+        // 获取权限码失败时不阻断流程，仅清空权限码
+        accessStore.setAccessCodes([]);
+      }
+
+      accessStore.setAccessMenus(accessibleMenus);
+      accessStore.setAccessRoutes(accessibleRoutes);
+      accessStore.setIsAccessChecked(true);
     }
 
-    // 生成路由表
-    // 当前登录用户拥有的角色标识列表
-    const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
-    const userRoles = userInfo.roles ?? [];
+    if (to.path === '/') {
+      const { findFirstPage, resolvePage } = createLandingPageResolver(
+        router,
+        accessStore.accessRoutes,
+      );
+      const redirect =
+        to.query.redirect ??
+        (from.path === LOGIN_PATH ? from.query.redirect : undefined);
+      const page =
+        (typeof redirect === 'string'
+          ? resolvePage(decodeURIComponent(redirect))
+          : undefined) ?? findFirstPage(accessStore.accessMenus);
 
-    // 生成菜单和路由
-    const { accessibleMenus, accessibleRoutes } = await generateAccess({
-      roles: userRoles,
-      router,
-      // 则会在菜单中显示，但是访问会被重定向到403
-      routes: accessRoutes,
-    });
-
-    // 获取并设置权限码（用于按钮级权限控制）
-    try {
-      const accessCodes = await getAccessCodesApi();
-      accessStore.setAccessCodes(accessCodes);
-    } catch {
-      // 获取权限码失败时不阻断流程，仅清空权限码
-      accessStore.setAccessCodes([]);
+      return page
+        ? { path: page.path, query: page.query, hash: page.hash, replace: true }
+        : { name: 'NoAccess', replace: true };
     }
 
-    // 保存菜单信息和路由信息
-    accessStore.setAccessMenus(accessibleMenus);
-    accessStore.setAccessRoutes(accessibleRoutes);
-    accessStore.setIsAccessChecked(true);
-    const redirectPath = (from.query.redirect ??
-      (to.path === preferences.app.defaultHomePath
-        ? userInfo.homePath || preferences.app.defaultHomePath
-        : to.fullPath)) as string;
-
-    return {
-      ...router.resolve(decodeURIComponent(redirectPath)),
-      replace: true,
-    };
+    return needsAccessCheck
+      ? { ...router.resolve(to.fullPath), replace: true }
+      : true;
   });
 }
 
