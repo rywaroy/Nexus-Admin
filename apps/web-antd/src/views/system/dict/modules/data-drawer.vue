@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { DictDataFormDrawerData } from './data-form.vue';
+
 import type { SystemDictApi } from '#/api/system/dict';
 
 import { computed, h, ref } from 'vue';
@@ -39,12 +41,13 @@ const canCreate = computed(() => hasAccessByCodes([PERMISSION_CODES.create]));
 const canUpdate = computed(() => hasAccessByCodes([PERMISSION_CODES.update]));
 const canDelete = computed(() => hasAccessByCodes([PERMISSION_CODES.delete]));
 
-const [DataFormDrawer, dataFormDrawerApi] = useVbenDrawer({
-  connectedComponent: DataForm,
-  destroyOnClose: true,
-});
+const [DataFormDrawer, dataFormDrawerApi] =
+  useVbenDrawer<DictDataFormDrawerData>({
+    connectedComponent: DataForm,
+    destroyOnClose: true,
+  });
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<SystemDictApi.DictType>({
   footer: false,
   async onOpenChange(isOpen) {
     if (!isOpen) {
@@ -53,7 +56,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
       return;
     }
 
-    currentType.value = drawerApi.getData<SystemDictApi.DictType>() ?? null;
+    currentType.value = drawerApi.getData() ?? null;
     await loadData();
   },
 });
@@ -201,7 +204,7 @@ const drawerTitle = computed(() =>
 function onCreate() {
   dataFormDrawerApi
     .setData({
-      currentType: currentType.value!,
+      currentType: currentType.value as SystemDictApi.DictType,
     })
     .open();
 }
@@ -209,7 +212,7 @@ function onCreate() {
 function onEdit(record: SystemDictApi.DictData) {
   dataFormDrawerApi
     .setData({
-      currentType: currentType.value!,
+      currentType: currentType.value as SystemDictApi.DictType,
       record,
     })
     .open();

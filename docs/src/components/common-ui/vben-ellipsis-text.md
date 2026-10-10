@@ -36,20 +36,20 @@ outline: deep
 
 ### Props
 
-| 属性名                 | 描述                               | 类型                                     | 默认值                     |
-| ---------------------- | ---------------------------------- | ---------------------------------------- | -------------------------- |
-| expand                 | 是否支持点击展开或收起             | `boolean`                                | `false`                    |
-| line                   | 文本最大显示行数                   | `number`                                 | `1`                        |
-| maxWidth               | 文本区域最大宽度                   | `number \| string`                       | `'100%'`                   |
-| placement              | 提示浮层位置                       | `'bottom' \| 'left' \| 'right' \| 'top'` | `'top'`                    |
-| tooltip                | 是否启用文本提示                   | `boolean`                                | `true`                     |
-| tooltipWhenEllipsis    | 是否仅在文本被截断时显示提示       | `boolean`                                | `false`                    |
-| ellipsisThreshold      | 文本截断检测阈值，值越大判定越严格 | `number`                                 | `3`                        |
-| tooltipBackgroundColor | 提示背景色                         | `string`                                 | `''`                       |
-| tooltipColor           | 提示文字颜色                       | `string`                                 | `''`                       |
-| tooltipFontSize        | 提示文字大小，单位 `px`            | `number`                                 | `14`                       |
-| tooltipMaxWidth        | 提示内容最大宽度，单位 `px`        | `number`                                 | -                          |
-| tooltipOverlayStyle    | 提示内容区域样式                   | `CSSProperties`                          | `{ textAlign: 'justify' }` |
+| 属性名 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| expand | 是否支持点击展开或收起 | `boolean` | `false` |
+| line | 文本最大显示行数 | `number` | `1` |
+| maxWidth | 文本区域最大宽度 | `number \| string` | `'100%'` |
+| placement | 提示浮层位置 | `'bottom' \| 'left' \| 'right' \| 'top'` | `'top'` |
+| tooltip | 是否启用文本提示 | `boolean` | `true` |
+| tooltipWhenEllipsis | 是否仅在文本被截断时显示提示 | `boolean` | `false` |
+| ellipsisThreshold | 文本截断检测阈值，值越大判定越严格 | `number` | `3` |
+| tooltipBackgroundColor | 提示背景色 | `string` | `''` |
+| tooltipColor | 提示文字颜色 | `string` | `''` |
+| tooltipFontSize | 提示文字大小，单位 `px` | `number` | `14` |
+| tooltipMaxWidth | 提示内容最大宽度，单位 `px` | `number` | - |
+| tooltipOverlayStyle | 提示内容区域样式 | `CSSProperties` | `{ textAlign: 'justify' }` |
 
 ### Events
 

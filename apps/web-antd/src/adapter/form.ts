@@ -1,9 +1,10 @@
 import type {
+  VbenFormProps as FormProps,
   VbenFormSchema as FormSchema,
-  VbenFormProps,
+  FormValues,
 } from '@vben/common-ui';
 
-import type { ComponentType } from './component';
+import type { ComponentPropsMap, ComponentType } from './component';
 
 import { setupVbenForm, useVbenForm as useForm, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -23,7 +24,7 @@ async function initSetupVbenForm() {
         Tiptap: 'modelValue',
       },
     },
-    defineRules: {
+    rules: {
       // 输入项目必填国际化适配
       required: (value, _params, ctx) => {
         if (value === undefined || value === null || value.length === 0) {
@@ -42,9 +43,27 @@ async function initSetupVbenForm() {
   });
 }
 
-const useVbenForm = useForm<ComponentType>;
+function useVbenForm<
+  TFormValues extends FormValues = FormValues,
+  TSubmitValues extends FormValues = TFormValues,
+>(
+  options: FormProps<
+    ComponentType,
+    ComponentPropsMap,
+    TFormValues,
+    TSubmitValues
+  >,
+) {
+  return useForm<TFormValues, ComponentType, ComponentPropsMap, TSubmitValues>(
+    options,
+  );
+}
 
 export { initSetupVbenForm, useVbenForm, z };
 
-export type VbenFormSchema = FormSchema<ComponentType>;
-export type { VbenFormProps };
+export type VbenFormSchema<TValues extends FormValues = FormValues> =
+  FormSchema<ComponentType, ComponentPropsMap, TValues>;
+export type VbenFormProps<
+  TFormValues extends FormValues = FormValues,
+  TSubmitValues extends FormValues = TFormValues,
+> = FormProps<ComponentType, ComponentPropsMap, TFormValues, TSubmitValues>;

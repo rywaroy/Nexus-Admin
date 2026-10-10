@@ -1,31 +1,43 @@
 <script setup lang="ts">
-import type { MenuRecordRaw } from "@vben/types";
+import type { MenuRecordRaw } from '@vben/types';
 
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
-import { ArrowDown, ArrowUp, CornerDownLeft, MdiKeyboardEsc, Search } from "@vben/icons";
-import { $t } from "@vben/locales";
-import { isWindowsOs } from "@vben/utils";
+import {
+  ArrowDown,
+  ArrowUp,
+  CornerDownLeft,
+  MdiKeyboardEsc,
+  Search,
+} from '@vben/icons';
+import { $t } from '@vben/locales';
+import { isWindowsOs } from '@vben/utils';
 
-import { useVbenModal } from "@vben-core/popup-ui";
+import { useVbenModal } from '@vben-core/popup-ui';
 
-import { useMagicKeys, whenever } from "@vueuse/core";
+import { useMagicKeys, whenever } from '@vueuse/core';
 
-import SearchPanel from "./search-panel.vue";
+import SearchPanel from './search-panel.vue';
 
 defineOptions({
-  name: "GlobalSearch",
+  name: 'GlobalSearch',
 });
 
 const props = withDefaults(
-  defineProps<{ enableShortcutKey?: boolean; menus?: MenuRecordRaw[] }>(),
+  defineProps<{
+    enableShortcutKey?: boolean;
+    menus?: MenuRecordRaw[];
+    /** 是否显示触发按钮（嵌在 dropdown 等容器里时可关掉） */
+    showButton?: boolean;
+  }>(),
   {
     enableShortcutKey: true,
     menus: () => [],
+    showButton: true,
   },
 );
 
-const keyword = ref("");
+const keyword = ref('');
 const searchInputRef = ref<HTMLInputElement>();
 
 const [Modal, modalApi] = useVbenModal({
@@ -34,7 +46,7 @@ const [Modal, modalApi] = useVbenModal({
   },
   onOpenChange(isOpen: boolean) {
     if (!isOpen) {
-      keyword.value = "";
+      keyword.value = '';
     }
   },
 });
@@ -42,11 +54,11 @@ const open = modalApi.useStore((state) => state.isOpen);
 
 function handleClose() {
   modalApi.close();
-  keyword.value = "";
+  keyword.value = '';
 }
 
 const keys = useMagicKeys();
-const cmd = isWindowsOs() ? keys["ctrl+k"] : keys["cmd+k"];
+const cmd = isWindowsOs() ? keys['ctrl+k'] : keys['cmd+k'];
 if (cmd) {
   whenever(cmd, () => {
     if (props.enableShortcutKey) {
@@ -62,16 +74,16 @@ whenever(open, () => {
 });
 
 const preventDefaultBrowserSearchHotKey = (event: KeyboardEvent) => {
-  if (event.key?.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+  if (event.key?.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey)) {
     event.preventDefault();
   }
 };
 
 const toggleKeydownListener = () => {
   if (props.enableShortcutKey) {
-    window.addEventListener("keydown", preventDefaultBrowserSearchHotKey);
+    window.addEventListener('keydown', preventDefaultBrowserSearchHotKey);
   } else {
-    window.removeEventListener("keydown", preventDefaultBrowserSearchHotKey);
+    window.removeEventListener('keydown', preventDefaultBrowserSearchHotKey);
   }
 };
 
@@ -85,14 +97,25 @@ onMounted(() => {
   toggleKeydownListener();
 
   onUnmounted(() => {
-    window.removeEventListener("keydown", preventDefaultBrowserSearchHotKey);
+    window.removeEventListener('keydown', preventDefaultBrowserSearchHotKey);
   });
+});
+
+// 暴露给父组件，允许从外部触发搜索弹框（如 user-dropdown 里点击菜单项触发）
+defineExpose({
+  open: () => modalApi.open(),
+  close: () => modalApi.close(),
+  toggle: toggleOpen,
 });
 </script>
 
 <template>
   <div>
-    <Modal :fullscreen-button="false" class="w-150" header-class="py-2 border-b">
+    <Modal
+      :fullscreen-button="false"
+      class="w-150"
+      header-class="py-2 border-b"
+    >
       <template #title>
         <div class="flex items-center">
           <Search class="mr-2 size-4 text-muted-foreground" />
@@ -110,21 +133,22 @@ onMounted(() => {
         <div class="flex w-full justify-start text-xs">
           <div class="mr-2 flex items-center">
             <CornerDownLeft class="mr-1 size-3" />
-            {{ $t("ui.widgets.search.select") }}
+            {{ $t('ui.widgets.search.select') }}
           </div>
           <div class="mr-2 flex items-center">
             <ArrowUp class="mr-1 size-3" />
             <ArrowDown class="mr-1 size-3" />
-            {{ $t("ui.widgets.search.navigate") }}
+            {{ $t('ui.widgets.search.navigate') }}
           </div>
           <div class="flex items-center">
             <MdiKeyboardEsc class="mr-1 size-3" />
-            {{ $t("ui.widgets.search.close") }}
+            {{ $t('ui.widgets.search.close') }}
           </div>
         </div>
       </template>
     </Modal>
     <div
+      v-if="showButton"
       class="group flex h-8 cursor-pointer items-center gap-3 rounded-2xl border-none bg-none px-2 py-0.5 outline-hidden md:bg-accent"
       @click="toggleOpen()"
     >
@@ -134,13 +158,13 @@ onMounted(() => {
       <span
         class="hidden text-xs text-muted-foreground duration-300 group-hover:text-foreground md:block"
       >
-        {{ $t("ui.widgets.search.title") }}
+        {{ $t('ui.widgets.search.title') }}
       </span>
       <span
         v-if="enableShortcutKey"
         class="relative hidden rounded-sm rounded-r-xl border-foreground/60 bg-background px-1.5 py-1 text-xs leading-none text-muted-foreground group-hover:text-foreground group-hover:opacity-100 md:block"
       >
-        {{ isWindowsOs() ? "Ctrl" : "⌘" }}
+        {{ isWindowsOs() ? 'Ctrl' : '⌘' }}
         <kbd>K</kbd>
       </span>
       <span v-else></span>

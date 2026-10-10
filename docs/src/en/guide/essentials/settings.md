@@ -18,10 +18,10 @@ The rules are consistent with [Vite Env Variables and Modes](https://vitejs.dev/
 - Only variables starting with `VITE_` will be embedded into the client-side package. You can access them in the project code like this:
 
   ```ts
-  console.log(import.meta.env.VITE_PROT);
+  console.log(import.meta.env.VITE_PORT);
   ```
 
-- Variables starting with `VITE_GLOB_*` will be added to the `_app.config.js` configuration file during packaging.
+- Variables starting with `VITE_GLOB_*` will be added to the `_app-config-{version}-{hash}.js` configuration file during packaging.
 
 :::
 
@@ -87,16 +87,16 @@ VITE_ARCHIVER=true
 
 ## Dynamic Configuration in Production Environment
 
-When executing `pnpm build` in the root directory of the monorepo, a `dist/_app.config.js` file will be automatically generated in the corresponding application and inserted into `index.html`.
+When executing `pnpm build` in the root directory of the monorepo, a `dist/_app-config-{version}-{hash}.js` file will be automatically generated in the corresponding application and inserted into `index.html`.
 
-`_app.config.js` is a dynamic configuration file that allows for modifications to the configuration dynamically based on different environments after the project has been built. The content is as follows:
+`_app-config-{version}-{hash}.js` is a dynamic configuration file that allows for modifications to the configuration dynamically based on different environments after the project has been built. The content is as follows:
 
 ```ts
 window._VBEN_ADMIN_PRO_APP_CONF_ = {
-  VITE_GLOB_API_URL: "https://mock-napi.vben.pro/api",
+  VITE_GLOB_API_URL: 'https://mock-napi.vben.pro/api',
 };
 Object.freeze(window._VBEN_ADMIN_PRO_APP_CONF_);
-Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
+Object.defineProperty(window, '_VBEN_ADMIN_PRO_APP_CONF_', {
   configurable: false,
   writable: false,
 });
@@ -104,11 +104,11 @@ Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
 
 ### Purpose
 
-`_app.config.js` is used for projects that need to dynamically modify configurations after packaging, such as API endpoints. There's no need to repackage; you can simply modify the variables in `/dist/_app.config.js` after packaging, and refresh to update the variables in the code. A `js` file is used to ensure that the configuration file is loaded early in the order.
+`_app-config-{version}-{hash}.js` is used for projects that need to dynamically modify configurations after packaging, such as API endpoints. There's no need to repackage; you can simply modify the variables in `/dist/_app-config-{version}-{hash}.js` after packaging, and refresh to update the variables in the code. A `js` file is used to ensure that the configuration file is loaded early in the order.
 
 ### Usage
 
-To access the variables inside `_app.config.js`, you need to use the `useAppConfig` method provided by `@vben/hooks`.
+To access the variables inside `_app-config-{version}-{hash}.js`, you need to use the `useAppConfig` method provided by `@vben/hooks`.
 
 ```ts
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
@@ -141,7 +141,10 @@ To add a new dynamically modifiable configuration item, simply follow the steps 
 - In `packages/effects/hooks/src/use-app-config.ts`, add the corresponding configuration item, such as:
 
   ```ts
-  export function useAppConfig(env: Record<string, any>, isProduction: boolean): ApplicationConfig {
+  export function useAppConfig(
+    env: Record<string, any>,
+    isProduction: boolean,
+  ): ApplicationConfig {
     // In production environment, directly use the window._VBEN_ADMIN_PRO_APP_CONF_ global variable
     const config = isProduction
       ? window._VBEN_ADMIN_PRO_APP_CONF_
@@ -177,8 +180,8 @@ The project offers a wide range of preference settings for dynamically configuri
 If you cannot find documentation for a setting, you can try configuring it yourself and then click `Copy Preferences` to override the project defaults. The configuration file is located in the application directory under `preferences.ts`, where you can override the framework's default configurations to achieve custom settings.
 
 ```ts
-import { useAppConfig } from "@vben/hooks";
-import { defineOverridesPreferences } from "@vben/preferences";
+import { useAppConfig } from '@vben/hooks';
+import { defineOverridesPreferences } from '@vben/preferences';
 
 /**
  * @description Project configuration file
@@ -190,6 +193,156 @@ export const overridesPreferences = defineOverridesPreferences({
 });
 ```
 
+### Extend project-level preferences
+
+In addition to overriding the built-in framework preferences, you can also add a set of business preferences for each application. After configuration, the preferences drawer will display an extra tab for the current app, and the data will be stored together with the app `namespace`. This is useful for project-specific fields such as tenant mode, business titles, or default page size.
+
+#### 1. Define the extension in `src/preferences.ts`
+
+```ts
+import {
+  defineOverridesPreferences,
+  definePreferencesExtension,
+} from '@vben/preferences';
+
+interface ProjectPreferencesExtension {
+  defaultTableSize: number;
+  enableFormFullscreen: boolean;
+  reportTitle: string;
+  tenantMode: 'multi' | 'single';
+}
+
+export const overridesPreferences = defineOverridesPreferences({
+  app: {
+    name: import.meta.env.VITE_APP_TITLE,
+  },
+});
+
+export const preferencesExtension =
+  definePreferencesExtension<ProjectPreferencesExtension>({
+    tabLabel: 'preferences.antd.tabLabel',
+    title: 'preferences.antd.title',
+    fields: [
+      {
+        component: 'switch',
+        defaultValue: true,
+        key: 'enableFormFullscreen',
+        label: 'preferences.antd.fields.enableFormFullscreen.label',
+        tip: 'preferences.antd.fields.enableFormFullscreen.tip',
+      },
+      {
+        component: 'select',
+        defaultValue: 'single',
+        key: 'tenantMode',
+        label: 'preferences.antd.fields.tenantMode.label',
+        options: [
+          {
+            label: 'preferences.antd.fields.tenantMode.options.single.label',
+            value: 'single',
+          },
+          {
+            label: 'preferences.antd.fields.tenantMode.options.multi.label',
+            value: 'multi',
+          },
+        ],
+      },
+      {
+        component: 'number',
+        componentProps: {
+          max: 200,
+          min: 10,
+          step: 10,
+        },
+        defaultValue: 20,
+        key: 'defaultTableSize',
+        label: 'preferences.antd.fields.defaultTableSize.label',
+      },
+      {
+        component: 'input',
+        defaultValue: '',
+        key: 'reportTitle',
+        label: 'preferences.antd.fields.reportTitle.label',
+        placeholder: 'preferences.antd.fields.reportTitle.placeholder',
+      },
+    ],
+  });
+```
+
+- `tabLabel` is the tab label, and `title` is the panel title. If `title` is omitted, `tabLabel` is used as the fallback.
+- `fields` currently supports four component types: `input`, `number`, `select`, and `switch`.
+- `label`, `placeholder`, `tip`, and `options[].label` can be i18n keys directly. The preferences drawer resolves them with `$t` automatically.
+
+#### 2. Pass `extension` when initializing preferences
+
+```ts
+import { initPreferences } from '@vben/preferences';
+
+import { overridesPreferences, preferencesExtension } from './preferences';
+
+await initPreferences({
+  namespace,
+  overrides: overridesPreferences,
+  extension: preferencesExtension,
+});
+```
+
+The same `namespace` isolates both framework preferences and extension preferences. So even if multiple subprojects run in the same browser, their business preferences remain independent.
+
+#### 3. Read or update extension preferences in business pages
+
+```ts
+import {
+  getCustomPreferences,
+  updateCustomPreferences,
+  usePreferences,
+} from '@vben/preferences';
+
+interface ProjectPreferencesExtension {
+  defaultTableSize: number;
+  enableFormFullscreen: boolean;
+  reportTitle: string;
+  tenantMode: 'multi' | 'single';
+}
+
+const projectPreferences = getCustomPreferences<ProjectPreferencesExtension>();
+
+const { customPreferences, preferencesExtension } = usePreferences();
+
+updateCustomPreferences<ProjectPreferencesExtension>({
+  defaultTableSize: 50,
+  tenantMode: 'multi',
+});
+```
+
+- `getCustomPreferences` returns the reactive extension-preferences object for the current app.
+- `customPreferences` and `preferencesExtension` from `usePreferences` are convenient when composing reusable logic.
+- Calling `resetPreferences()` also resets extension preferences back to their default values.
+
+#### 4. Number fields validate `min` / `max` / `step` automatically
+
+If you provide `componentProps.min`, `componentProps.max`, and `componentProps.step` for a `number` field, runtime persistence follows the same constraints. For example:
+
+```ts
+{
+  component: 'number',
+  componentProps: {
+    min: 10,
+    max: 200,
+    step: 10,
+  },
+  defaultValue: 20,
+  key: 'defaultTableSize',
+  label: 'preferences.antd.fields.defaultTableSize.label',
+}
+```
+
+Only values within `10 ~ 200` and increasing by `10` will be saved. Values like `15`, `205`, or invalid legacy cache values are ignored automatically.
+
+For complete examples, see:
+
+- `playground/src/preferences.ts`
+- `playground/src/views/demos/features/preferences-extension/index.vue`
+
 ### Framework default configuration
 
 ::: details View the default configuration of the framework
@@ -197,32 +350,33 @@ export const overridesPreferences = defineOverridesPreferences({
 ```ts
 const defaultPreferences: Preferences = {
   app: {
-    accessMode: "frontend",
-    authPageLayout: "panel-right",
+    accessMode: 'frontend',
+    authPageLayout: 'panel-right',
     checkUpdatesInterval: 1,
     colorGrayMode: false,
     colorWeakMode: false,
     compact: false,
-    contentCompact: "wide",
+    contentCompact: 'wide',
     contentCompactWidth: 1200,
     contentPadding: 0,
     contentPaddingBottom: 0,
     contentPaddingLeft: 0,
     contentPaddingRight: 0,
     contentPaddingTop: 0,
-    defaultAvatar: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp",
-    defaultHomePath: "/analytics",
+    defaultAvatar:
+      'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp',
+    defaultHomePath: '/dashboard/analytics',
     dynamicTitle: true,
     enableCheckUpdates: true,
     enablePreferences: true,
     enableCopyPreferences: true,
     enableRefreshToken: false,
     isMobile: false,
-    layout: "sidebar-nav",
-    locale: "zh-CN",
-    loginExpiredMode: "page",
-    name: "Vben Admin",
-    preferencesButtonPosition: "auto",
+    layout: 'sidebar-nav',
+    locale: 'zh-CN',
+    loginExpiredMode: 'page',
+    name: 'Vben Admin',
+    preferencesButtonPosition: 'auto',
     watermark: false,
     zIndex: 200,
   },
@@ -231,15 +385,15 @@ const defaultPreferences: Preferences = {
     hideOnlyOne: false,
     showHome: false,
     showIcon: true,
-    styleType: "normal",
+    styleType: 'normal',
   },
   copyright: {
-    companyName: "Vben",
-    companySiteLink: "https://www.vben.pro",
-    date: "2024",
+    companyName: 'Vben',
+    companySiteLink: 'https://www.vben.pro',
+    date: '2024',
     enable: true,
-    icp: "",
-    icpLink: "",
+    icp: '',
+    icpLink: '',
     settingShow: true,
   },
   footer: {
@@ -251,19 +405,19 @@ const defaultPreferences: Preferences = {
     enable: true,
     height: 50,
     hidden: false,
-    menuAlign: "start",
-    mode: "fixed",
+    menuAlign: 'start',
+    mode: 'fixed',
   },
   logo: {
     enable: true,
-    fit: "contain",
-    source: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp",
+    fit: 'contain',
+    source: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp',
     // sourceDark: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-dark.webp', // Optional: Dark theme logo
   },
   navigation: {
     accordion: true,
     split: true,
-    styleType: "rounded",
+    styleType: 'rounded',
   },
   shortcutKeys: {
     enable: true,
@@ -298,24 +452,24 @@ const defaultPreferences: Preferences = {
     showIcon: true,
     showMaximize: true,
     showMore: true,
-    styleType: "chrome",
+    styleType: 'chrome',
     wheelable: true,
   },
   theme: {
-    builtinType: "default",
-    colorDestructive: "hsl(348 100% 61%)",
-    colorPrimary: "hsl(212 100% 45%)",
-    colorSuccess: "hsl(144 57% 58%)",
-    colorWarning: "hsl(42 84% 61%)",
-    mode: "dark",
-    radius: "0.5",
+    builtinType: 'default',
+    colorDestructive: 'hsl(348 100% 61%)',
+    colorPrimary: 'hsl(212 100% 45%)',
+    colorSuccess: 'hsl(144 57% 58%)',
+    colorWarning: 'hsl(42 84% 61%)',
+    mode: 'dark',
+    radius: '0.5',
     semiDarkHeader: false,
     semiDarkSidebar: false,
   },
   transition: {
     enable: true,
     loading: true,
-    name: "fade-slide",
+    name: 'fade-slide',
     progress: true,
   },
   widget: {
@@ -454,7 +608,7 @@ interface LogoPreferences {
   /** Whether the logo is visible */
   enable: boolean;
   /** Logo image fitting method */
-  fit: "contain" | "cover" | "fill" | "none" | "scale-down";
+  fit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   /** Logo URL */
   source: string;
   /** Dark theme logo URL (optional, if not set, use source) */

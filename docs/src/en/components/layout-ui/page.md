@@ -8,15 +8,15 @@ outline: deep
 
 ## Props
 
-| Prop                | Description                                                                      | Type             | Default |
-| ------------------- | -------------------------------------------------------------------------------- | ---------------- | ------- |
-| `title`             | page title                                                                       | `string \| slot` | -       |
-| `description`       | page description                                                                 | `string \| slot` | -       |
-| `contentClass`      | class for the content area                                                       | `string`         | -       |
-| `headerClass`       | class for the header area                                                        | `string`         | -       |
-| `footerClass`       | class for the footer area                                                        | `string`         | -       |
-| `autoContentHeight` | auto-calculate the content area height from the visible layout height            | `boolean`        | `false` |
-| `heightOffset`      | extra height offset subtracted from the content area when auto height is enabled | `number`         | `0`     |
+| Prop | Description | Type | Default |
+| --- | --- | --- | --- |
+| `title` | page title | `string \| slot` | - |
+| `description` | page description | `string \| slot` | - |
+| `contentClass` | class for the content area | `string` | - |
+| `headerClass` | class for the header area | `string` | - |
+| `footerClass` | class for the footer area | `string` | - |
+| `autoContentHeight` | auto-calculate the content area height from the visible layout height | `boolean` | `false` |
+| `heightOffset` | extra height offset subtracted from the content area when auto height is enabled | `number` | `0` |
 
 ## Slots
 

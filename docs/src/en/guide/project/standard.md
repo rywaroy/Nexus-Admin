@@ -49,7 +49,7 @@ pnpm oxfmt --check
 
 ### Configuration
 
-The root Oxfmt entry file is `oxfmt.config.mjs`, and its core configuration is located in `internal/lint-configs/oxfmt-config`.
+The root Oxfmt entry file is `oxfmt.config.ts`, and its core configuration is located in `internal/lint-configs/oxfmt-config`.
 
 ## Oxlint
 
@@ -64,7 +64,7 @@ pnpm oxlint --fix
 
 ### Configuration
 
-The core Oxlint configuration is located in `internal/lint-configs/oxlint-config`, and the root entry file is `oxlint.config.mjs`.
+The core Oxlint configuration is located in `internal/lint-configs/oxlint-config`, and the root entry file is `oxlint.config.ts`.
 
 ## ESLint
 
@@ -217,7 +217,7 @@ pre-commit:
   commands:
     lint-js:
       run: pnpm oxfmt {staged_files} && pnpm oxlint --fix {staged_files} && pnpm eslint --cache --fix {staged_files}
-      glob: "*.{js,jsx,ts,tsx}"
+      glob: '*.{js,jsx,ts,tsx}'
 ```
 
 Where:

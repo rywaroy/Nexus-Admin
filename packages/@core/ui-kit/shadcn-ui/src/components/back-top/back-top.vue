@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import type { BacktopProps } from "./backtop";
+import type { BacktopProps } from './backtop';
 
-import { computed } from "vue";
+import { computed } from 'vue';
 
-import { ArrowUpToLine } from "@vben-core/icons";
+import { ArrowUpToLine } from '@vben-core/icons';
 
-import { VbenButton } from "../button";
-import { useBackTop } from "./use-backtop";
+import { VbenButton } from '../button';
+import { useBackTop } from './use-backtop';
 
 interface Props extends BacktopProps {}
 
-defineOptions({ name: "BackTop" });
+defineOptions({ name: 'BackTop' });
 
 const props = withDefaults(defineProps<Props>(), {
   bottom: 20,
   isGroup: false,
   right: 24,
-  target: "",
+  target: '',
   visibilityHeight: 200,
 });
 
@@ -34,7 +34,7 @@ const { handleClick, visible } = useBackTop(props);
       :style="backTopStyle"
       class="data z-popup bg-background shadow-float hover:bg-heavy dark:bg-accent dark:hover:bg-heavy fixed bottom-10 size-10 rounded-full duration-500"
       size="icon"
-      variant="icon"
+      variant="ghost"
       @click="handleClick"
     >
       <ArrowUpToLine class="size-4" />

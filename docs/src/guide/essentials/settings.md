@@ -18,10 +18,10 @@
 - 只有以 `VITE_` 开头的变量会被嵌入到客户端侧的包中，你可以在项目代码中这样访问它们：
 
   ```ts
-  console.log(import.meta.env.VITE_PROT);
+  console.log(import.meta.env.VITE_PORT);
   ```
 
-- 以 `VITE_GLOB_*` 开头的的变量，在打包的时候，会被加入 `_app.config.js`配置文件当中.
+- 以 `VITE_GLOB_*` 开头的的变量，在打包的时候，会被加入 `_app-config-{version}-{hash}.js`配置文件当中.
 
 :::
 
@@ -86,16 +86,16 @@ VITE_ARCHIVER=true
 
 ## 生产环境动态配置
 
-当在大仓根目录下，执行 `pnpm build`构建项目之后，会自动在对应的应用下生成 `dist/_app.config.js`文件并插入 `index.html`。
+当在大仓根目录下，执行 `pnpm build`构建项目之后，会自动在对应的应用下生成 `dist/_app-config-{version}-{hash}.js`文件并插入 `index.html`。
 
-`_app.config.js` 是一个动态配置文件，可以在项目构建之后，根据不同的环境动态修改配置。内容如下：
+`_app-config-{version}-{hash}.js` 是一个动态配置文件，可以在项目构建之后，根据不同的环境动态修改配置。内容如下：
 
 ```ts
 window._VBEN_ADMIN_PRO_APP_CONF_ = {
-  VITE_GLOB_API_URL: "https://mock-napi.vben.pro/api",
+  VITE_GLOB_API_URL: 'https://mock-napi.vben.pro/api',
 };
 Object.freeze(window._VBEN_ADMIN_PRO_APP_CONF_);
-Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
+Object.defineProperty(window, '_VBEN_ADMIN_PRO_APP_CONF_', {
   configurable: false,
   writable: false,
 });
@@ -103,11 +103,11 @@ Object.defineProperty(window, "_VBEN_ADMIN_PRO_APP_CONF_", {
 
 ### 作用
 
-`_app.config.js` 用于项目在打包后，需要动态修改配置的需求，如接口地址。不用重新进行打包，可在打包后修改 /`dist/_app.config.js` 内的变量，刷新即可更新代码内的局部变量。这里使用`js`文件，是为了确保配置文件加载顺序保持在前面。
+`_app-config-{version}-{hash}.js` 用于项目在打包后，需要动态修改配置的需求，如接口地址。不用重新进行打包，可在打包后修改 /`dist/_app-config-{version}-{hash}.js` 内的变量，刷新即可更新代码内的局部变量。这里使用`js`文件，是为了确保配置文件加载顺序保持在前面。
 
 ### 使用
 
-想要获取 `_app.config.js` 内的变量，需要使用`@vben/hooks`提供的 `useAppConfig`方法。
+想要获取 `_app-config-{version}-{hash}.js` 内的变量，需要使用`@vben/hooks`提供的 `useAppConfig`方法。
 
 ```ts
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
@@ -140,7 +140,10 @@ const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 - 在 `packages/effects/hooks/src/use-app-config.ts` 中，新增对应的配置项，如：
 
   ```ts
-  export function useAppConfig(env: Record<string, any>, isProduction: boolean): ApplicationConfig {
+  export function useAppConfig(
+    env: Record<string, any>,
+    isProduction: boolean,
+  ): ApplicationConfig {
     // 生产环境下，直接使用 window._VBEN_ADMIN_PRO_APP_CONF_ 全局变量
     const config = isProduction
       ? window._VBEN_ADMIN_PRO_APP_CONF_
@@ -176,8 +179,8 @@ const { otherApiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 如果你找不到文档说明，可以尝试自己配置好以后，点击`复制偏好设置`，覆盖项目默认即可。配置文件位于应用目录下的`preferences.ts`，在这里，你可以覆盖框架默认的配置，实现自定义配置。
 
 ```ts
-import { useAppConfig } from "@vben/hooks";
-import { defineOverridesPreferences } from "@vben/preferences";
+import { useAppConfig } from '@vben/hooks';
+import { defineOverridesPreferences } from '@vben/preferences';
 
 /**
  * @description 项目配置文件
@@ -189,6 +192,156 @@ export const overridesPreferences = defineOverridesPreferences({
 });
 ```
 
+### 扩展项目级偏好
+
+除了覆盖框架内置偏好外，还可以为每个应用追加一组“业务偏好”。配置后，偏好设置抽屉会新增一个独立标签页，并且这组数据会跟随当前应用的 `namespace` 一起存储，适合放租户模式、业务标题、默认分页条数等项目字段。
+
+#### 1. 在应用的 `src/preferences.ts` 中定义扩展
+
+```ts
+import {
+  defineOverridesPreferences,
+  definePreferencesExtension,
+} from '@vben/preferences';
+
+interface ProjectPreferencesExtension {
+  defaultTableSize: number;
+  enableFormFullscreen: boolean;
+  reportTitle: string;
+  tenantMode: 'multi' | 'single';
+}
+
+export const overridesPreferences = defineOverridesPreferences({
+  app: {
+    name: import.meta.env.VITE_APP_TITLE,
+  },
+});
+
+export const preferencesExtension =
+  definePreferencesExtension<ProjectPreferencesExtension>({
+    tabLabel: 'preferences.antd.tabLabel',
+    title: 'preferences.antd.title',
+    fields: [
+      {
+        component: 'switch',
+        defaultValue: true,
+        key: 'enableFormFullscreen',
+        label: 'preferences.antd.fields.enableFormFullscreen.label',
+        tip: 'preferences.antd.fields.enableFormFullscreen.tip',
+      },
+      {
+        component: 'select',
+        defaultValue: 'single',
+        key: 'tenantMode',
+        label: 'preferences.antd.fields.tenantMode.label',
+        options: [
+          {
+            label: 'preferences.antd.fields.tenantMode.options.single.label',
+            value: 'single',
+          },
+          {
+            label: 'preferences.antd.fields.tenantMode.options.multi.label',
+            value: 'multi',
+          },
+        ],
+      },
+      {
+        component: 'number',
+        componentProps: {
+          max: 200,
+          min: 10,
+          step: 10,
+        },
+        defaultValue: 20,
+        key: 'defaultTableSize',
+        label: 'preferences.antd.fields.defaultTableSize.label',
+      },
+      {
+        component: 'input',
+        defaultValue: '',
+        key: 'reportTitle',
+        label: 'preferences.antd.fields.reportTitle.label',
+        placeholder: 'preferences.antd.fields.reportTitle.placeholder',
+      },
+    ],
+  });
+```
+
+- `tabLabel` 是标签名称，`title` 是该标签页标题；如果不传 `title`，会回退使用 `tabLabel`。
+- `fields` 目前支持 `input`、`number`、`select`、`switch` 四种组件。
+- `label`、`placeholder`、`tip`、`options[].label` 可以直接写 i18n key，偏好设置面板会自动调用 `$t` 渲染。
+
+#### 2. 初始化偏好设置时传入 `extension`
+
+```ts
+import { initPreferences } from '@vben/preferences';
+
+import { overridesPreferences, preferencesExtension } from './preferences';
+
+await initPreferences({
+  namespace,
+  overrides: overridesPreferences,
+  extension: preferencesExtension,
+});
+```
+
+这里的 `namespace` 会同时隔离框架偏好和扩展偏好。因此同一浏览器中即使运行多个子项目，它们的业务偏好也不会互相污染。
+
+#### 3. 在业务页面中读取或更新扩展偏好
+
+```ts
+import {
+  getCustomPreferences,
+  updateCustomPreferences,
+  usePreferences,
+} from '@vben/preferences';
+
+interface ProjectPreferencesExtension {
+  defaultTableSize: number;
+  enableFormFullscreen: boolean;
+  reportTitle: string;
+  tenantMode: 'multi' | 'single';
+}
+
+const projectPreferences = getCustomPreferences<ProjectPreferencesExtension>();
+
+const { customPreferences, preferencesExtension } = usePreferences();
+
+updateCustomPreferences<ProjectPreferencesExtension>({
+  defaultTableSize: 50,
+  tenantMode: 'multi',
+});
+```
+
+- `getCustomPreferences` 返回当前应用扩展偏好的响应式对象，适合直接在页面中读取。
+- `usePreferences` 中的 `customPreferences` 和 `preferencesExtension` 适合在组合式逻辑里统一使用。
+- 调用 `resetPreferences()` 时，扩展偏好也会一起重置到默认值。
+
+#### 4. 数字字段会自动校验 `min` / `max` / `step`
+
+为 `number` 字段设置 `componentProps.min`、`componentProps.max`、`componentProps.step` 后，运行时保存也会遵守同样的规则。例如下面的配置：
+
+```ts
+{
+  component: 'number',
+  componentProps: {
+    min: 10,
+    max: 200,
+    step: 10,
+  },
+  defaultValue: 20,
+  key: 'defaultTableSize',
+  label: 'preferences.antd.fields.defaultTableSize.label',
+}
+```
+
+此时只有 `10 ~ 200` 且按 `10` 递增的值会被保存；像 `15`、`205`，或者旧缓存里不满足约束的值，都会被自动忽略。
+
+完整示例可以参考：
+
+- `playground/src/preferences.ts`
+- `playground/src/views/demos/features/preferences-extension/index.vue`
+
 ### 框架默认配置
 
 ::: details 查看框架默认配置
@@ -196,32 +349,33 @@ export const overridesPreferences = defineOverridesPreferences({
 ```ts
 const defaultPreferences: Preferences = {
   app: {
-    accessMode: "frontend",
-    authPageLayout: "panel-right",
+    accessMode: 'frontend',
+    authPageLayout: 'panel-right',
     checkUpdatesInterval: 1,
     colorGrayMode: false,
     colorWeakMode: false,
     compact: false,
-    contentCompact: "wide",
+    contentCompact: 'wide',
     contentCompactWidth: 1200,
     contentPadding: 0,
     contentPaddingBottom: 0,
     contentPaddingLeft: 0,
     contentPaddingRight: 0,
     contentPaddingTop: 0,
-    defaultAvatar: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp",
-    defaultHomePath: "/analytics",
+    defaultAvatar:
+      'https://unpkg.com/@vbenjs/static-source@0.1.7/source/avatar-v1.webp',
+    defaultHomePath: '/dashboard/analytics',
     dynamicTitle: true,
     enableCheckUpdates: true,
     enablePreferences: true,
     enableCopyPreferences: true,
     enableRefreshToken: false,
     isMobile: false,
-    layout: "sidebar-nav",
-    locale: "zh-CN",
-    loginExpiredMode: "page",
-    name: "Vben Admin",
-    preferencesButtonPosition: "auto",
+    layout: 'sidebar-nav',
+    locale: 'zh-CN',
+    loginExpiredMode: 'page',
+    name: 'Vben Admin',
+    preferencesButtonPosition: 'auto',
     watermark: false,
     zIndex: 200,
   },
@@ -230,15 +384,15 @@ const defaultPreferences: Preferences = {
     hideOnlyOne: false,
     showHome: false,
     showIcon: true,
-    styleType: "normal",
+    styleType: 'normal',
   },
   copyright: {
-    companyName: "Vben",
-    companySiteLink: "https://www.vben.pro",
-    date: "2024",
+    companyName: 'Vben',
+    companySiteLink: 'https://www.vben.pro',
+    date: '2024',
     enable: true,
-    icp: "",
-    icpLink: "",
+    icp: '',
+    icpLink: '',
     settingShow: true,
   },
   footer: {
@@ -250,19 +404,19 @@ const defaultPreferences: Preferences = {
     enable: true,
     height: 50,
     hidden: false,
-    menuAlign: "start",
-    mode: "fixed",
+    menuAlign: 'start',
+    mode: 'fixed',
   },
   logo: {
     enable: true,
-    fit: "contain",
-    source: "https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp",
+    fit: 'contain',
+    source: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp',
     // sourceDark: 'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-dark.webp', // 可选：暗色主题logo
   },
   navigation: {
     accordion: true,
     split: true,
-    styleType: "rounded",
+    styleType: 'rounded',
   },
   shortcutKeys: {
     enable: true,
@@ -297,24 +451,24 @@ const defaultPreferences: Preferences = {
     showIcon: true,
     showMaximize: true,
     showMore: true,
-    styleType: "chrome",
+    styleType: 'chrome',
     wheelable: true,
   },
   theme: {
-    builtinType: "default",
-    colorDestructive: "hsl(348 100% 61%)",
-    colorPrimary: "hsl(212 100% 45%)",
-    colorSuccess: "hsl(144 57% 58%)",
-    colorWarning: "hsl(42 84% 61%)",
-    mode: "dark",
-    radius: "0.5",
+    builtinType: 'default',
+    colorDestructive: 'hsl(348 100% 61%)',
+    colorPrimary: 'hsl(212 100% 45%)',
+    colorSuccess: 'hsl(144 57% 58%)',
+    colorWarning: 'hsl(42 84% 61%)',
+    mode: 'dark',
+    radius: '0.5',
     semiDarkHeader: false,
     semiDarkSidebar: false,
   },
   transition: {
     enable: true,
     loading: true,
-    name: "fade-slide",
+    name: 'fade-slide',
     progress: true,
   },
   widget: {
@@ -454,7 +608,7 @@ interface LogoPreferences {
   /** logo是否可见 */
   enable: boolean;
   /** logo图片适应方式 */
-  fit: "contain" | "cover" | "fill" | "none" | "scale-down";
+  fit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   /** logo地址 */
   source: string;
   /** 暗色主题logo地址 (可选，若不设置则使用 source) */

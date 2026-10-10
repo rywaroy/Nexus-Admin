@@ -1,27 +1,27 @@
 export const json1 = {
   additionalInfo: {
-    author: "Your Name",
+    author: 'Your Name',
     debug: true,
-    version: "1.3.10",
+    version: '1.3.10',
     versionCode: 132,
   },
-  additionalNotes: "This JSON is used for demonstration purposes",
+  additionalNotes: 'This JSON is used for demonstration purposes',
   tools: [
     {
-      description: "Description of Tool 1",
-      name: "Tool 1",
+      description: 'Description of Tool 1',
+      name: 'Tool 1',
     },
     {
-      description: "Description of Tool 2",
-      name: "Tool 2",
+      description: 'Description of Tool 2',
+      name: 'Tool 2',
     },
     {
-      description: "Description of Tool 3",
-      name: "Tool 3",
+      description: 'Description of Tool 3',
+      name: 'Tool 3',
     },
     {
-      description: "Description of Tool 4",
-      name: "Tool 4",
+      description: 'Description of Tool 4',
+      name: 'Tool 4',
     },
   ],
 };

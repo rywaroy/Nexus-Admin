@@ -8,11 +8,15 @@ outline: deep
 
 ::: info 适用场景
 
-`Alert` 与 `Modal` 的能力有部分重叠，但更适合临时确认、简单提示和轻量输入场景。复杂弹窗仍然建议使用 `Vben Modal`。:::
+`Alert` 与 `Modal` 的能力有部分重叠，但更适合临时确认、简单提示和轻量输入场景。复杂弹窗仍然建议使用 `Vben Modal`。
+
+:::
 
 ::: tip 注意
 
-通过 `alert`、`confirm`、`prompt` 动态创建的弹窗，在已经打开的情况下不支持 HMR 热更新。修改相关代码后，需要关闭后重新打开。:::
+通过 `alert`、`confirm`、`prompt` 动态创建的弹窗，在已经打开的情况下不支持 HMR 热更新。修改相关代码后，需要关闭后重新打开。
+
+:::
 
 ## 基础用法
 
@@ -46,16 +50,18 @@ outline: deep
 ## 类型说明
 
 ```ts
-export type IconType = "error" | "info" | "question" | "success" | "warning";
+export type IconType = 'error' | 'info' | 'question' | 'success' | 'warning';
 
 export type BeforeCloseScope = {
   isConfirm: boolean;
 };
 
 export type AlertProps = {
-  beforeClose?: (scope: BeforeCloseScope) => boolean | Promise<boolean | undefined> | undefined;
+  beforeClose?: (
+    scope: BeforeCloseScope,
+  ) => boolean | Promise<boolean | undefined> | undefined;
   bordered?: boolean;
-  buttonAlign?: "center" | "end" | "start";
+  buttonAlign?: 'center' | 'end' | 'start';
   cancelText?: string;
   centered?: boolean;
   confirmText?: string;
@@ -77,13 +83,17 @@ export type PromptProps<T = any> = {
   }) => boolean | Promise<boolean | undefined> | undefined;
   component?: Component;
   componentProps?: Recordable<any>;
-  componentSlots?: (() => any) | Recordable<unknown> | VNode | VNodeArrayChildren;
+  componentSlots?:
+    (() => any) | Recordable<unknown> | VNode | VNodeArrayChildren;
   defaultValue?: T;
   modelPropName?: string;
-} & Omit<AlertProps, "beforeClose">;
+} & Omit<AlertProps, 'beforeClose'>;
 
 export function alert(options: AlertProps): Promise<void>;
-export function alert(message: string, options?: Partial<AlertProps>): Promise<void>;
+export function alert(
+  message: string,
+  options?: Partial<AlertProps>,
+): Promise<void>;
 export function alert(
   message: string,
   title?: string,
@@ -91,7 +101,7 @@ export function alert(
 ): Promise<void>;
 
 export async function prompt<T = any>(
-  options: Omit<AlertProps, "beforeClose"> & {
+  options: Omit<AlertProps, 'beforeClose'> & {
     beforeClose?: (
       scope: BeforeCloseScope & {
         value: T;

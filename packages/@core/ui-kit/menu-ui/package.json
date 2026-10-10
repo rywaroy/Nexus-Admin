@@ -1,6 +1,6 @@
 {
   "name": "@vben-core/menu-ui",
-  "version": "5.7.0",
+  "version": "5.8.0",
   "homepage": "https://github.com/vbenjs/vue-vben-admin",
   "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
   "repository": {
@@ -51,6 +51,7 @@
     "vue": "catalog:"
   },
   "devDependencies": {
-    "@types/qs": "catalog:"
+    "@types/qs": "catalog:",
+    "unplugin-vue": "catalog:"
   }
 }

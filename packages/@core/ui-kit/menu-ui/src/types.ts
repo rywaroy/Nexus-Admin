@@ -1,6 +1,10 @@
-import type { Component, Ref } from "vue";
+import type { Component, Ref } from 'vue';
 
-import type { MenuRecordBadgeRaw, Recordable, ThemeModeType } from "@vben-core/typings";
+import type {
+  MenuRecordBadgeRaw,
+  Recordable,
+  ThemeModeType,
+} from '@vben-core/typings';
 
 interface MenuProps {
   /**
@@ -34,7 +38,7 @@ interface MenuProps {
    * @zh_CN 菜单模式
    * @default vertical
    */
-  mode?: "horizontal" | "vertical";
+  mode?: 'horizontal' | 'vertical';
 
   /**
    * @zh_CN 是否圆润风格

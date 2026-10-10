@@ -10,7 +10,9 @@ outline: deep
 
 ::: info 写在前面
 
-如果现有封装不满足你的场景，可以直接使用原生 `vxe-table` 能力，或者在适配层中继续扩展。:::
+如果现有封装不满足你的场景，可以直接使用原生 `vxe-table` 能力，或者在适配层中继续扩展。
+
+:::
 
 ## 适配器
 
@@ -21,19 +23,19 @@ outline: deep
 ::: details vxe-table 表格适配器
 
 ```ts
-import { h } from "vue";
+import { h } from 'vue';
 
-import { setupVbenVxeTable, useVbenVxeGrid } from "@vben/plugins/vxe-table";
+import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
-import { Button, Image } from "ant-design-vue";
+import { Button, Image } from 'antdv-next';
 
-import { useVbenForm } from "./form";
+import { useVbenForm } from './form';
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
     vxeUI.setConfig({
       grid: {
-        align: "center",
+        align: 'center',
         border: false,
         columnConfig: {
           resizable: true,
@@ -45,30 +47,34 @@ setupVbenVxeTable({
         proxyConfig: {
           autoLoad: true,
           response: {
-            result: "items",
-            total: "total",
-            list: "items",
+            result: 'items',
+            total: 'total',
+            list: 'items',
           },
           showActiveMsg: true,
           showResponseMsg: false,
         },
         round: true,
         showOverflow: true,
-        size: "small",
+        size: 'small',
       },
     });
 
-    vxeUI.renderer.add("CellImage", {
+    vxeUI.renderer.add('CellImage', {
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
         return h(Image, { src: row[column.field] });
       },
     });
 
-    vxeUI.renderer.add("CellLink", {
+    vxeUI.renderer.add('CellLink', {
       renderTableDefault(renderOpts) {
         const { props } = renderOpts;
-        return h(Button, { size: "small", type: "link" }, { default: () => props?.text });
+        return h(
+          Button,
+          { size: 'small', type: 'link' },
+          { default: () => props?.text },
+        );
       },
     });
   },
@@ -77,7 +83,7 @@ setupVbenVxeTable({
 
 export { useVbenVxeGrid };
 
-export type * from "@vben/plugins/vxe-table";
+export type * from '@vben/plugins/vxe-table';
 ```
 
 :::
@@ -119,17 +125,21 @@ treeConfig: {
 可以通过插槽或自定义渲染器实现单元格定制。
 
 ```ts
-vxeUI.renderer.add("CellImage", {
+vxeUI.renderer.add('CellImage', {
   renderTableDefault(_renderOpts, params) {
     const { column, row } = params;
     return h(Image, { src: row[column.field] } as any);
   },
 });
 
-vxeUI.renderer.add("CellLink", {
+vxeUI.renderer.add('CellLink', {
   renderTableDefault(renderOpts) {
     const { props } = renderOpts;
-    return h(Button, { size: "small", type: "link" }, { default: () => props?.text });
+    return h(
+      Button,
+      { size: 'small', type: 'link' },
+      { default: () => props?.text },
+    );
   },
 });
 ```
@@ -184,7 +194,7 @@ const [Grid] = useVbenVxeGrid({
 
 ```vue
 <script setup lang="ts">
-import { useVbenVxeGrid } from "#/adapter/vxe-table";
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 
 const [Grid, gridApi] = useVbenVxeGrid({
   gridOptions: {},
@@ -200,31 +210,31 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 ### GridApi
 
-| 方法名           | 描述                           | 类型                                                      | 说明                                                               |
-| ---------------- | ------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------ |
-| setLoading       | 设置 loading 状态              | `(loading: boolean) => void`                              | -                                                                  |
-| setGridOptions   | 更新 `gridOptions`             | `(options: Partial<VxeGridProps['gridOptions']>) => void` | -                                                                  |
-| reload           | 重新加载表格，并重置到初始分页 | `(params?: Record<string, any>) => void`                  | -                                                                  |
-| query            | 重新查询表格，保留当前分页     | `(params?: Record<string, any>) => void`                  | -                                                                  |
-| grid             | `vxe-grid` 实例                | `VxeGridInstance`                                         | -                                                                  |
-| formApi          | 搜索表单 API 实例              | `FormApi`                                                 | -                                                                  |
-| toggleSearchForm | 切换或指定搜索表单显示状态     | `(show?: boolean) => boolean`                             | 传入参数时强制设置；不传参数时在显示和隐藏之间切换，并返回当前状态 |
+| 方法名 | 描述 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| setLoading | 设置 loading 状态 | `(loading: boolean) => void` | - |
+| setGridOptions | 更新 `gridOptions` | `(options: Partial<VxeGridProps['gridOptions']>) => void` | - |
+| reload | 重新加载表格，并重置到初始分页 | `(params?: Record<string, any>) => void` | - |
+| query | 重新查询表格，保留当前分页 | `(params?: Record<string, any>) => void` | - |
+| grid | `vxe-grid` 实例 | `VxeGridInstance` | - |
+| formApi | 搜索表单 API 实例 | `FormApi` | - |
+| toggleSearchForm | 切换或指定搜索表单显示状态 | `(show?: boolean) => boolean` | 传入参数时强制设置；不传参数时在显示和隐藏之间切换，并返回当前状态 |
 
 ## Props
 
 所有属性都通过 `useVbenVxeGrid` 的第一个参数传入。
 
-| 属性名         | 描述                           | 类型                               | 版本要求 |
-| -------------- | ------------------------------ | ---------------------------------- | -------- |
-| tableTitle     | 表格标题                       | `string`                           | -        |
-| tableTitleHelp | 表格标题帮助信息               | `string`                           | -        |
-| class          | 外层容器的 class               | `string`                           | -        |
-| gridClass      | `vxe-grid` 的 class            | `string`                           | -        |
-| gridOptions    | `vxe-grid` 配置                | `DeepPartial<VxeTableGridOptions>` | -        |
-| gridEvents     | `vxe-grid` 事件                | `DeepPartial<VxeGridListeners>`    | -        |
-| formOptions    | 搜索表单配置                   | `VbenFormProps`                    | -        |
-| showSearchForm | 是否显示搜索表单               | `boolean`                          | -        |
-| separator      | 搜索表单与表格主体之间的分隔条 | `boolean \| SeparatorOptions`      | `>5.5.4` |
+| 属性名 | 描述 | 类型 | 版本要求 |
+| --- | --- | --- | --- |
+| tableTitle | 表格标题 | `string` | - |
+| tableTitleHelp | 表格标题帮助信息 | `string` | - |
+| class | 外层容器的 class | `string` | - |
+| gridClass | `vxe-grid` 的 class | `string` | - |
+| gridOptions | `vxe-grid` 配置 | `DeepPartial<VxeTableGridOptions>` | - |
+| gridEvents | `vxe-grid` 事件 | `DeepPartial<VxeGridListeners>` | - |
+| formOptions | 搜索表单配置 | `VbenFormProps` | - |
+| showSearchForm | 是否显示搜索表单 | `boolean` | - |
+| separator | 搜索表单与表格主体之间的分隔条 | `boolean \| SeparatorOptions` | `>5.5.4` |
 
 ## Slots
 

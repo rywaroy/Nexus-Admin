@@ -1,9 +1,9 @@
-import type { Extensions, JSONContent } from "@tiptap/core";
-import type { Editor } from "@tiptap/vue-3";
+import type { Extensions, JSONContent } from '@tiptap/core';
+import type { Editor } from '@tiptap/vue-3';
 
-import type { Component } from "vue";
+import type { Component } from 'vue';
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     mediaUpload: {
       uploadImage: () => ReturnType;
@@ -25,7 +25,10 @@ export interface MediaUploadOptions {
   maxSize?: number;
   onUploadError?: (error: unknown) => void;
   /** 返回可访问的媒体 URL；进度回调接收 0–100 的百分比。 */
-  upload: (file: File, onProgress?: (percent: number) => void) => Promise<string>;
+  upload: (
+    file: File,
+    onProgress?: (percent: number) => void,
+  ) => Promise<string>;
 }
 
 export type ImageUploadOptions = MediaUploadOptions;

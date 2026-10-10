@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import type { DataNode } from "ant-design-vue/es/tree";
+import type { DataNode } from 'antdv-next/dist/tree';
 
-import type { Recordable } from "@vben/types";
+import type { Recordable } from '@vben/types';
 
-import type { SystemRoleApi } from "#/api/system/role";
+import type { SystemRoleApi } from '#/api/system/role';
 
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, ref } from 'vue';
 
-import { Tree, useVbenDrawer } from "@vben/common-ui";
-import { IconifyIcon } from "@vben/icons";
+import { Tree, useVbenDrawer } from '@vben/common-ui';
+import { IconifyIcon } from '@vben/icons';
 
-import { Spin } from "ant-design-vue";
+import { Spin } from 'antdv-next';
 
-import { useVbenForm } from "#/adapter/form";
-import { getMenuList } from "#/api/system/menu";
-import { createRole, updateRole } from "#/api/system/role";
-import { $t } from "#/locales";
+import { useVbenForm } from '#/adapter/form';
+import { getMenuList } from '#/api/system/menu';
+import { createRole, updateRole } from '#/api/system/role';
+import { $t } from '#/locales';
 
-import { useFormSchema } from "../data";
+import { useFormSchema } from '../data';
 
-const emits = defineEmits(["success"]);
+const emits = defineEmits(['success']);
 
 const formData = ref<SystemRoleApi.SystemRole>();
 
@@ -32,7 +32,7 @@ const permissions = ref<DataNode[]>([]);
 const loadingPermissions = ref(false);
 
 const id = ref();
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<null | SystemRoleApi.SystemRole>({
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) return;
@@ -40,7 +40,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     drawerApi.lock();
     (id.value ? updateRole(id.value, values) : createRole(values))
       .then(() => {
-        emits("success");
+        emits('success');
         drawerApi.close();
       })
       .catch(() => {
@@ -50,13 +50,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
   async onOpenChange(isOpen) {
     if (isOpen) {
-      const data = drawerApi.getData<SystemRoleApi.SystemRole>();
-      formApi.resetForm();
+      const data = drawerApi.getData();
+      formApi.reset();
 
       if (data) {
         formData.value = data;
         id.value = data.id;
       } else {
+        formData.value = undefined;
         id.value = undefined;
       }
 
@@ -72,6 +73,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 });
 
+defineExpose({ drawerApi });
+
 async function loadPermissions() {
   loadingPermissions.value = true;
   try {
@@ -84,31 +87,31 @@ async function loadPermissions() {
 
 const getDrawerTitle = computed(() => {
   return formData.value?.id
-    ? $t("common.edit", $t("system.role.name"))
-    : $t("common.create", $t("system.role.name"));
+    ? $t('common.edit', $t('system.role.name'))
+    : $t('common.create', $t('system.role.name'));
 });
 
 function getNodeClass(node: Recordable<any>) {
   const classes: string[] = [];
-  if (node.value?.type === "button") {
-    classes.push("inline-flex");
+  if (node.value?.type === 'button') {
+    classes.push('inline-flex');
   }
 
-  return classes.join(" ");
+  return classes.join(' ');
 }
 </script>
 <template>
   <Drawer :title="getDrawerTitle">
     <Form>
       <template #permissions="slotProps">
-        <Spin :spinning="loadingPermissions" wrapper-class-name="w-full">
+        <Spin :spinning="loadingPermissions" :classes="{ root: 'w-full' }">
           <Tree
             :tree-data="permissions"
             multiple
             bordered
             :default-expanded-level="2"
             :get-node-class="getNodeClass"
-            v-bind="slotProps"
+            v-bind="slotProps.componentProps"
             value-field="id"
             label-field="meta.title"
             icon-field="meta.icon"

@@ -18,16 +18,16 @@ The current wrapper flow is:
 
 ```vue
 <script lang="ts" setup>
-import { ApiComponent } from "@vben/common-ui";
+import { ApiComponent } from '@vben/common-ui';
 
-import { Cascader } from "ant-design-vue";
+import { Cascader } from 'antdv-next';
 
 function fetchApi() {
   return Promise.resolve([
     {
-      label: "Zhejiang",
-      value: "zhejiang",
-      children: [{ label: "Hangzhou", value: "hangzhou" }],
+      label: 'Zhejiang',
+      value: 'zhejiang',
+      children: [{ label: 'Hangzhou', value: 'hangzhou' }],
     },
   ]);
 }
@@ -47,17 +47,17 @@ function fetchApi() {
 
 ## Current Props
 
-| Prop            | Description                                                        | Type                                                       |
-| --------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| `component`     | wrapped target component                                           | `Component`                                                |
-| `api`           | remote request function                                            | `(arg?: any) => Promise<any>`                              |
-| `params`        | extra request params                                               | `Record<string, any>`                                      |
-| `beforeFetch`   | hook before request                                                | `AnyPromiseFunction`                                       |
-| `afterFetch`    | hook after request                                                 | `AnyPromiseFunction`                                       |
-| `visibleEvent`  | event name used to lazy-load data                                  | `string`                                                   |
-| `loadingSlot`   | slot name used to render the loading icon                          | `string`                                                   |
-| `modelPropName` | model prop name of the wrapped component                           | `string`                                                   |
-| `autoSelect`    | auto-pick the first / last / only option, or use a custom function | `'first' \| 'last' \| 'one' \| ((items) => item) \| false` |
+| Prop | Description | Type |
+| --- | --- | --- |
+| `component` | wrapped target component | `Component` |
+| `api` | remote request function | `(arg?: any) => Promise<any>` |
+| `params` | extra request params | `Record<string, any>` |
+| `beforeFetch` | hook before request | `AnyPromiseFunction` |
+| `afterFetch` | hook after request | `AnyPromiseFunction` |
+| `visibleEvent` | event name used to lazy-load data | `string` |
+| `loadingSlot` | slot name used to render the loading icon | `string` |
+| `modelPropName` | model prop name of the wrapped component | `string` |
+| `autoSelect` | auto-pick the first / last / only option, or use a custom function | `'first' \| 'last' \| 'one' \| ((items) => item) \| false` |
 
 ## Exposed Methods
 

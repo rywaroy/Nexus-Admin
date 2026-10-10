@@ -1,4 +1,4 @@
-import type { Linter } from "eslint";
+import type { Linter } from 'eslint';
 
 import {
   ignores,
@@ -8,15 +8,18 @@ import {
   perfectionist,
   pnpm,
   typescript,
-  unicorn,
   vue,
   yaml,
-} from "./configs";
-import { customConfig } from "./custom-config";
+} from './configs';
+import { customConfig } from './custom-config';
 
 type FlatConfig = Linter.Config;
 
-type FlatConfigPromise = FlatConfig | FlatConfig[] | Promise<FlatConfig> | Promise<FlatConfig[]>;
+type FlatConfigPromise =
+  | FlatConfig
+  | FlatConfig[]
+  | Promise<FlatConfig>
+  | Promise<FlatConfig[]>;
 
 async function defineConfig(config: FlatConfig[] = []) {
   const configs: FlatConfigPromise[] = [
@@ -27,7 +30,6 @@ async function defineConfig(config: FlatConfig[] = []) {
     jsonc(),
     node(),
     perfectionist(),
-    unicorn(),
     yaml(),
     pnpm(),
     ...customConfig,

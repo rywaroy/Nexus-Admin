@@ -1,10 +1,10 @@
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from '@tiptap/vue-3';
 
-import type { ShallowRef } from "vue";
+import type { ShallowRef } from 'vue';
 
-import type { ToolbarAction, ToolbarMenuItem } from "./types";
+import type { ToolbarAction, ToolbarMenuItem } from './types';
 
-import { cn } from "@vben-core/shared/utils";
+import { cn } from '@vben-core/shared/utils';
 
 interface UseTiptapToolbarOptions {
   editable: () => boolean;
@@ -128,31 +128,33 @@ export function useTiptapToolbar(options: UseTiptapToolbarOptions) {
 
   function getToolbarButtonClass(action: ToolbarAction) {
     return cn(
-      "text-muted-foreground relative rounded-[10px] border border-transparent bg-transparent shadow-none",
-      "transition-[transform,color,background-color,border-color,box-shadow] duration-200 ease-out",
-      "enabled:hover:border-border enabled:hover:-translate-y-px disabled:opacity-45",
-      "enabled:hover:bg-accent enabled:hover:text-foreground",
-      isActionActive(action) && "bg-accent border-primary/30 shadow-primary text-primary",
+      'text-muted-foreground relative rounded-[10px] border border-transparent bg-transparent shadow-none',
+      'transition-[transform,color,background-color,border-color,box-shadow] duration-200 ease-out',
+      'enabled:hover:border-border enabled:hover:-translate-y-px disabled:opacity-45',
+      'enabled:hover:bg-accent enabled:hover:text-foreground',
+      isActionActive(action) &&
+        'bg-accent border-primary/30 shadow-primary text-primary',
     );
   }
 
   function getPaletteSwatchClass(action: ToolbarAction, color: string) {
     return cn(
-      "border-border inline-flex size-8 items-center justify-center rounded-full border",
-      "shadow-accent",
-      "transition-[transform,box-shadow,border-color] duration-200 ease-out",
-      "hover:-translate-y-px hover:scale-[1.04]",
-      getPaletteCurrentColor(action) === color && "border-primary shadow-primary",
+      'border-border inline-flex size-8 items-center justify-center rounded-full border',
+      'shadow-accent',
+      'transition-[transform,box-shadow,border-color] duration-200 ease-out',
+      'hover:-translate-y-px hover:scale-[1.04]',
+      getPaletteCurrentColor(action) === color &&
+        'border-primary shadow-primary',
     );
   }
 
   function getMenuItemClass(item: ToolbarMenuItem) {
     return cn(
-      "flex items-center gap-2 rounded-lg p-2 text-left text-sm transition-colors",
-      "disabled:cursor-not-allowed disabled:opacity-45",
+      'flex items-center gap-2 rounded-lg p-2 text-left text-sm transition-colors',
+      'disabled:cursor-not-allowed disabled:opacity-45',
       isMenuItemActive(item)
-        ? "bg-accent text-foreground"
-        : "hover:bg-accent hover:text-foreground text-muted-foreground",
+        ? 'bg-accent text-foreground'
+        : 'hover:bg-accent hover:text-foreground text-muted-foreground',
     );
   }
 

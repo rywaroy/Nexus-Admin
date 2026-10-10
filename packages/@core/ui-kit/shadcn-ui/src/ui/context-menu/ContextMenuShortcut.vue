@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { cn } from "@vben-core/shared/utils";
+import type { HTMLAttributes } from 'vue';
+
+import { cn } from '@vben-core/shared/utils';
 
 const props = defineProps<{
-  class?: any;
+  class?: HTMLAttributes['class'];
 }>();
 </script>
 
 <template>
-  <span :class="cn('text-muted-foreground ml-auto text-xs tracking-widest', props.class)">
+  <span
+    data-slot="context-menu-shortcut"
+    :class="
+      cn('text-muted-foreground ml-auto text-xs tracking-widest', props.class)
+    "
+  >
     <slot></slot>
   </span>
 </template>

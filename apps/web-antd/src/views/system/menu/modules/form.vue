@@ -59,12 +59,13 @@ const schema: VbenFormSchema[] = [
         async (value: string) => {
           return !(await isMenuNameExists(value, formData.value?.id));
         },
-        (value) => ({
-          message: $t('ui.formRules.alreadyExists', [
-            $t('system.menu.menuName'),
-            value,
-          ]),
-        }),
+        {
+          error: (issue) =>
+            $t('ui.formRules.alreadyExists', [
+              $t('system.menu.menuName'),
+              issue.input as string,
+            ]),
+        },
       ),
   },
   {
@@ -135,12 +136,13 @@ const schema: VbenFormSchema[] = [
         async (value: string) => {
           return !(await isMenuPathExists(value, formData.value?.id));
         },
-        (value) => ({
-          message: $t('ui.formRules.alreadyExists', [
-            $t('system.menu.path'),
-            value,
-          ]),
-        }),
+        {
+          error: (issue) =>
+            $t('ui.formRules.alreadyExists', [
+              $t('system.menu.path'),
+              issue.input as string,
+            ]),
+        },
       ),
   },
   {
@@ -284,18 +286,13 @@ const schema: VbenFormSchema[] = [
   },
   {
     component: 'Input',
-    componentProps: (values) => {
-      return {
-        allowClear: true,
-        class: 'w-full',
-        disabled: values.badgeType !== 'normal',
-      };
-    },
+    componentProps: { allowClear: true, class: 'w-full' },
     dependencies: {
-      show: (values) => {
-        return values.type !== 'button';
-      },
-      triggerFields: ['type'],
+      triggerFields: ['type', 'badgeType'],
+      resolve: ({ values }) => ({
+        show: values.type !== 'button',
+        disabled: values.badgeType !== 'normal',
+      }),
     },
     fieldName: 'badge',
     label: $t('system.menu.badge'),
@@ -578,11 +575,11 @@ const transformToFormData = (data: SystemMenuApi.SystemMenu): any => {
   return result;
 };
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<SystemMenuApi.SystemMenu>({
   onConfirm: onSubmit,
   onOpenChange(isOpen) {
     if (isOpen) {
-      const data = drawerApi.getData<SystemMenuApi.SystemMenu>();
+      const data = drawerApi.getData();
       if (data?.id) {
         // 编辑模式
         formData.value = data;
@@ -599,13 +596,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
       } else if (data?.pid) {
         // 新增下级模式
         formData.value = undefined;
-        formApi.resetForm();
+        formApi.reset();
         formApi.setValues({ pid: data.pid });
         titleSuffix.value = '';
       } else {
         // 新增模式
         formData.value = undefined;
-        formApi.resetForm();
+        formApi.reset();
         titleSuffix.value = '';
       }
     }

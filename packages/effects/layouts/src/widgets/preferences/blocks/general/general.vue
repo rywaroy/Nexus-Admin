@@ -1,29 +1,72 @@
 <script setup lang="ts">
-import { SUPPORT_LANGUAGES } from "@vben/constants";
-import { $t } from "@vben/locales";
+import type { LanguageOption } from '@vben/constants';
 
-import InputItem from "../input-item.vue";
-import SelectItem from "../select-item.vue";
-import SwitchItem from "../switch-item.vue";
+import { onMounted, onUnmounted, ref, unref } from 'vue';
+
+import { onSupportLanguagesChange } from '@vben/constants';
+import { $t } from '@vben/locales';
+import { useTimezoneStore } from '@vben/stores';
+
+import InputItem from '../input-item.vue';
+import SelectItem from '../select-item.vue';
+import SwitchItem from '../switch-item.vue';
 
 defineOptions({
-  name: "PreferenceGeneralConfig",
+  name: 'PreferenceGeneralConfig',
 });
 
-const appLocale = defineModel<string>("appLocale");
-const appDynamicTitle = defineModel<boolean>("appDynamicTitle");
-const appWatermark = defineModel<boolean>("appWatermark");
-const appWatermarkContent = defineModel<string>("appWatermarkContent");
-const appEnableCheckUpdates = defineModel<boolean>("appEnableCheckUpdates");
-const appEnableCopyPreferences = defineModel<boolean>("appEnableCopyPreferences");
+const appLocale = defineModel<string | undefined>('appLocale', {
+  default: undefined,
+});
+const appTimezone = defineModel<string | undefined>('appTimezone', {
+  default: undefined,
+});
+const appDynamicTitle = defineModel<boolean>('appDynamicTitle');
+const appWatermark = defineModel<boolean>('appWatermark');
+const appWatermarkContent = defineModel<string | undefined>(
+  'appWatermarkContent',
+  {
+    default: undefined,
+  },
+);
+const appEnableCheckUpdates = defineModel<boolean>('appEnableCheckUpdates');
+const appEnableCopyPreferences = defineModel<boolean>(
+  'appEnableCopyPreferences',
+);
+const timezoneStore = useTimezoneStore();
+
+const languageList = ref<LanguageOption[]>([]);
+const unsubscribe = onSupportLanguagesChange((langs) => {
+  languageList.value = [...langs];
+});
+onUnmounted(unsubscribe);
+
+const timezoneOptionsRef = ref<
+  {
+    label: string;
+    value: string;
+  }[]
+>([]);
+
+onMounted(async () => {
+  timezoneOptionsRef.value = await timezoneStore.getTimezoneOptions();
+  // 获取当前时区，例如：Asia/Shanghai
+  const timezoneValue = unref(timezoneStore.timezone);
+  if (timezoneValue) {
+    appTimezone.value = timezoneValue;
+  }
+});
 </script>
 
 <template>
-  <SelectItem v-model="appLocale" :items="SUPPORT_LANGUAGES">
-    {{ $t("preferences.language") }}
+  <SelectItem v-model="appLocale" :items="languageList">
+    {{ $t('preferences.language') }}
+  </SelectItem>
+  <SelectItem v-model="appTimezone" :items="timezoneOptionsRef">
+    {{ $t('preferences.timezone') }}
   </SelectItem>
   <SwitchItem v-model="appDynamicTitle">
-    {{ $t("preferences.dynamicTitle") }}
+    {{ $t('preferences.dynamicTitle') }}
   </SwitchItem>
   <SwitchItem
     v-model="appWatermark"
@@ -33,19 +76,19 @@ const appEnableCopyPreferences = defineModel<boolean>("appEnableCopyPreferences"
       }
     "
   >
-    {{ $t("preferences.watermark") }}
+    {{ $t('preferences.watermark') }}
   </SwitchItem>
   <InputItem
     v-if="appWatermark"
     v-model="appWatermarkContent"
     :placeholder="$t('preferences.watermarkContent')"
   >
-    {{ $t("preferences.watermarkContent") }}
+    {{ $t('preferences.watermarkContent') }}
   </InputItem>
   <SwitchItem v-model="appEnableCheckUpdates">
-    {{ $t("preferences.checkUpdates") }}
+    {{ $t('preferences.checkUpdates') }}
   </SwitchItem>
   <SwitchItem v-model="appEnableCopyPreferences">
-    {{ $t("preferences.enableCopyPreferences") }}
+    {{ $t('preferences.enableCopyPreferences') }}
   </SwitchItem>
 </template>

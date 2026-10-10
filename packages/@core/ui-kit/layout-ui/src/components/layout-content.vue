@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import type { CSSProperties } from "vue";
+import type { CSSProperties } from 'vue';
 
-import type { ContentCompactType } from "@vben-core/typings";
+import type { ContentCompactType } from '@vben-core/typings';
 
-import { computed } from "vue";
-
-import { useLayoutContentStyle } from "@vben-core/composables";
-import { Slot } from "@vben-core/shadcn-ui";
+import { computed } from 'vue';
 
 interface Props {
   /**
@@ -26,19 +23,29 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {});
 
-// @ts-expect-error - unused
-const { contentElement, overlayStyle } = useLayoutContentStyle();
+const overlayViewportStyle: CSSProperties = {
+  height:
+    'calc(var(--vben-viewport-height) - var(--vben-header-height, 0px) - var(--vben-footer-height, 0px))',
+};
 
 const style = computed((): CSSProperties => {
-  const { contentCompact, padding, paddingBottom, paddingLeft, paddingRight, paddingTop } = props;
+  const {
+    contentCompact,
+    padding,
+    paddingBottom,
+    paddingLeft,
+    paddingRight,
+    paddingTop,
+  } = props;
 
   const compactStyle: CSSProperties =
-    contentCompact === "compact"
-      ? { margin: "0 auto", width: `${props.contentCompactWidth}px` }
+    contentCompact === 'compact'
+      ? { margin: '0 auto', width: `${props.contentCompactWidth}px` }
       : {};
   return {
     ...compactStyle,
     flex: 1,
+    minWidth: 0,
     padding: `${padding}px`,
     paddingBottom: `${paddingBottom}px`,
     paddingLeft: `${paddingLeft}px`,
@@ -49,10 +56,20 @@ const style = computed((): CSSProperties => {
 </script>
 
 <template>
-  <main ref="contentElement" :style="style" class="relative bg-background-deep">
-    <Slot :style="overlayStyle">
-      <slot name="overlay"></slot>
-    </Slot>
+  <main :style="style" class="relative min-w-0">
+    <div
+      v-if="$slots.overlay"
+      data-layout-region="content-overlay"
+      class="pointer-events-none sticky top-0 z-150 h-0 w-full"
+    >
+      <div
+        :style="overlayViewportStyle"
+        data-layout-region="overlay-viewport"
+        class="pointer-events-none relative min-h-0 w-full"
+      >
+        <slot name="overlay"></slot>
+      </div>
+    </div>
     <slot></slot>
   </main>
 </template>

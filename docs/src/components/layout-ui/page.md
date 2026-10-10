@@ -16,15 +16,15 @@ outline: deep
 
 ### Props
 
-| 属性名            | 描述                               | 类型             | 默认值  | 说明                                                 |
-| ----------------- | ---------------------------------- | ---------------- | ------- | ---------------------------------------------------- |
-| title             | 页面标题                           | `string \| slot` | -       | -                                                    |
-| description       | 页面描述                           | `string \| slot` | -       | -                                                    |
-| contentClass      | 内容区域的 class                   | `string`         | -       | -                                                    |
-| headerClass       | 头部区域的 class                   | `string`         | -       | -                                                    |
-| footerClass       | 底部区域的 class                   | `string`         | -       | -                                                    |
-| autoContentHeight | 根据可视内容高度自动计算内容区高度 | `boolean`        | `false` | 开启后内容区会根据布局可视高度自动扣减头部和底部高度 |
-| heightOffset      | 额外扣减的内容区高度偏移量         | `number`         | `0`     | 仅在 `autoContentHeight` 开启时生效，单位为 `px`     |
+| 属性名 | 描述 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- | --- |
+| title | 页面标题 | `string \| slot` | - | - |
+| description | 页面描述 | `string \| slot` | - | - |
+| contentClass | 内容区域的 class | `string` | - | - |
+| headerClass | 头部区域的 class | `string` | - | - |
+| footerClass | 底部区域的 class | `string` | - | - |
+| autoContentHeight | 根据可视内容高度自动计算内容区高度 | `boolean` | `false` | 开启后内容区会根据布局可视高度自动扣减头部和底部高度 |
+| heightOffset | 额外扣减的内容区高度偏移量 | `number` | `0` | 仅在 `autoContentHeight` 开启时生效，单位为 `px` |
 
 ::: tip 注意
 

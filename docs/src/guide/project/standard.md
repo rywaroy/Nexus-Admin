@@ -49,7 +49,7 @@ pnpm oxfmt --check
 
 ### 配置
 
-Oxfmt 的根目录入口文件为 `oxfmt.config.mjs`，其核心配置位于 `internal/lint-configs/oxfmt-config` 目录下，可以根据项目需求进行修改。
+Oxfmt 的根目录入口文件为 `oxfmt.config.ts`，其核心配置位于 `internal/lint-configs/oxfmt-config` 目录下，可以根据项目需求进行修改。
 
 ## Oxlint
 
@@ -64,7 +64,7 @@ pnpm oxlint --fix
 
 ### 配置
 
-Oxlint 的核心配置位于 `internal/lint-configs/oxlint-config` 目录下，根目录入口文件为 `oxlint.config.mjs`。
+Oxlint 的核心配置位于 `internal/lint-configs/oxlint-config` 目录下，根目录入口文件为 `oxlint.config.ts`。
 
 ## ESLint
 
@@ -217,7 +217,7 @@ pre-commit:
   commands:
     lint-js:
       run: pnpm oxfmt {staged_files} && pnpm oxlint --fix {staged_files} && pnpm eslint --cache --fix {staged_files}
-      glob: "*.{js,jsx,ts,tsx}"
+      glob: '*.{js,jsx,ts,tsx}'
 ```
 
 其中：

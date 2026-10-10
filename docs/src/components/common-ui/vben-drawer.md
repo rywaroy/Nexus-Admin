@@ -50,6 +50,29 @@ Drawer 内的内容一般业务中，会比较复杂，所以我们可以将 dra
 
 <DemoPreview dir="demos/vben-drawer/shared-data" />
 
+### 数据类型约束
+
+推荐在 connected 子组件中声明一次数据类型并暴露 `drawerApi`，外部会从 `connectedComponent` 自动推导 `setData` 和 `getData` 的类型：
+
+```ts
+// connected 子组件
+const [Drawer, drawerApi] = useVbenDrawer<EditData>();
+defineExpose({ drawerApi });
+
+// 外部组件，无需重复声明 EditData
+const [Drawer, drawerApi] = useVbenDrawer({
+  connectedComponent: EditDrawer,
+});
+```
+
+无法从组件公开实例推导时，可以显式使用 `useVbenDrawer<EditData>()`。需要让多个文件共享同一契约时，可以在独立模块中预绑定：
+
+```ts
+export const useEditDrawer = createVbenDrawer<EditData>();
+```
+
+三种方式的优先级为：显式泛型、connected component 自动推导、`unknown`。普通 SFC 通过 `defineExpose` 支持自动推导；泛型 SFC、函数式组件或被标注为宽 `Component` 的组件应使用显式泛型或契约工厂。`getData()` 在尚未调用 `setData()` 时返回 `undefined`，业务允许 `null`、部分对象等值时，需要在数据泛型中准确声明。
+
 ::: info 注意
 
 - `VbenDrawer` 组件对于参数的处理优先级是 `slot` > `props` > `state`(通过api更新的状态以及useVbenDrawer参数)。如果你已经传入了 `slot` 或者 `props`，那么 `setState` 将不会生效，这种情况下你可以通过 `slot` 或者 `props` 来更新状态。
@@ -74,35 +97,35 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
 所有属性都可以传入 `useVbenDrawer` 的第一个参数中。
 
-| 属性名             | 描述                                 | 类型                               | 默认值  |
-| ------------------ | ------------------------------------ | ---------------------------------- | ------- |
-| appendToMain       | 是否挂载到内容区域（默认挂载到body） | `boolean`                          | `false` |
-| connectedComponent | 连接另一个Drawer组件                 | `Component`                        | -       |
-| destroyOnClose     | 关闭时销毁                           | `boolean`                          | `false` |
-| title              | 标题                                 | `string\|slot`                     | -       |
-| titleTooltip       | 标题提示信息                         | `string\|slot`                     | -       |
-| description        | 描述信息                             | `string\|slot`                     | -       |
-| isOpen             | 弹窗打开状态                         | `boolean`                          | `false` |
-| loading            | 弹窗加载状态                         | `boolean`                          | `false` |
-| closable           | 显示关闭按钮                         | `boolean`                          | `true`  |
-| closeIconPlacement | 关闭按钮位置                         | `'left'\|'right'`                  | `right` |
-| modal              | 显示遮罩                             | `boolean`                          | `true`  |
-| header             | 显示header                           | `boolean`                          | `true`  |
-| footer             | 显示footer                           | `boolean\|slot`                    | `true`  |
-| confirmLoading     | 确认按钮loading状态                  | `boolean`                          | `false` |
-| closeOnClickModal  | 点击遮罩关闭弹窗                     | `boolean`                          | `true`  |
-| closeOnPressEscape | esc 关闭弹窗                         | `boolean`                          | `true`  |
-| confirmText        | 确认按钮文本                         | `string\|slot`                     | `确认`  |
-| cancelText         | 取消按钮文本                         | `string\|slot`                     | `取消`  |
-| placement          | 抽屉弹出位置                         | `'left'\|'right'\|'top'\|'bottom'` | `right` |
-| showCancelButton   | 显示取消按钮                         | `boolean`                          | `true`  |
-| showConfirmButton  | 显示确认按钮                         | `boolean`                          | `true`  |
-| class              | modal的class，宽度通过这个配置       | `string`                           | -       |
-| contentClass       | modal内容区域的class                 | `string`                           | -       |
-| footerClass        | modal底部区域的class                 | `string`                           | -       |
-| headerClass        | modal顶部区域的class                 | `string`                           | -       |
-| zIndex             | 抽屉的ZIndex层级                     | `number`                           | `1000`  |
-| overlayBlur        | 遮罩模糊度                           | `number`                           | -       |
+| 属性名 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| appendToMain | 是否挂载到内容区域（默认挂载到body） | `boolean` | `false` |
+| connectedComponent | 连接另一个Drawer组件 | `Component` | - |
+| destroyOnClose | 关闭时销毁 | `boolean` | `false` |
+| title | 标题 | `string\|slot` | - |
+| titleTooltip | 标题提示信息 | `string\|slot` | - |
+| description | 描述信息 | `string\|slot` | - |
+| isOpen | 弹窗打开状态 | `boolean` | `false` |
+| loading | 弹窗加载状态 | `boolean` | `false` |
+| closable | 显示关闭按钮 | `boolean` | `true` |
+| closeIconPlacement | 关闭按钮位置 | `'left'\|'right'` | `right` |
+| modal | 显示遮罩 | `boolean` | `true` |
+| header | 显示header | `boolean` | `true` |
+| footer | 显示footer | `boolean\|slot` | `true` |
+| confirmLoading | 确认按钮loading状态 | `boolean` | `false` |
+| closeOnClickModal | 点击遮罩关闭弹窗 | `boolean` | `true` |
+| closeOnPressEscape | esc 关闭弹窗 | `boolean` | `true` |
+| confirmText | 确认按钮文本 | `string\|slot` | `确认` |
+| cancelText | 取消按钮文本 | `string\|slot` | `取消` |
+| placement | 抽屉弹出位置 | `'left'\|'right'\|'top'\|'bottom'` | `right` |
+| showCancelButton | 显示取消按钮 | `boolean` | `true` |
+| showConfirmButton | 显示确认按钮 | `boolean` | `true` |
+| class | modal的class，宽度通过这个配置 | `string` | - |
+| contentClass | modal内容区域的class | `string` | - |
+| footerClass | modal底部区域的class | `string` | - |
+| headerClass | modal顶部区域的class | `string` | - |
+| zIndex | 抽屉的ZIndex层级 | `number` | `1000` |
+| overlayBlur | 遮罩模糊度 | `number` | - |
 
 ::: info appendToMain
 
@@ -114,14 +137,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
 以下事件，只有在 `useVbenDrawer({onCancel:()=>{}})` 中传入才会生效。
 
-| 事件名        | 描述                                                  | 类型                                                    | 版本限制            |
-| ------------- | ----------------------------------------------------- | ------------------------------------------------------- | ------------------- |
+| 事件名 | 描述 | 类型 | 版本限制 |
+| --- | --- | --- | --- |
 | onBeforeClose | 关闭前触发，返回 `false` 或 Promise reject 则禁止关闭 | `()=>Promise<boolean \| undefined>\|boolean\|undefined` | >5.5.2 支持 Promise |
-| onCancel      | 点击取消按钮触发                                      | `()=>void`                                              | ---                 |
-| onClosed      | 关闭动画播放完毕时触发                                | `()=>void`                                              | >5.5.2              |
-| onConfirm     | 点击确认按钮触发                                      | `()=>void`                                              | ---                 |
-| onOpenChange  | 关闭或者打开弹窗时触发                                | `(isOpen:boolean)=>void`                                | ---                 |
-| onOpened      | 打开动画播放完毕时触发                                | `()=>void`                                              | >5.5.2              |
+| onCancel | 点击取消按钮触发 | `()=>void` | --- |
+| onClosed | 关闭动画播放完毕时触发 | `()=>void` | >5.5.2 |
+| onConfirm | 点击确认按钮触发 | `()=>void` | --- |
+| onOpenChange | 关闭或者打开弹窗时触发 | `(isOpen:boolean)=>void` | --- |
+| onOpened | 打开动画播放完毕时触发 | `()=>void` | >5.5.2 |
 
 ### Slots
 
@@ -138,16 +161,16 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
 ### drawerApi
 
-| 方法     | 描述                                                        | 类型                                                                                | 版本限制 |
-| -------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------- |
-| setState | 动态设置抽屉状态属性                                        | `(((prev: DrawerState) => Partial<DrawerState>)\| Partial<DrawerState>)=>drawerApi` |
-| open     | 打开弹窗                                                    | `()=>void`                                                                          | ---      |
-| close    | 关闭弹窗                                                    | `()=>void`                                                                          | ---      |
-| setData  | 设置共享数据                                                | `<T>(data:T)=>drawerApi`                                                            | ---      |
-| getData  | 获取共享数据                                                | `<T>()=>T`                                                                          | ---      |
-| useStore | 获取可响应式状态                                            | -                                                                                   | ---      |
-| lock     | 将抽屉标记为提交中，锁定当前状态                            | `(isLock:boolean)=>drawerApi`                                                       | >5.5.3   |
-| unlock   | lock方法的反操作，解除抽屉的锁定状态，也是lock(false)的别名 | `()=>drawerApi`                                                                     | >5.5.3   |
+| 方法 | 描述 | 类型 | 版本限制 |
+| --- | --- | --- | --- |
+| setState | 动态设置抽屉状态属性 | `(((prev: DrawerState) => Partial<DrawerState>)\| Partial<DrawerState>)=>drawerApi` |
+| open | 打开弹窗 | `()=>void` | --- |
+| close | 关闭弹窗 | `()=>void` | --- |
+| setData | 设置共享数据 | `(data:TData)=>drawerApi` | --- |
+| getData | 获取共享数据 | `()=>TData\|undefined` | --- |
+| useStore | 获取可响应式状态 | - | --- |
+| lock | 将抽屉标记为提交中，锁定当前状态 | `(isLock:boolean)=>drawerApi` | >5.5.3 |
+| unlock | lock方法的反操作，解除抽屉的锁定状态，也是lock(false)的别名 | `()=>drawerApi` | >5.5.3 |
 
 ::: info lock
 

@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { cn } from "@vben-core/shared/utils";
+import type { HTMLAttributes } from 'vue';
+
+import { cn } from '@vben-core/shared/utils';
 
 const props = defineProps<{
-  class?: any;
+  class?: HTMLAttributes['class'];
 }>();
 </script>
 
 <template>
-  <div :class="cn('border-border bg-card text-card-foreground rounded-xl border', props.class)">
+  <div
+    data-slot="card"
+    :class="
+      cn(
+        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        props.class,
+      )
+    "
+  >
     <slot></slot>
   </div>
 </template>

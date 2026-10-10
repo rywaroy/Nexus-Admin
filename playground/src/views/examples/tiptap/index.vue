@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { MediaUploadOptions } from "@vben/plugins/tiptap";
+import type { MediaUploadOptions } from '@vben/plugins/tiptap';
 
-import { ref } from "vue";
+import { ref } from 'vue';
 
-import { Page } from "@vben/common-ui";
-import { VbenTiptap, VbenTiptapPreview } from "@vben/plugins/tiptap";
+import { Page } from '@vben/common-ui';
+import { VbenTiptap, VbenTiptapPreview } from '@vben/plugins/tiptap';
 
-import { Card, message, Switch } from "ant-design-vue";
+import { Card, message, Switch } from 'antdv-next';
 
-import { uploadEditorMedia } from "#/api/examples/tiptap";
+import { uploadEditorMedia } from '#/api/examples/tiptap';
 
 const content = ref(
-  "<h2>Tiptap 富文本编辑器</h2><p>支持图片和视频上传。选中媒体后可输入宽高，也可以拖动四角调整尺寸。</p>",
+  '<h2>Tiptap 富文本编辑器</h2><p>支持图片和视频上传。选中媒体后可输入宽高，也可以拖动四角调整尺寸。</p>',
 );
 const editable = ref(true);
 const mediaUpload: MediaUploadOptions = {

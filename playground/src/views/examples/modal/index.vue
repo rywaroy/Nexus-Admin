@@ -1,22 +1,35 @@
 <script lang="ts" setup>
-import { onBeforeUnmount } from "vue";
+import type { ExplicitModalData } from './typed-data-contract';
 
-import { alert, clearAllAlerts, confirm, Page, prompt, useVbenModal } from "@vben/common-ui";
+import { onBeforeUnmount } from 'vue';
 
-import { Button, Card, Flex, message } from "ant-design-vue";
+import {
+  alert,
+  clearAllAlerts,
+  confirm,
+  Page,
+  prompt,
+  useVbenModal,
+} from '@vben/common-ui';
 
-import DocButton from "../doc-button.vue";
-import AutoHeightDemo from "./auto-height-demo.vue";
-import BaseDemo from "./base-demo.vue";
-import BlurDemo from "./blur-demo.vue";
-import DragDemo from "./drag-demo.vue";
-import DynamicDemo from "./dynamic-demo.vue";
-import FormModalDemo from "./form-modal-demo.vue";
-import InContentModalDemo from "./in-content-demo.vue";
-import NestedDemo from "./nested-demo.vue";
-import SharedDataDemo from "./shared-data-demo.vue";
+import { Button, Card, Flex, message } from 'antdv-next';
 
-defineOptions({ name: "ModalExample" });
+import DocButton from '../doc-button.vue';
+import AutoHeightDemo from './auto-height-demo.vue';
+import BaseDemo from './base-demo.vue';
+import BlurDemo from './blur-demo.vue';
+import DragDemo from './drag-demo.vue';
+import DynamicDemo from './dynamic-demo.vue';
+import FormModalDemo from './form-modal-demo.vue';
+import InContentModalDemo from './in-content-demo.vue';
+import NestedDemo from './nested-demo.vue';
+import SharedDataDemo from './shared-data-demo.vue';
+import TypedDataAutoDemo from './typed-data-auto-demo.vue';
+import { useFactoryModal } from './typed-data-contract';
+import TypedDataExplicitDemo from './typed-data-explicit-demo.vue';
+import TypedDataFactoryDemo from './typed-data-factory-demo.vue';
+
+defineOptions({ name: 'ModalExample' });
 
 const [BaseModal, baseModalApi] = useVbenModal({
   // 连接抽离的组件
@@ -46,6 +59,19 @@ const [SharedDataModal, sharedModalApi] = useVbenModal({
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: FormModalDemo,
+});
+
+const [TypedDataAutoModal, typedDataAutoModalApi] = useVbenModal({
+  connectedComponent: TypedDataAutoDemo,
+});
+
+const [TypedDataExplicitModal, typedDataExplicitModalApi] =
+  useVbenModal<ExplicitModalData>({
+    connectedComponent: TypedDataExplicitDemo,
+  });
+
+const [TypedDataFactoryModal, typedDataFactoryModalApi] = useFactoryModal({
+  connectedComponent: TypedDataFactoryDemo,
 });
 
 const [NestedModal, nestedModalApi] = useVbenModal({
@@ -79,8 +105,8 @@ function openDynamicModal() {
 function openSharedModal() {
   sharedModalApi
     .setData({
-      content: "外部传递的数据 content",
-      payload: "外部传递的数据 payload",
+      content: '外部传递的数据 content',
+      payload: '外部传递的数据 payload',
     })
     .open();
 }
@@ -94,24 +120,51 @@ function openBlurModal() {
 }
 
 function handleUpdateTitle() {
-  dynamicModalApi.setState({ title: "外部动态标题" }).open();
+  dynamicModalApi.setState({ title: '外部动态标题' }).open();
 }
 
 function openFormModal() {
   formModalApi
     .setData({
       // 表单值
-      values: { field1: "abc", field2: "123" },
+      values: { field1: 'abc', field2: '123', field3: '1' },
+    })
+    .open();
+}
+
+function openTypedDataAutoModal() {
+  typedDataAutoModalApi
+    .setData({
+      message: '外部无需声明泛型，由 connected component 自动推导。',
+      method: '自动推导',
+    })
+    .open();
+}
+
+function openTypedDataExplicitModal() {
+  typedDataExplicitModalApi
+    .setData({
+      message: '父子组件显式引用同一个数据类型。',
+      method: '显式泛型',
+    })
+    .open();
+}
+
+function openTypedDataFactoryModal() {
+  typedDataFactoryModalApi
+    .setData({
+      message: '父子组件复用预绑定的 typed composable。',
+      method: '契约工厂',
     })
     .open();
 }
 
 function openAlert() {
   alert({
-    content: "这是一个弹窗",
-    icon: "success",
+    content: '这是一个弹窗',
+    icon: 'success',
   }).then(() => {
-    message.info("用户关闭了弹窗");
+    message.info('用户关闭了弹窗');
   });
 }
 
@@ -132,35 +185,35 @@ function openConfirm() {
       });
     },
     centered: false,
-    content: "这是一个确认弹窗",
-    icon: "question",
+    content: '这是一个确认弹窗',
+    icon: 'question',
   })
     .then(() => {
-      message.success("用户确认了操作");
+      message.success('用户确认了操作');
     })
     .catch(() => {
-      message.error("用户取消了操作");
+      message.error('用户取消了操作');
     });
 }
 
 async function openPrompt() {
   prompt<string>({
     async beforeClose({ isConfirm, value }) {
-      if (isConfirm && value === "芝士") {
-        message.error("不能吃芝士");
+      if (isConfirm && value === '芝士') {
+        message.error('不能吃芝士');
         return false;
       }
     },
-    componentProps: { placeholder: "不能吃芝士..." },
-    content: "中午吃了什么？",
-    icon: "question",
+    componentProps: { placeholder: '不能吃芝士...' },
+    content: '中午吃了什么？',
+    icon: 'question',
     overlayBlur: 3,
   })
     .then((res) => {
       message.success(`用户输入了：${res}`);
     })
     .catch(() => {
-      message.error("用户取消了输入");
+      message.error('用户取消了输入');
     });
 }
 </script>
@@ -181,6 +234,9 @@ async function openPrompt() {
     <DynamicModal />
     <SharedDataModal />
     <FormModal />
+    <TypedDataAutoModal />
+    <TypedDataExplicitModal />
+    <TypedDataFactoryModal />
     <NestedModal />
     <BlurModal />
     <Flex wrap="wrap" class="w-full" gap="10">
@@ -201,7 +257,9 @@ async function openPrompt() {
       <Card class="w-75" title="内容高度自适应">
         <p>可根据内容并自动调整高度</p>
         <template #actions>
-          <Button type="primary" @click="openAutoHeightModal"> 打开弹窗 </Button>
+          <Button type="primary" @click="openAutoHeightModal">
+            打开弹窗
+          </Button>
         </template>
       </Card>
 
@@ -218,14 +276,18 @@ async function openPrompt() {
           <Button type="link" @click="openDynamicModal">打开弹窗</Button>
         </template>
         <template #actions>
-          <Button type="primary" @click="handleUpdateTitle"> 外部修改标题并打开 </Button>
+          <Button type="primary" @click="handleUpdateTitle">
+            外部修改标题并打开
+          </Button>
         </template>
       </Card>
 
       <Card class="w-75" title="内外数据共享示例">
         <p>通过共享 sharedData 来进行数据交互</p>
         <template #actions>
-          <Button type="primary" @click="openSharedModal"> 打开弹窗并传递数据 </Button>
+          <Button type="primary" @click="openSharedModal">
+            打开弹窗并传递数据
+          </Button>
         </template>
       </Card>
 
@@ -233,6 +295,33 @@ async function openPrompt() {
         <p>弹窗与表单结合</p>
         <template #actions>
           <Button type="primary" @click="openFormModal"> 打开表单弹窗 </Button>
+        </template>
+      </Card>
+
+      <Card class="w-75" title="共享数据：自动推导">
+        <p>子组件 expose API，父组件从 connected component 推导类型</p>
+        <template #actions>
+          <Button type="primary" @click="openTypedDataAutoModal">
+            打开自动推导示例
+          </Button>
+        </template>
+      </Card>
+
+      <Card class="w-75" title="共享数据：显式泛型">
+        <p>无法自动推导时，父子组件显式引用同一个数据类型</p>
+        <template #actions>
+          <Button type="primary" @click="openTypedDataExplicitModal">
+            打开显式泛型示例
+          </Button>
+        </template>
+      </Card>
+
+      <Card class="w-75" title="共享数据：契约工厂">
+        <p>通过 createVbenModal 预绑定类型并复用 typed composable</p>
+        <template #actions>
+          <Button type="primary" @click="openTypedDataFactoryModal">
+            打开契约工厂示例
+          </Button>
         </template>
       </Card>
 

@@ -1,55 +1,40 @@
-# 开发文档
+# Nexus 前端开发文档（AI 入口）
 
-> **AI 助手提示**：本文档为概览索引。根据你的具体需求，请查阅对应的子文档以获取详细信息。
->
-> - 需要了解项目结构？→ 查阅 [项目结构](./devdocs/project-structure.md)
-> - 需要使用组件？→ 查阅 [组件文档](./devdocs/components/)
-> - 需要创建页面？→ 查阅 [页面构建指南](./devdocs/guidelines/page-building.md) 和 [列表页模板](./devdocs/templates/list-page.md)
+本文档对应当前代码。上游同步基线为 `vbenjs/vue-vben-admin` 的 `main` 提交 `533e2464670f525204428e37c2a9a3d39eac3e4b`（2026-10-09），见 [同步说明](devdocs/upstream-sync.md)。根目录版本号仍为 5.7.0；底层 API 以源码和锁文件为准。
 
-## 快速索引
+## 开发前必读
 
-### 项目基础
+1. 业务应用是 `apps/web-antd`，Nexus 后端在同级 `../Nexus`。应用源码使用 `#/` 别名。
+2. 表单、表格必须从 `#/adapter/form`、`#/adapter/vxe-table` 导入，以获得 Ant Design Vue 的组件适配和类型。Page、弹窗和抽屉从 `@vben/common-ui` 导入。
+3. 当前表单底层为 TanStack Vue Form，校验为 Zod 4。不要引用旧版 vee-validate API。新联动使用 `dependencies.resolve`，重置使用 `reset()`。
+4. 当前采用后端菜单模式：页面文件存在不代表用户能访问，还需要后端菜单、角色和权限配置。
+5. 新业务放在应用层，使用 `<script setup lang="ts">`、箭头函数和 async/await。禁止无目的的兜底代码、无意义注释和子代理；未经用户主动要求，不使用 Playwright。
+6. 修改公共组件、示例或依赖后，更新对应指南并运行 `pnpm check:devdocs`。示例 Vue 文件参与应用类型检查，不维护另一份完整教程。
 
-| 文档 | 描述 |
+## 文档索引
+
+| 需求 | 文档 |
 | --- | --- |
-| [项目结构](./devdocs/project-structure.md) | 技术栈、目录结构、web-antd 应用详解 |
+| 环境、目录、运行和构建 | [项目结构](devdocs/project-structure.md) |
+| 同步上游、二开边界、API 迁移 | [同步说明](devdocs/upstream-sync.md) |
+| 编码和验证要求 | [代码规范](devdocs/guidelines/code-style.md) |
+| 页面、后端菜单和权限 | [页面构建](devdocs/guidelines/page-building.md) |
+| 表单、校验、联动和插槽 | [Vben Form](devdocs/components/vben-form.md) |
+| 远程表格、分页和操作列 | [VxeTable](devdocs/components/vxe-table.md) |
+| 弹窗与传参 | [Vben Modal](devdocs/components/vben-modal.md) |
+| CRUD 抽屉与传参 | [Vben Drawer](devdocs/components/vben-drawer.md) |
+| 富文本、媒体上传和尺寸 | [Tiptap](devdocs/components/tiptap.md) |
+| 图标 | [Icon](devdocs/components/icon.md) |
+| 可复制的列表页示例 | [列表页模板](devdocs/templates/list-page.md) |
 
-### 组件文档
+## 验证命令
 
-| 组件 | 文档 | 适用场景 |
-| --- | --- | --- |
-| Vben Form | [vben-form.md](./devdocs/components/vben-form.md) | 表单创建、校验、动态表单 |
-| VxeTable | [vxe-table.md](./devdocs/components/vxe-table.md) | 数据表格、远程加载、编辑功能 |
-| Vben Modal | [vben-modal.md](./devdocs/components/vben-modal.md) | 弹窗、表单弹窗 |
-| Vben Drawer | [vben-drawer.md](./devdocs/components/vben-drawer.md) | 抽屉面板、表单抽屉 |
-| Vben Tiptap | [tiptap.md](./devdocs/components/tiptap.md) | 富文本编辑、图片和视频上传、媒体宽高调整 |
-| Icon | [icon.md](./devdocs/components/icon.md) | 图标使用、Iconify、图标选择器 |
+```sh
+pnpm install --frozen-lockfile
+pnpm dev:antd
+pnpm check:devdocs
+pnpm check:type
+pnpm build:antd
+```
 
-### 开发指南
-
-| 文档 | 描述 |
-| --- | --- |
-| [代码规范](./devdocs/guidelines/code-style.md) | 编码规范、通用组件 |
-| [页面构建](./devdocs/guidelines/page-building.md) | 路由配置、meta 详解、权限控制 |
-
-### 页面模板
-
-| 模板 | 文档 | 适用场景 |
-| --- | --- | --- |
-| 列表页 | [list-page.md](./devdocs/templates/list-page.md) | CRUD 列表、数据管理页面 |
-
-## 核心规范速览
-
-1. **方法定义**：使用箭头函数
-2. **异步处理**：优先使用 async/await
-3. **Vue 模式**：严格使用 setup 模式
-4. **组件优先级**：Vben 封装组件 > Ant Design Vue 组件
-
-## 技术栈
-
-- **前端框架**: Vue 3
-- **构建工具**: Vite
-- **包管理器**: pnpm (Monorepo)
-- **UI 框架**: Ant Design Vue
-- **状态管理**: Pinia
-- **路由**: Vue Router
+完整底层 API 见仓库内的 [上游组件文档](docs/src/components/common-ui/)。本项目指南解释 Nexus 的实际接入方式；接口类型和组件属性以链接的源码为准。后续升级仍需核对指南，当前检查通过不代表未来版本自动兼容。

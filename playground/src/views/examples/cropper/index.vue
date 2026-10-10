@@ -1,40 +1,40 @@
 <script lang="ts" setup>
-import type { UploadChangeParam } from "ant-design-vue";
+import type { UploadChangeParam } from 'antdv-next';
 
-import { ref } from "vue";
+import { ref } from 'vue';
 
-import { Page, VCropper } from "@vben/common-ui";
+import { Page, VCropper } from '@vben/common-ui';
 
-import { Button, Card, Select, Upload } from "ant-design-vue";
+import { Button, Card, Select, Upload } from 'antdv-next';
 
 const options = [
-  { label: "1:1", value: "1:1" },
-  { label: "16:9", value: "16:9" },
-  { label: "不限制", value: "" },
+  { label: '1:1', value: '1:1' },
+  { label: '16:9', value: '16:9' },
+  { label: '不限制', value: '' },
 ];
 
 const cropperRef = ref<InstanceType<typeof VCropper>>();
 
 const cropLoading = ref(false);
-const validAspectRatio = ref<string | undefined>("1:1");
-const imgUrl = ref("");
+const validAspectRatio = ref<string | undefined>('1:1');
+const imgUrl = ref('');
 const cropperImg = ref();
 
 const selectImgFile = (event: UploadChangeParam) => {
   const file = event.fileList[0]?.originFileObj;
   if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    console.error("请上传图片文件");
+  if (!file.type.startsWith('image/')) {
+    console.error('请上传图片文件');
     return;
   }
 
   const reader = new FileReader();
-  reader.addEventListener("load", (e) => {
+  reader.addEventListener('load', (e) => {
     imgUrl.value = e.target?.result as string;
   });
-  reader.addEventListener("error", () => {
-    console.error("Failed to read file");
+  reader.addEventListener('error', () => {
+    console.error('Failed to read file');
   });
 
   reader.readAsDataURL(file);
@@ -44,9 +44,13 @@ const cropImage = async () => {
   if (!cropperRef.value) return;
   cropLoading.value = true;
   try {
-    cropperImg.value = await cropperRef.value.getCropImage("image/jpeg", 0.92, "base64");
+    cropperImg.value = await cropperRef.value.getCropImage(
+      'image/jpeg',
+      0.92,
+      'base64',
+    );
   } catch (error) {
-    console.error("图片裁剪失败:", error);
+    console.error('图片裁剪失败:', error);
   } finally {
     cropLoading.value = false;
   }
@@ -58,7 +62,7 @@ const cropImage = async () => {
 const downloadImage = () => {
   if (!cropperImg.value) return;
 
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.download = `cropped-image-${Date.now()}.png`;
   link.href = cropperImg.value;
   link.click();
@@ -73,7 +77,11 @@ const downloadImage = () => {
       <div class="image-cropper-container">
         <div class="cropper-ratio-display">
           <label class="ratio-label">当前裁剪比例：</label>
-          <Select class="w-24" v-model:value="validAspectRatio" :options="options" />
+          <Select
+            class="w-24"
+            v-model:value="validAspectRatio"
+            :options="options"
+          />
           <Upload
             :max-count="1"
             :show-upload-list="false"
@@ -95,12 +103,21 @@ const downloadImage = () => {
 
           <!-- 操作按钮组 -->
           <div class="cropper-btn-group">
-            <Button :loading="cropLoading" @click="cropImage" type="primary"> 裁剪 </Button>
-            <Button v-if="cropperImg" @click="downloadImage" danger> 下载图片 </Button>
+            <Button :loading="cropLoading" @click="cropImage" type="primary">
+              裁剪
+            </Button>
+            <Button v-if="cropperImg" @click="downloadImage" danger>
+              下载图片
+            </Button>
           </div>
 
           <!-- 裁剪预览 -->
-          <img v-if="cropperImg" class="h-full w-80" :src="cropperImg" alt="裁剪预览" />
+          <img
+            v-if="cropperImg"
+            class="h-full w-80"
+            :src="cropperImg"
+            alt="裁剪预览"
+          />
         </div>
       </div>
     </Card>

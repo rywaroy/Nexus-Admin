@@ -1,18 +1,24 @@
-import type { VxeTableGridOptions } from "@vben/plugins/vxe-table";
+import type { FormValues } from '@vben/common-ui';
+import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 
-import { h } from "vue";
+import type { ComponentPropsMap, ComponentType } from './component';
 
-import { setupVbenVxeTable, useVbenVxeGrid } from "@vben/plugins/vxe-table";
+import { h } from 'vue';
 
-import { Button, Image } from "antdv-next";
+import {
+  setupVbenVxeTable,
+  useVbenVxeGrid as useGrid,
+} from '@vben/plugins/vxe-table';
 
-import { useVbenForm } from "./form";
+import { Button, Image } from 'antdv-next';
+
+import { useVbenForm } from './form';
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
     vxeUI.setConfig({
       grid: {
-        align: "center",
+        align: 'center',
         border: false,
         columnConfig: {
           resizable: true,
@@ -25,21 +31,21 @@ setupVbenVxeTable({
         proxyConfig: {
           autoLoad: true,
           response: {
-            result: "items",
-            total: "total",
-            list: "items",
+            result: 'items',
+            total: 'total',
+            list: 'items',
           },
           showActiveMsg: true,
           showResponseMsg: false,
         },
         round: true,
         showOverflow: true,
-        size: "small",
+        size: 'small',
       } as VxeTableGridOptions,
     });
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
-    vxeUI.renderer.add("CellImage", {
+    vxeUI.renderer.add('CellImage', {
       renderTableDefault(renderOpts, params) {
         const { props } = renderOpts;
         const { column, row } = params;
@@ -48,10 +54,14 @@ setupVbenVxeTable({
     });
 
     // 表格配置项可以用 cellRender: { name: 'CellLink' },
-    vxeUI.renderer.add("CellLink", {
+    vxeUI.renderer.add('CellLink', {
       renderTableDefault(renderOpts) {
         const { props } = renderOpts;
-        return h(Button, { size: "small", type: "link" }, { default: () => props?.text });
+        return h(
+          Button,
+          { size: 'small', type: 'link' },
+          { default: () => props?.text },
+        );
       },
     });
 
@@ -61,6 +71,23 @@ setupVbenVxeTable({
   useVbenForm,
 });
 
-export { useVbenVxeGrid };
+export const useVbenVxeGrid = <
+  T extends Record<string, any>,
+  TFormValues extends FormValues = FormValues,
+  TSubmitValues extends FormValues = TFormValues,
+>(
+  ...rest: Parameters<
+    typeof useGrid<
+      T,
+      ComponentType,
+      ComponentPropsMap,
+      TFormValues,
+      TSubmitValues
+    >
+  >
+) =>
+  useGrid<T, ComponentType, ComponentPropsMap, TFormValues, TSubmitValues>(
+    ...rest,
+  );
 
-export type * from "@vben/plugins/vxe-table";
+export type * from '@vben/plugins/vxe-table';

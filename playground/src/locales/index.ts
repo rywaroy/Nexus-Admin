@@ -1,4 +1,4 @@
-import type { Locale } from 'ant-design-vue/es/locale';
+import type { Locale } from 'antdv-next/dist/locale/index';
 
 import type { App } from 'vue';
 
@@ -13,8 +13,8 @@ import {
 } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 
-import antdEnLocale from 'ant-design-vue/es/locale/en_US';
-import antdDefaultLocale from 'ant-design-vue/es/locale/zh_CN';
+import antdEnLocale from 'antdv-next/dist/locale/en_US';
+import antdDefaultLocale from 'antdv-next/dist/locale/zh_CN';
 import dayjs from 'dayjs';
 
 const antdLocale = ref<Locale>(antdDefaultLocale);
@@ -61,6 +61,10 @@ async function loadDayjsLocale(lang: SupportedLanguagesType) {
       locale = await import('dayjs/locale/zh-cn');
       break;
     }
+    case 'zh-TW': {
+      locale = await import('dayjs/locale/zh-tw');
+      break;
+    }
     // 默认使用英语
     default: {
       locale = await import('dayjs/locale/en');
@@ -86,6 +90,15 @@ async function loadAntdLocale(lang: SupportedLanguagesType) {
     case 'zh-CN': {
       antdLocale.value = antdDefaultLocale;
       break;
+    }
+    case 'zh-TW': {
+      const twLocale = await import('antdv-next/dist/locale/zh_TW');
+      antdLocale.value = twLocale.default;
+      break;
+    }
+    // 未打包对应语言包的语言回退到 en-US，避免残留上一次的语言
+    default: {
+      antdLocale.value = antdEnLocale;
     }
   }
 }

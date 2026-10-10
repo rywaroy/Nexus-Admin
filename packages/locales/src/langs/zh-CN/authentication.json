@@ -4,7 +4,7 @@
   "pageDesc": "工程化、高性能、跨组件库的前端模版",
   "loginSuccess": "登录成功",
   "loginSuccessDesc": "欢迎回来",
-  "loginSubtitle": "请输入您的帐户信息以开始管理您的项目",
+  "loginSubtitle": "请输入您的账户信息以开始管理您的项目",
   "selectAccount": "快速选择账号",
   "username": "账号",
   "password": "密码",
@@ -57,6 +57,11 @@
   "google": "Google",
   "loginAgainTitle": "重新登录",
   "loginAgainSubTitle": "您的登录状态已过期，请重新登录以继续。",
+  "layout": {
+    "center": "居中",
+    "alignLeft": "居左",
+    "alignRight": "居右"
+  },
   "changePassword": "修改密码",
   "changePasswordSubtitle": "请输入您的旧密码和新密码",
   "oldPassword": "旧密码",
@@ -64,10 +69,5 @@
   "oldPasswordTip": "请输入旧密码",
   "passwordLengthTip": "密码长度必须在6-20位之间",
   "passwordMismatch": "两次输入的密码不一致",
-  "passwordChangeSuccess": "密码修改成功",
-  "layout": {
-    "center": "居中",
-    "alignLeft": "居左",
-    "alignRight": "居右"
-  }
+  "passwordChangeSuccess": "密码修改成功"
 }

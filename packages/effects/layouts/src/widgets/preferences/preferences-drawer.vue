@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { SupportedLanguagesType } from "@vben/locales";
+import type { SupportedLanguagesType } from '@vben/locales';
+import type { CustomPreferencesRecord } from '@vben/preferences';
 import type {
   BreadcrumbStyleType,
   BuiltinThemeType,
@@ -10,21 +11,31 @@ import type {
   NavigationStyleType,
   PreferencesButtonPositionType,
   ThemeModeType,
-} from "@vben/types";
+} from '@vben/types';
 
-import type { SegmentedItem } from "@vben-core/shadcn-ui";
+import type { SegmentedItem } from '@vben-core/shadcn-ui';
 
-import { computed, ref } from "vue";
+import { computed, ref } from 'vue';
 
-import { Copy, Pin, PinOff, RotateCw } from "@vben/icons";
-import { $t, loadLocaleMessages } from "@vben/locales";
-import { clearCache, preferences, resetPreferences, usePreferences } from "@vben/preferences";
+import { Copy, Pin, PinOff, RotateCw } from '@vben/icons';
+import { $t, loadLocaleMessages } from '@vben/locales';
+import {
+  clearCache,
+  preferences,
+  resetPreferences,
+  updateCustomPreferences,
+  usePreferences,
+} from '@vben/preferences';
 
-import { useVbenDrawer } from "@vben-core/popup-ui";
-import { VbenButton, VbenIconButton, VbenSegmented } from "@vben-core/shadcn-ui";
-import { globalShareState } from "@vben-core/shared/global-state";
+import { useVbenDrawer } from '@vben-core/popup-ui';
+import {
+  VbenButton,
+  VbenIconButton,
+  VbenSegmented,
+} from '@vben-core/shadcn-ui';
+import { globalShareState } from '@vben-core/shared/global-state';
 
-import { useClipboard } from "@vueuse/core";
+import { useClipboard } from '@vueuse/core';
 
 import {
   Animation,
@@ -34,6 +45,7 @@ import {
   ColorMode,
   Content,
   Copyright,
+  Custom,
   FontSize,
   Footer,
   General,
@@ -46,113 +58,225 @@ import {
   Tabbar,
   Theme,
   Widget,
-} from "./blocks";
+} from './blocks';
 
 const emit = defineEmits<{ clearPreferencesAndLogout: [] }>();
 
 const message = globalShareState.getMessage();
 
-const appLocale = defineModel<SupportedLanguagesType>("appLocale");
-const appDynamicTitle = defineModel<boolean>("appDynamicTitle");
-const appLayout = defineModel<LayoutType>("appLayout");
-const appColorGrayMode = defineModel<boolean>("appColorGrayMode");
-const appColorWeakMode = defineModel<boolean>("appColorWeakMode");
-const appContentCompact = defineModel<ContentCompactType>("appContentCompact");
-const appWatermark = defineModel<boolean>("appWatermark");
-const appWatermarkContent = defineModel<string>("appWatermarkContent");
-const appEnableCheckUpdates = defineModel<boolean>("appEnableCheckUpdates");
-const appEnableCopyPreferences = defineModel<boolean>("appEnableCopyPreferences");
+const appLocale = defineModel<SupportedLanguagesType | undefined>('appLocale', {
+  default: undefined,
+});
+const appTimezone = defineModel<string | undefined>('appTimezone', {
+  default: undefined,
+});
+const appDynamicTitle = defineModel<boolean>('appDynamicTitle');
+const appLayout = defineModel<LayoutType | undefined>('appLayout', {
+  default: undefined,
+});
+const appColorGrayMode = defineModel<boolean>('appColorGrayMode');
+const appColorWeakMode = defineModel<boolean>('appColorWeakMode');
+const appContentCompact = defineModel<ContentCompactType | undefined>(
+  'appContentCompact',
+  {
+    default: undefined,
+  },
+);
+const appWatermark = defineModel<boolean>('appWatermark');
+const appWatermarkContent = defineModel<string | undefined>(
+  'appWatermarkContent',
+  {
+    default: undefined,
+  },
+);
+const appEnableCheckUpdates = defineModel<boolean>('appEnableCheckUpdates');
+const appEnableCopyPreferences = defineModel<boolean>(
+  'appEnableCopyPreferences',
+);
 const appEnableStickyPreferencesNavigationBar = defineModel<boolean>(
-  "appEnableStickyPreferencesNavigationBar",
+  'appEnableStickyPreferencesNavigationBar',
 );
-const appPreferencesButtonPosition = defineModel<PreferencesButtonPositionType>(
-  "appPreferencesButtonPosition",
+const appPreferencesButtonPosition = defineModel<
+  PreferencesButtonPositionType | undefined
+>('appPreferencesButtonPosition', { default: undefined });
+
+const transitionProgress = defineModel<boolean>('transitionProgress');
+const transitionName = defineModel<string | undefined>('transitionName', {
+  default: undefined,
+});
+const transitionLoading = defineModel<boolean>('transitionLoading');
+const transitionEnable = defineModel<boolean>('transitionEnable');
+
+const themeColorPrimary = defineModel<string | undefined>('themeColorPrimary', {
+  default: undefined,
+});
+const themeBuiltinType = defineModel<BuiltinThemeType | undefined>(
+  'themeBuiltinType',
+  {
+    default: undefined,
+  },
+);
+const themeMode = defineModel<ThemeModeType | undefined>('themeMode', {
+  default: undefined,
+});
+const themeRadius = defineModel<string | undefined>('themeRadius', {
+  default: undefined,
+});
+const themeFontSize = defineModel<number | undefined>('themeFontSize', {
+  default: undefined,
+});
+const themeSemiDarkSidebar = defineModel<boolean>('themeSemiDarkSidebar');
+const themeSemiDarkSidebarSub = defineModel<boolean>('themeSemiDarkSidebarSub');
+const themeSemiDarkHeader = defineModel<boolean>('themeSemiDarkHeader');
+
+const sidebarEnable = defineModel<boolean>('sidebarEnable');
+const sidebarWidth = defineModel<number | undefined>('sidebarWidth', {
+  default: undefined,
+});
+const sidebarDraggable = defineModel<boolean>('sidebarDraggable');
+const sidebarCollapsed = defineModel<boolean>('sidebarCollapsed');
+const sidebarCollapsedShowTitle = defineModel<boolean>(
+  'sidebarCollapsedShowTitle',
+);
+const sidebarAutoActivateChild = defineModel<boolean>(
+  'sidebarAutoActivateChild',
+);
+const sidebarExpandOnHover = defineModel<boolean>('sidebarExpandOnHover');
+const sidebarCollapsedButton = defineModel<boolean>('sidebarCollapsedButton');
+const sidebarFixedButton = defineModel<boolean>('sidebarFixedButton');
+const headerEnable = defineModel<boolean>('headerEnable');
+const headerMode = defineModel<LayoutHeaderModeType | undefined>('headerMode', {
+  default: undefined,
+});
+const headerMenuAlign = defineModel<LayoutHeaderMenuAlignType | undefined>(
+  'headerMenuAlign',
+  { default: undefined },
 );
 
-const transitionProgress = defineModel<boolean>("transitionProgress");
-const transitionName = defineModel<string>("transitionName");
-const transitionLoading = defineModel<boolean>("transitionLoading");
-const transitionEnable = defineModel<boolean>("transitionEnable");
+const breadcrumbEnable = defineModel<boolean>('breadcrumbEnable');
+const breadcrumbShowIcon = defineModel<boolean>('breadcrumbShowIcon');
+const breadcrumbShowHome = defineModel<boolean>('breadcrumbShowHome');
+const breadcrumbStyleType = defineModel<BreadcrumbStyleType | undefined>(
+  'breadcrumbStyleType',
+  { default: undefined },
+);
+const breadcrumbHideOnlyOne = defineModel<boolean>('breadcrumbHideOnlyOne');
 
-const themeColorPrimary = defineModel<string>("themeColorPrimary");
-const themeBuiltinType = defineModel<BuiltinThemeType>("themeBuiltinType");
-const themeMode = defineModel<ThemeModeType>("themeMode");
-const themeRadius = defineModel<string>("themeRadius");
-const themeFontSize = defineModel<number>("themeFontSize");
-const themeSemiDarkSidebar = defineModel<boolean>("themeSemiDarkSidebar");
-const themeSemiDarkSidebarSub = defineModel<boolean>("themeSemiDarkSidebarSub");
-const themeSemiDarkHeader = defineModel<boolean>("themeSemiDarkHeader");
+const tabbarEnable = defineModel<boolean>('tabbarEnable');
+const tabbarShowIcon = defineModel<boolean>('tabbarShowIcon');
+const tabbarShowMore = defineModel<boolean>('tabbarShowMore');
+const tabbarShowMaximize = defineModel<boolean>('tabbarShowMaximize');
+const tabbarPersist = defineModel<boolean>('tabbarPersist');
+const tabbarVisitHistory = defineModel<boolean>('tabbarVisitHistory');
+const tabbarDraggable = defineModel<boolean>('tabbarDraggable');
+const tabbarWheelable = defineModel<boolean>('tabbarWheelable');
+const tabbarStyleType = defineModel<string | undefined>('tabbarStyleType', {
+  default: undefined,
+});
+const tabbarMaxCount = defineModel<number | undefined>('tabbarMaxCount', {
+  default: undefined,
+});
+const tabbarMiddleClickToClose = defineModel<boolean>(
+  'tabbarMiddleClickToClose',
+);
 
-const sidebarEnable = defineModel<boolean>("sidebarEnable");
-const sidebarWidth = defineModel<number>("sidebarWidth");
-const sidebarDraggable = defineModel<boolean>("sidebarDraggable");
-const sidebarCollapsed = defineModel<boolean>("sidebarCollapsed");
-const sidebarCollapsedShowTitle = defineModel<boolean>("sidebarCollapsedShowTitle");
-const sidebarAutoActivateChild = defineModel<boolean>("sidebarAutoActivateChild");
-const sidebarExpandOnHover = defineModel<boolean>("sidebarExpandOnHover");
-const sidebarCollapsedButton = defineModel<boolean>("sidebarCollapsedButton");
-const sidebarFixedButton = defineModel<boolean>("sidebarFixedButton");
-const headerEnable = defineModel<boolean>("headerEnable");
-const headerMode = defineModel<LayoutHeaderModeType>("headerMode");
-const headerMenuAlign = defineModel<LayoutHeaderMenuAlignType>("headerMenuAlign");
-
-const breadcrumbEnable = defineModel<boolean>("breadcrumbEnable");
-const breadcrumbShowIcon = defineModel<boolean>("breadcrumbShowIcon");
-const breadcrumbShowHome = defineModel<boolean>("breadcrumbShowHome");
-const breadcrumbStyleType = defineModel<BreadcrumbStyleType>("breadcrumbStyleType");
-const breadcrumbHideOnlyOne = defineModel<boolean>("breadcrumbHideOnlyOne");
-
-const tabbarEnable = defineModel<boolean>("tabbarEnable");
-const tabbarShowIcon = defineModel<boolean>("tabbarShowIcon");
-const tabbarShowMore = defineModel<boolean>("tabbarShowMore");
-const tabbarShowMaximize = defineModel<boolean>("tabbarShowMaximize");
-const tabbarPersist = defineModel<boolean>("tabbarPersist");
-const tabbarVisitHistory = defineModel<boolean>("tabbarVisitHistory");
-const tabbarDraggable = defineModel<boolean>("tabbarDraggable");
-const tabbarWheelable = defineModel<boolean>("tabbarWheelable");
-const tabbarStyleType = defineModel<string>("tabbarStyleType");
-const tabbarMaxCount = defineModel<number>("tabbarMaxCount");
-const tabbarMiddleClickToClose = defineModel<boolean>("tabbarMiddleClickToClose");
-
-const navigationStyleType = defineModel<NavigationStyleType>("navigationStyleType");
-const navigationSplit = defineModel<boolean>("navigationSplit");
-const navigationAccordion = defineModel<boolean>("navigationAccordion");
+const navigationStyleType = defineModel<NavigationStyleType | undefined>(
+  'navigationStyleType',
+  { default: undefined },
+);
+const navigationSplit = defineModel<boolean>('navigationSplit');
+const navigationAccordion = defineModel<boolean>('navigationAccordion');
 
 // const logoVisible = defineModel<boolean>('logoVisible');
 
-const footerEnable = defineModel<boolean>("footerEnable");
-const footerFixed = defineModel<boolean>("footerFixed");
+const footerEnable = defineModel<boolean>('footerEnable');
+const footerFixed = defineModel<boolean>('footerFixed');
 
-const copyrightSettingShow = defineModel<boolean>("copyrightSettingShow");
-const copyrightEnable = defineModel<boolean>("copyrightEnable");
-const copyrightCompanyName = defineModel<string>("copyrightCompanyName");
-const copyrightCompanySiteLink = defineModel<string>("copyrightCompanySiteLink");
-const copyrightDate = defineModel<string>("copyrightDate");
-const copyrightIcp = defineModel<string>("copyrightIcp");
-const copyrightIcpLink = defineModel<string>("copyrightIcpLink");
+const copyrightSettingShow = defineModel<boolean>('copyrightSettingShow');
+const copyrightEnable = defineModel<boolean>('copyrightEnable');
+const copyrightCompanyName = defineModel<string | undefined>(
+  'copyrightCompanyName',
+  {
+    default: undefined,
+  },
+);
+const copyrightCompanySiteLink = defineModel<string | undefined>(
+  'copyrightCompanySiteLink',
+  { default: undefined },
+);
+const copyrightDate = defineModel<string | undefined>('copyrightDate', {
+  default: undefined,
+});
+const copyrightIcp = defineModel<string | undefined>('copyrightIcp', {
+  default: undefined,
+});
+const copyrightIcpLink = defineModel<string | undefined>('copyrightIcpLink', {
+  default: undefined,
+});
 
-const shortcutKeysEnable = defineModel<boolean>("shortcutKeysEnable");
-const shortcutKeysGlobalSearch = defineModel<boolean>("shortcutKeysGlobalSearch");
-const shortcutKeysGlobalLogout = defineModel<boolean>("shortcutKeysGlobalLogout");
+const shortcutKeysEnable = defineModel<boolean>('shortcutKeysEnable');
+const shortcutKeysGlobalSearch = defineModel<boolean>(
+  'shortcutKeysGlobalSearch',
+);
+const shortcutKeysGlobalLogout = defineModel<boolean>(
+  'shortcutKeysGlobalLogout',
+);
+const shortcutKeysGlobalEscape = defineModel<boolean>(
+  'shortcutKeysGlobalEscape',
+);
 
-const shortcutKeysGlobalLockScreen = defineModel<boolean>("shortcutKeysGlobalLockScreen");
+const shortcutKeysGlobalLockScreen = defineModel<boolean>(
+  'shortcutKeysGlobalLockScreen',
+);
 
-const widgetGlobalSearch = defineModel<boolean>("widgetGlobalSearch");
-const widgetFullscreen = defineModel<boolean>("widgetFullscreen");
-const widgetLanguageToggle = defineModel<boolean>("widgetLanguageToggle");
-const widgetNotification = defineModel<boolean>("widgetNotification");
-const widgetThemeToggle = defineModel<boolean>("widgetThemeToggle");
-const widgetSidebarToggle = defineModel<boolean>("widgetSidebarToggle");
-const widgetLockScreen = defineModel<boolean>("widgetLockScreen");
-const widgetRefresh = defineModel<boolean>("widgetRefresh");
+const widgetGlobalSearchButtonPosition = defineModel<string | undefined>(
+  'widgetGlobalSearchButtonPosition',
+  { default: undefined },
+);
+const widgetFullscreenButtonPosition = defineModel<string | undefined>(
+  'widgetFullscreenButtonPosition',
+  { default: undefined },
+);
+const widgetLanguageToggleButtonPosition = defineModel<string | undefined>(
+  'widgetLanguageToggleButtonPosition',
+  { default: undefined },
+);
+const widgetNotificationButtonPosition = defineModel<string | undefined>(
+  'widgetNotificationButtonPosition',
+  { default: undefined },
+);
+const widgetThemeToggleButtonPosition = defineModel<string | undefined>(
+  'widgetThemeToggleButtonPosition',
+  { default: undefined },
+);
+const widgetLockScreenButtonPosition = defineModel<string | undefined>(
+  'widgetLockScreenButtonPosition',
+  { default: undefined },
+);
+const widgetLogoutButtonPosition = defineModel<string | undefined>(
+  'widgetLogoutButtonPosition',
+  { default: undefined },
+);
+const widgetOrder = defineModel<string[]>('widgetOrder', { required: true });
+const widgetRefreshButtonPosition = defineModel<string | undefined>(
+  'widgetRefreshButtonPosition',
+  { default: undefined },
+);
+const widgetTimezoneButtonPosition = defineModel<string | undefined>(
+  'widgetTimezoneButtonPosition',
+  { default: undefined },
+);
 
 const {
+  customPreferences,
+  diffCustomPreference,
   diffPreference,
   isDark,
   isFullContent,
   isHeaderNav,
   isHeaderSidebarNav,
   isMixedNav,
+  preferencesExtension,
   isSideMixedNav,
   isSideMode,
   isSideNav,
@@ -161,56 +285,106 @@ const { copy } = useClipboard({ legacy: true });
 
 const [Drawer] = useVbenDrawer();
 
-const activeTab = ref("appearance");
+const activeTab = ref('appearance');
+
+const customPreferencesTab = computed(() => {
+  return preferencesExtension.value;
+});
+
+const customTabLabel = computed(() => {
+  return customPreferencesTab.value?.tabLabel
+    ? $t(customPreferencesTab.value.tabLabel)
+    : '';
+});
+
+const customTabTitle = computed(() => {
+  const title =
+    customPreferencesTab.value?.title || customPreferencesTab.value?.tabLabel;
+  return title ? $t(title) : '';
+});
+
+const mergedDiffPreference = computed(() => {
+  const result: Record<string, unknown> = {};
+
+  if (diffPreference.value) {
+    Object.assign(result, diffPreference.value);
+  }
+
+  if (diffCustomPreference.value) {
+    result.custom = diffCustomPreference.value;
+  }
+
+  return Object.keys(result).length > 0 ? result : undefined;
+});
+
+const showCustomTab = computed(() => {
+  return (customPreferencesTab.value?.fields.length ?? 0) > 0;
+});
 
 const tabs = computed((): SegmentedItem[] => {
-  return [
+  const items: SegmentedItem[] = [
     {
-      label: $t("preferences.appearance"),
-      value: "appearance",
+      label: $t('preferences.appearance'),
+      value: 'appearance',
     },
     {
-      label: $t("preferences.layout"),
-      value: "layout",
+      label: $t('preferences.layout'),
+      value: 'layout',
     },
     {
-      label: $t("preferences.shortcutKeys.title"),
-      value: "shortcutKey",
+      label: $t('preferences.shortcutKeys.title'),
+      value: 'shortcutKey',
     },
     {
-      label: $t("preferences.general"),
-      value: "general",
+      label: $t('preferences.general'),
+      value: 'general',
     },
   ];
+
+  if (showCustomTab.value) {
+    items.push({
+      label: customTabLabel.value,
+      value: 'custom',
+    });
+  }
+
+  return items;
 });
 
 const showBreadcrumbConfig = computed(() => {
   return (
-    !isFullContent.value && !isMixedNav.value && !isHeaderNav.value && preferences.header.enable
+    !isFullContent.value &&
+    !isMixedNav.value &&
+    !isHeaderNav.value &&
+    preferences.header.enable
   );
 });
 
 async function handleCopy() {
-  await copy(JSON.stringify(diffPreference.value, null, 2));
+  await copy(JSON.stringify(mergedDiffPreference.value, null, 2));
 
   message.copyPreferencesSuccess?.(
-    $t("preferences.copyPreferencesSuccessTitle"),
-    $t("preferences.copyPreferencesSuccess"),
+    $t('preferences.copyPreferencesSuccessTitle'),
+    $t('preferences.copyPreferencesSuccess'),
   );
 }
 
 async function handleClearCache() {
-  resetPreferences();
-  clearCache();
-  emit("clearPreferencesAndLogout");
+  await resetPreferences();
+  await clearCache();
+  emit('clearPreferencesAndLogout');
 }
 
 async function handleReset() {
-  if (!diffPreference.value) {
+  if (!mergedDiffPreference.value) {
     return;
   }
-  resetPreferences();
+  await resetPreferences();
   await loadLocaleMessages(preferences.app.locale);
+}
+
+function handleCustomPreferencesUpdate(updates: CustomPreferencesRecord) {
+  updateCustomPreferences(updates);
 }
 </script>
 
@@ -224,13 +398,13 @@ async function handleReset() {
       <template #extra>
         <div class="flex items-center">
           <VbenIconButton
-            :disabled="!diffPreference"
+            :disabled="!mergedDiffPreference"
             :tooltip="$t('preferences.resetTip')"
             class="relative"
             @click="handleReset"
           >
             <span
-              v-if="diffPreference"
+              v-if="mergedDiffPreference"
               class="absolute top-0.5 right-0.5 size-2 rounded-sm bg-primary"
             ></span>
             <RotateCw class="size-4" />
@@ -244,10 +418,14 @@ async function handleReset() {
             class="relative"
             @click="
               () =>
-                (appEnableStickyPreferencesNavigationBar = !appEnableStickyPreferencesNavigationBar)
+                (appEnableStickyPreferencesNavigationBar =
+                  !appEnableStickyPreferencesNavigationBar)
             "
           >
-            <PinOff v-if="appEnableStickyPreferencesNavigationBar" class="size-4" />
+            <PinOff
+              v-if="appEnableStickyPreferencesNavigationBar"
+              class="size-4"
+            />
             <Pin v-else class="size-4" />
           </VbenIconButton>
         </div>
@@ -268,6 +446,7 @@ async function handleReset() {
                 v-model:app-enable-check-updates="appEnableCheckUpdates"
                 v-model:app-enable-copy-preferences="appEnableCopyPreferences"
                 v-model:app-locale="appLocale"
+                v-model:app-timezone="appTimezone"
                 v-model:app-watermark="appWatermark"
                 v-model:app-watermark-content="appWatermarkContent"
               />
@@ -362,7 +541,8 @@ async function handleReset() {
                 v-model:breadcrumb-show-icon="breadcrumbShowIcon"
                 v-model:breadcrumb-style-type="breadcrumbStyleType"
                 :disabled="
-                  !showBreadcrumbConfig || !(isSideNav || isSideMixedNav || isHeaderSidebarNav)
+                  !showBreadcrumbConfig ||
+                  !(isSideNav || isSideMixedNav || isHeaderSidebarNav)
                 "
               />
             </Block>
@@ -383,21 +563,49 @@ async function handleReset() {
             </Block>
             <Block :title="$t('preferences.widget.title')">
               <Widget
-                v-model:app-preferences-button-position="appPreferencesButtonPosition"
-                v-model:widget-fullscreen="widgetFullscreen"
-                v-model:widget-global-search="widgetGlobalSearch"
-                v-model:widget-language-toggle="widgetLanguageToggle"
-                v-model:widget-lock-screen="widgetLockScreen"
-                v-model:widget-notification="widgetNotification"
-                v-model:widget-refresh="widgetRefresh"
-                v-model:widget-sidebar-toggle="widgetSidebarToggle"
-                v-model:widget-theme-toggle="widgetThemeToggle"
+                v-model:app-preferences-button-position="
+                  appPreferencesButtonPosition
+                "
+                v-model:widget-fullscreen-button-position="
+                  widgetFullscreenButtonPosition
+                "
+                v-model:widget-global-search-button-position="
+                  widgetGlobalSearchButtonPosition
+                "
+                v-model:widget-language-toggle-button-position="
+                  widgetLanguageToggleButtonPosition
+                "
+                v-model:widget-lock-screen-button-position="
+                  widgetLockScreenButtonPosition
+                "
+                v-model:widget-logout-button-position="
+                  widgetLogoutButtonPosition
+                "
+                v-model:widget-order="widgetOrder"
+                v-model:widget-notification-button-position="
+                  widgetNotificationButtonPosition
+                "
+                v-model:widget-refresh-button-position="
+                  widgetRefreshButtonPosition
+                "
+                v-model:widget-theme-toggle-button-position="
+                  widgetThemeToggleButtonPosition
+                "
+                v-model:widget-timezone-button-position="
+                  widgetTimezoneButtonPosition
+                "
               />
             </Block>
             <Block :title="$t('preferences.footer.title')">
-              <Footer v-model:footer-enable="footerEnable" v-model:footer-fixed="footerFixed" />
+              <Footer
+                v-model:footer-enable="footerEnable"
+                v-model:footer-fixed="footerFixed"
+              />
             </Block>
-            <Block v-if="copyrightSettingShow" :title="$t('preferences.copyright.title')">
+            <Block
+              v-if="copyrightSettingShow"
+              :title="$t('preferences.copyright.title')"
+            >
               <Copyright
                 v-model:copyright-company-name="copyrightCompanyName"
                 v-model:copyright-company-site-link="copyrightCompanySiteLink"
@@ -417,6 +625,16 @@ async function handleReset() {
                 v-model:shortcut-keys-global-search="shortcutKeysGlobalSearch"
                 v-model:shortcut-keys-lock-screen="shortcutKeysGlobalLockScreen"
                 v-model:shortcut-keys-logout="shortcutKeysGlobalLogout"
+                v-model:shortcut-keys-escape="shortcutKeysGlobalEscape"
+              />
+            </Block>
+          </template>
+          <template #custom>
+            <Block :title="customTabTitle">
+              <Custom
+                :fields="customPreferencesTab?.fields || []"
+                :values="customPreferences"
+                @update="handleCustomPreferencesUpdate"
               />
             </Block>
           </template>
@@ -426,23 +644,23 @@ async function handleReset() {
       <template #footer>
         <VbenButton
           v-if="appEnableCopyPreferences"
-          :disabled="!diffPreference"
+          :disabled="!mergedDiffPreference"
           class="mx-4 w-full"
           size="sm"
           variant="default"
           @click="handleCopy"
         >
           <Copy class="mr-2 size-3" />
-          {{ $t("preferences.copyPreferences") }}
+          {{ $t('preferences.copyPreferences') }}
         </VbenButton>
         <VbenButton
-          :disabled="!diffPreference"
+          :disabled="!mergedDiffPreference"
           class="mr-4 w-full"
           size="sm"
           variant="ghost"
           @click="handleClearCache"
         >
-          {{ $t("preferences.clearAndLogout") }}
+          {{ $t('preferences.clearAndLogout') }}
         </VbenButton>
       </template>
     </Drawer>
@@ -450,7 +668,7 @@ async function handleReset() {
 </template>
 
 <style scoped>
-:deep(.sticky-tabs-header [role="tablist"]) {
+:deep(.sticky-tabs-header [role='tablist']) {
   @apply -top-3 z-9999 sticky;
 }
 </style>

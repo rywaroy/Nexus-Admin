@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useSlots } from "vue";
+import { useSlots } from 'vue';
 
-import { CircleHelp } from "@vben/icons";
+import { CircleHelp } from '@vben/icons';
 
-import { Switch, VbenTooltip } from "@vben-core/shadcn-ui";
+import { Switch, VbenTooltip } from '@vben-core/shadcn-ui';
 
 defineOptions({
-  name: "PreferenceSwitchItem",
+  name: 'PreferenceSwitchItem',
 });
 
 withDefaults(defineProps<{ disabled?: boolean; tip?: string }>(), {
   disabled: false,
-  tip: "",
+  tip: '',
 });
 
 const checked = defineModel<boolean>();
@@ -36,7 +36,7 @@ function handleClick() {
 
       <VbenTooltip v-if="slots.tip || tip" side="bottom">
         <template #trigger>
-          <CircleHelp class="ml-1 size-3 cursor-help" />
+          <CircleHelp class="ml-1 size-3 cursor-help pointer-events-auto" />
         </template>
         <slot name="tip">
           <template v-if="tip">

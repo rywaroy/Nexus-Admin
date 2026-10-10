@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 
 import {
   viteArchiverPlugin,
+  viteDayjsPlugin,
   viteVxeTableImportsPlugin,
 } from '@vben/vite-config';
 
@@ -29,6 +30,13 @@ export const shared = defineConfig({
     preConfig(md) {
       md.use(demoPreviewPlugin);
       md.use(groupIconMdPlugin);
+    },
+    // VitePress 2 alpha 会把 code fence 套两层，导致两个复制按钮；只拆掉重复外壳。
+    config(md) {
+      const fence = md.renderer.rules.fence;
+      if (!fence) return;
+      md.renderer.rules.fence = (...args) =>
+        unwrapDuplicateCodeFence(fence(...args));
     },
   },
   pwa: pwa(),
@@ -61,7 +69,7 @@ export const shared = defineConfig({
       },
       preprocessorOptions: {
         scss: {
-          api: 'modern',
+          // api: 'modern',
         },
       },
     },
@@ -69,6 +77,7 @@ export const shared = defineConfig({
       stringify: true,
     },
     plugins: [
+      viteDayjsPlugin(),
       tailwindcss(),
       GitChangelog({
         mapAuthors: [
@@ -85,9 +94,23 @@ export const shared = defineConfig({
             name: 'Li Kui',
             username: 'likui628',
           },
+          {
+            mapByNameAliases: ['Jin Mao', 'jinmao'],
+            name: 'Jin Mao',
+            username: 'jinmao88',
+          },
+          {
+            name: 'Netfan',
+            username: 'mynetfan',
+          },
+          {
+            mapByNameAliases: ['xingyu4j', 'xingyu'],
+            name: 'xingyu4j',
+            username: 'xingyu4j',
+          },
         ],
         repoURL: () => 'https://github.com/vbenjs/vue-vben-admin',
-      }),
+      }) as any,
       GitChangelogMarkdownSection(),
       viteArchiverPlugin({ outputDir: '.vitepress' }),
       groupIconVitePlugin(),
@@ -103,6 +126,7 @@ export const shared = defineConfig({
 
     ssr: {
       external: ['@vue/repl'],
+      noExternal: ['@v-c/picker'],
     },
   },
 });
@@ -113,7 +137,7 @@ function head(): HeadConfig[] {
     [
       'meta',
       {
-        content: 'vben, vitejs, vite, shacdn-ui, vue',
+        content: 'vben, vitejs, vite, shadcn-ui, vue',
         name: 'keywords',
       },
     ],
@@ -167,4 +191,11 @@ function pwa(): PwaOptions {
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
     },
   };
+}
+
+function unwrapDuplicateCodeFence(html: string): string {
+  const nested = html.match(
+    /^<div class="language-[^"]*"><button[^>]*\sclass="copy"[^>]*><\/button><span class="lang">[^<]*<\/span>(<div class="language-[^"]*"[\s\S]*)<\/div>\s*$/,
+  );
+  return nested?.[1] ?? html;
 }

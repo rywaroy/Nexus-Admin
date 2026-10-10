@@ -1,450 +1,50 @@
-# Vben Form 表单组件
-
-`Vben-Form` 是一个数据驱动的表单组件，它的核心思想是通过 **Schema** 来定义表单的结构、校验规则和行为，从而让你从繁琐的表单布局和逻辑中解脱出来。
-
-## 1. 核心用法：`useVbenForm`
-
-在几乎所有的示例中，我们都能看到这两个核心元素：
-
-- **`useVbenForm`**: 这是一个 Composition API，用于创建一个表单实例。
-  - **导入**: `import { useVbenForm } from '#/adapter/form';`
-  - **使用**: 它接收一个包含 `schema` 和其他表单配置的选项对象，并返回一个数组 `[Form, formApi]`。
-    - `Form`: 一个可以直接在 `<template>` 中渲染的表单组件。
-    - `formApi`: 一个包含了所有操作表单方法的控制器。
-- **`<Form />`**: 这是由 `useVbenForm` Hook 返回的 UI 组件，直接在模板中使用即可。
-
-**基础示例**
-
-```vue
-<script lang="ts" setup>
-import { useVbenForm } from '#/adapter/form';
-
-const schema = [
-  {
-    component: 'Input',
-    fieldName: 'field1',
-    label: '字段1',
-  },
-  {
-    component: 'Input',
-    fieldName: 'field2',
-    label: '字段2',
-  },
-];
-
-const [Form] = useVbenForm({
-  schema,
-});
-</script>
-
-<template>
-  <Form />
-</template>
-```
-
-## 2. Schema 配置详解
-
-`schema` 是一个数组，数组中的每个对象都定义了一个表单项。下面是一个典型的 Schema 对象及其常用属性：
-
-| 属性 | 类型 | 描述 |
-| :-- | :-- | :-- |
-| `fieldName` | `string` | **必需。** 表单项的字段名，用于和数据对象进行双向绑定。 |
-| `label` | `string` | 表单项的标签文本。 |
-| `component` | `string` | **必需。** 所使用的组件类型，例如 `'Input'`, `'Select'` 等。 |
-| `componentProps` | `object` \| `function` | 传递给组件的 `props`。可以是一个对象，也可以是一个返回对象的函数，以实现动态 `props`。 |
-| `rules` | `string` \| zod 对象 | 校验规则。 |
-| `defaultValue` | `any` | 表单项的默认值。 |
-| `ifShow` | `boolean` \| `function` | 控制表单项是否显示。可以是一个布尔值，也可以是一个返回布尔值的函数，以实现动态显示/隐藏。 |
-
-## 3. 常见使用场景
-
-### 3.1 表单校验
-
-校验规则通过 `rules` 属性来定义，它是一个数组，每个对象代表一条校验规则。
-
-```typescript
-const schema = [
-  {
-    component: 'InputPassword',
-    fieldName: 'password',
-    label: '密码',
-    rules: z.string().min(1, { message: '最少输入6个字符' }),
-  },
-];
-```
-
-### 3.2 动态表单
-
-通过 `useVbenForm` 返回的 `formApi`，可以动态地更新、添加或删除表单项。
-
-- **`updateSchema`**: 更新指定 `fieldName` 的 `schema`。
-- **`appendSchema`**: 在指定 `fieldName` 之后追加一个新的 `schema`。
-- **`removeSchema`**: 删除指定的 `schema`。
-
-```typescript
-const [Form, formApi] = useVbenForm({
-  // ...
-});
-
-function changeLabel() {
-  formApi.updateSchema({
-    fieldName: 'fieldA',
-    label: '新的标签',
-  });
-}
-
-function addField() {
-  formApi.appendSchema(
-    {
-      component: 'Input',
-      fieldName: 'newField',
-      label: '新增字段',
-    },
-    'fieldC', // 在 fieldC 后面添加
-  );
-}
-```
+# Vben Form
 
-### 3.3 与 API 交互
+业务统一从 `#/adapter/form` 导入 `useVbenForm`、`z` 和 `VbenFormSchema`。该适配器提供 Ant Design Vue 的组件属性、模型映射和 required 规则，业务页面不要绕过适配器。
 
-在很多场景下，表单的某些字段（如下拉框的选项）需要从后端 API 获取。`Vben-Form` 对此提供了很好的支持。你可以在 `componentProps` 中传入一个返回 `Promise` 的 `api` 函数。
+当前底层是 TanStack Vue Form 和 Zod 4。完整可编译示例见 [form.vue](../../apps/web-antd/src/documentation/form.vue)，应用实例见 [用户 schema](../../apps/web-antd/src/views/system/user/data.ts)。
 
-```typescript
-import { getProvinceList } from '@/api/examples/form';
+## 配置与组件
 
-const schema = [
-  {
-    component: 'Select',
-    fieldName: 'province',
-    label: '省份',
-    componentProps: {
-      api: getProvinceList,
-      resultField: 'items',
-    },
-  },
-];
-```
-
-### 3.4 查询表单
-
-对于查询场景，`useVbenForm` 提供了一些便利的配置项来控制布局和交互。
-
-- **`showCollapseButton`**: 是否显示展开/收起按钮。
-- **`submitButtonOptions`**: 操作按钮（查询、重置）的布局配置。
-- **`showDefaultActions`**: (默认为`true`) 控制是否显示默认的提交和重置按钮。
-
-## 4. 自定义与扩展
-
-- **自定义组件**: 你可以通过在 `schema` 中定义 `slot` 属性，然后在 `<Form>` 组件上使用同名插槽来自定义渲染。
-
-```typescript
-// In your schema
-{
-  fieldName: 'customField',
-  label: '自定义内容',
-  component: 'Input',
-  slot: 'custom',
-}
-```
-
-```vue
-<Form>
-  <template #custom="{ model, fieldName }">
-    <YourCustomComponent v-model="model[fieldName]" />
-  </template>
-</Form>
-```
-
-- **自定义布局**: 通过 `schema` 中的 `colProps` 属性，可以精细地控制每个表单项的栅格布局。
-
-## 5. 支持的组件
-
-`Vben-Form` 的 `schema` 中的 `component` 属性所支持的组件，是根据你当前使用的 UI 框架 (`antd`, `naive`, `element-plus`) 动态适配的。
-
-**基础输入组件**
-
-- `'Input'`: 文本输入框
-- `'InputNumber'`: 数字输入框
-- `'InputPassword'`: 密码输入框
-- `'Textarea'`: 多行文本域
-
-**选择类组件**
-
-- `'Select'`: 下拉选择器
-- `'TreeSelect'`: 树形选择器
-- `'RadioGroup'`: 单选框组
-- `'Checkbox'` & `'CheckboxGroup'`: 复选框与复选框组
-- `'AutoComplete'`: 自动完成输入框
-- `'Cascader'`: 级联选择器
-- `'Switch'`: 开关
-
-**日期与时间组件**
-
-- `'DatePicker'`: 日期选择器
-- `'TimePicker'`: 时间选择器
-- `'RangePicker'`: 日期范围选择器
-- `'TimeRangePicker'`: 时间范围选择器
-
-**高级组件**
-
-- `'IconPicker'`: 图标选择器
-- `'Upload'`: 上传组件
-- `'StrengthMeter'`: 密码强度计
-- `'VbenButton'`
-- `'VbenDivider'`
-
-**异步数据组件**
-
-- `'ApiSelect'`: 异步加载选项的下拉选择器
-- `'ApiTreeSelect'`: 异步加载选项的树形选择器
-
-## 6. ApiSelect 组件
-
-`ApiSelect` 是项目封装的支持异步加载数据的选择器组件。与普通 `Select` 不同，它可以通过 `api` 属性自动调用接口获取选项数据。
-
-**注意**：普通的 `Select` 组件不支持 `api` 属性，必须使用 `ApiSelect` 才能实现异步加载。
-
-**基础用法**
-
-```typescript
-{
-  component: 'ApiSelect',
-  fieldName: 'orgId',
-  label: '所属机构',
-  rules: 'required',
-  componentProps: {
-    placeholder: '请选择机构',
-    api: () => getOrgAllApi({ status: 'active' }),
-    labelField: 'name',
-    valueField: 'id',
-  },
-}
-```
-
-**核心属性**
-
-| 属性 | 类型 | 描述 |
-| :-- | :-- | :-- |
-| `api` | `() => Promise<T[]>` | **必需。** 返回选项数据的异步函数 |
-| `labelField` | `string` | 指定选项显示文本对应的字段名，默认 `'label'` |
-| `valueField` | `string` | 指定选项值对应的字段名，默认 `'value'` |
-| `resultField` | `string` | 如果接口返回的是对象而非数组，指定数据所在的字段名 |
-| `params` | `object` | 传递给 api 函数的参数 |
-| `immediate` | `boolean` | 是否立即加载数据，默认 `true` |
-
-**完整示例**
-
-```typescript
-// 方式一：api 函数内部处理参数
-{
-  component: 'ApiSelect',
-  fieldName: 'orgId',
-  label: '所属机构',
-  componentProps: {
-    placeholder: '请选择机构',
-    class: 'w-full',
-    showSearch: true,
-    filterOption: true,
-    optionFilterProp: 'label',
-    api: () => getOrgAllApi({ status: 'active' }),
-    labelField: 'name',
-    valueField: 'id',
-  },
-}
-
-// 方式二：通过 params 传递参数
-{
-  component: 'ApiSelect',
-  fieldName: 'orgId',
-  label: '所属机构',
-  componentProps: {
-    api: getOrgAllApi,
-    params: { status: 'active' },
-    labelField: 'name',
-    valueField: 'id',
-  },
-}
-```
-
-## 7. 查询和重置
-
-`Vben-Form` 通过 `useVbenForm` 配置中的 `handleSubmit` 和 `handleReset` 回调来处理表单的提交和重置操作。
-
-### 通过 `handleSubmit` 和 `handleReset`
-
-```vue
-<script lang="ts" setup>
-import { useVbenForm } from '#/adapter/form';
-
-function handleSubmit(values: Record<string, any>) {
-  console.log('submit', values);
-}
-
-function handleReset() {
-  console.log('reset');
-}
-
-const [Form] = useVbenForm({
-  handleSubmit,
-  handleReset,
-  schema: [
-    /* ... */
-  ],
-});
-</script>
-
-<template>
-  <Form />
-</template>
-```
-
-### 通过 `formApi` 手动操作
-
-| 方法 | 描述 |
-| :-- | :-- |
-| `getValues()` | 获取所有表单项的值。 |
-| `setValues(values)` | 设置一个或多个表单项的值。 |
-| `resetFields()` | 将所有表单项的值重置为其初始 `defaultValue`。 |
-| `validate()` | 手动触发整个表单的校验。 |
-| `validateAndSubmitForm()` | 手动触发表单的提交（会先进行校验，成功后调用`handleSubmit`）。 |
-
-**示例**
-
-```vue
-<script lang="ts" setup>
-import { VbenButton } from '@vben/common-ui';
-import { useVbenForm } from '#/adapter/form';
-
-const [Form, formApi] = useVbenForm({
-  handleSubmit: (values) => {
-    console.log('手动提交成功', values);
-  },
-  schema: [
-    /* ... */
-  ],
-  showDefaultActions: false,
-});
-
-async function customSubmit() {
-  try {
-    await formApi.validateAndSubmitForm();
-  } catch (error) {
-    console.error('校验失败', error);
-  }
-}
-
-async function customReset() {
-  await formApi.resetFields();
-  console.log('表单已重置');
-}
-</script>
-
-<template>
-  <div>
-    <Form />
-    <VbenButton @click="customSubmit">手动提交</VbenButton>
-    <VbenButton @click="customReset">手动重置</VbenButton>
-  </div>
-</template>
-```
-
-## 8. 表单联动
-
-```vue
-<script lang="ts" setup>
-import { message } from 'ant-design-vue';
-import { useVbenForm } from '#/adapter/form';
-
-const [Form] = useVbenForm({
-  handleSubmit: onSubmit,
-  schema: [
-    {
-      component: 'Input',
-      defaultValue: 'hidden value',
-      dependencies: {
-        show: false,
-        triggerFields: ['field1Switch'],
-      },
-      fieldName: 'hiddenField',
-      label: '隐藏字段',
-    },
-    {
-      component: 'Switch',
-      defaultValue: true,
-      fieldName: 'field1Switch',
-      help: '通过Dom控制销毁',
-      label: '显示字段1',
-    },
-    {
-      component: 'Input',
-      dependencies: {
-        show(values) {
-          return !!values.field1Switch;
-        },
-        triggerFields: ['field1Switch'],
-      },
-      fieldName: 'field1',
-      label: '字段1',
-    },
-    {
-      component: 'Input',
-      dependencies: {
-        rules(values) {
-          if (values.field1 === '123') {
-            return 'required';
-          }
-          return null;
-        },
-        triggerFields: ['field1'],
-      },
-      fieldName: 'field5',
-      help: '当字段1的值为`123`时，必填',
-      label: '动态rules',
-    },
-    {
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        class: 'w-full',
-        filterOption: true,
-        options: [
-          { label: '选项1', value: '1' },
-          { label: '选项2', value: '2' },
-        ],
-        placeholder: '请选择',
-        showSearch: true,
-      },
-      dependencies: {
-        componentProps(values) {
-          if (values.field2 === '123') {
-            return {
-              options: [
-                { label: '选项1', value: '1' },
-                { label: '选项2', value: '2' },
-                { label: '选项3', value: '3' },
-              ],
-            };
-          }
-          return {};
-        },
-        triggerFields: ['field2'],
-      },
-      fieldName: 'field6',
-      help: '当字段2的值为`123`时，更改下拉选项',
-      label: '动态配置',
-    },
-  ],
-  wrapperClass: 'grid-cols-1 md:grid-cols-2',
-});
-
-function onSubmit(values: Record<string, any>) {
-  message.success({
-    content: `form values: ${JSON.stringify(values)}`,
-  });
-}
-</script>
-
-<template>
-  <Form />
-</template>
-```
+`useVbenForm<表单值类型, 提交值类型>(options)` 返回 `[Form, formApi]`。常用配置包括 schema、commonConfig、wrapperClass、showDefaultActions、handleSubmit、submitOnChange 和 codec。codec 的 decode 将提交值转成组件值，encode 将组件值转成提交值。
+
+字段使用 fieldName、component、label、defaultValue、componentProps、rules、dependencies。字段占列使用 `formItemClass: 'col-span-2'`；不要使用旧版 colProps 或 ifShow。
+
+Ant Design Vue 大多使用 value；Checkbox、Radio、Switch 使用 checked，Upload 使用 fileList，Tiptap 使用 modelValue。映射见 [form.ts](../../apps/web-antd/src/adapter/form.ts)，可用组件和属性见 [组件适配器](../../apps/web-antd/src/adapter/component/index.ts)。
+
+固定选项使用 Select 的 options。远程数据使用 ApiSelect/ApiTreeSelect，并配置 api、labelField、valueField 和必要的 resultField；不要把 api 直接传给普通 Select。树组件还要匹配后端 children 和 fieldNames。
+
+## 校验与联动
+
+`rules: 'required'` 用于文本，`rules: 'selectRequired'` 用于选择值，数值 0 是有效选项。Zod schema 可直接作为 rules，异步 refine 可用于唯一性校验。
+
+Zod 4 的 refine 第二个参数使用对象。动态错误使用 `error: (issue) => ...`，输入值是 issue.input；不要使用旧版 `(value) => ({ message: ... })`。实例见 [菜单表单](../../apps/web-antd/src/views/system/menu/modules/form.vue)。
+
+新联动使用 `dependencies: { triggerFields: [...], resolve: ({ values, actions, controller, schema }) => ({ ... }) }`。返回值可含 disabled、show、if、required、rules 和 componentProps。show 通过 CSS 隐藏，if 移除字段渲染。
+
+旧的 dependencies.show/disabled/rules/trigger 仍作兼容保留。schema 的 componentProps 函数接收字段或数组行上下文，不能当作完整表单值；读取其他字段时使用 dependencies.resolve。
+
+## API
+
+| API | 说明 |
+| --- | --- |
+| `await formApi.validate()` | 返回 `{ valid, errors }` |
+| `await formApi.getValues()` | 取得经过 codec/值转换的提交值 |
+| `await formApi.getRawValues()` | 取得组件原始值 |
+| `await formApi.setValues(patch)` | 写入组件值 |
+| `await formApi.setSubmitValues(values)` | 通过 codec 解码并写入提交值 |
+| `await formApi.reset()` | 重置值和校验状态 |
+| `await formApi.clearValidation()` | 只清除校验状态 |
+| `await formApi.setFieldValue(name, value)` | 更新单字段 |
+| `formApi.updateSchema([{ fieldName, ...修改项 }])` | 更新已有字段，参数为数组 |
+| `formApi.setState({ schema: 新字段数组 })` | 替换完整 schema，可用于增删字段 |
+| `await formApi.removeSchemaByFields([...])` | 删除字段 |
+| `await formApi.validateAndSubmit()` | 校验通过后调用 handleSubmit |
+
+不存在 appendSchema。新增字段应构造新 schema 后 setState。类型在 useVbenForm 调用时声明，避免旧的 getValues 泛型写法；旧 resetForm/submitForm 仅作兼容保留。完整语义见 [FormApi](../../packages/@core/ui-kit/form-ui/src/form-api.ts) 和 [类型](../../packages/@core/ui-kit/form-ui/src/types.ts)。
+
+## 字段插槽
+
+字段插槽名为 fieldName，例如 `#permissions`。插槽提供 componentProps、componentField、modelValue 和 field。一般通过 `v-bind="slotProps.componentProps"` 绑定自定义组件。
+
+模型字段与适配器不同的组件应显式绑定，例如权限 Tree 使用 `:model-value="slotProps.modelValue"` 和 `@update:model-value="slotProps.componentField['onUpdate:modelValue']"`。更新回调不在 slotProps 顶层；见 [角色表单](../../apps/web-antd/src/views/system/role/modules/form.vue)。

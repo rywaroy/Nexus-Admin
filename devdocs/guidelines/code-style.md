@@ -1,45 +1,17 @@
 # 代码规范
 
-## 基本规范
+新增业务使用 `<script setup lang="ts">`、箭头函数和 async/await。接口实体、请求参数与响应结构先定义类型，再编写页面；不能用 any 掩盖升级后的 API 不兼容。
 
-1. **方法定义请使用箭头函数**
-2. **异步方法优先使用 async/await**
-3. **本项目为 vue3 框架，请严格使用 setup 模式**
-4. **请优先使用 Vben 框架的内部封装组件**如 Vben Form、Vben Modal、Vben Drawer、VxeTable 等，如果没有再使用 Ant Design Vue 组件
+- 禁止无目的的防御性或兜底代码。需要配置的数据应明确约定来源，业务规则中的条件分支应表达实际行为。
+- 注释只解释非显然的逻辑或约束，不复述函数和语句名称。
+- 禁止子代理；未经用户主动要求，不使用 Playwright 做前端测试。
+- 复用 Page、应用表单/表格适配器、弹窗和抽屉；新增业务优先放在 `apps/web-antd`。
+- 文案使用已有翻译键或补充应用翻译；图标使用 `@vben/icons`，参考 [图标指南](../components/icon.md)。
 
-## 通用组件
+## 验证与文档
 
-### Page 容器组件
+修改表单、表格或公共组件 API 时，更新对应指南和 [可编译示例](../templates/list-page.md)。至少执行 `pnpm check:devdocs`、受影响应用的 typecheck 和构建；逻辑变化运行相关 Vitest 单测。不要给单纯格式或文案变更添加无意义测试。
 
-容器组件，展示页面信息，放在最外层
+仓库提交钩子按暂存文件执行 Oxlint、Oxfmt、ESLint、Stylelint，并执行应用类型检查。合并上游时应先完整暂存本次已审阅的改动，避免自动格式化与未暂存补丁冲突。
 
-```vue
-<script lang="ts" setup>
-import { Page } from '@vben/common-ui';
-</script>
-<template>
-  <Page></Page>
-</template>
-```
-
-**Props 定义**
-
-```ts
-export interface PageProps {
-  title?: string;
-  description?: string;
-  contentClass?: string;
-  /**
-   * 根据content可见高度自适应
-   */
-  autoContentHeight?: boolean;
-  headerClass?: string;
-  footerClass?: string;
-  /**
-   * Custom height offset value (in pixels) to adjust content area sizing
-   * when used with autoContentHeight
-   * @default 0
-   */
-  heightOffset?: number;
-}
-```
+`pnpm check:devdocs` 检查开发指南中的本地链接，并对包含示例文件的业务应用做类型检查。它不能自动验证所有正文描述或接口联调；升级时还要按 [同步流程](../upstream-sync.md) 核对源码与实际页面。

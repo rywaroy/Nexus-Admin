@@ -12,11 +12,11 @@ import { $t } from '#/locales';
 
 import { BUSINESS_TYPE_MAP, OPER_STATUS_MAP } from '../data';
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<SystemLogApi.OperLog>({
   footer: false,
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const data = drawerApi.getData<SystemLogApi.OperLog>();
+      const data = drawerApi.getData();
       if (data) {
         operLog.value = data;
       }

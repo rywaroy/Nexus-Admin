@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import type { SetupContext } from "vue";
+import type { SetupContext } from 'vue';
 
-import { computed, ref, useSlots } from "vue";
+import { computed, ref, useSlots } from 'vue';
 
-import { VbenTooltip } from "@vben-core/shadcn-ui";
+import { VbenTooltip } from '@vben-core/shadcn-ui';
 
-import { Code } from "lucide-vue-next";
-import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from "reka-ui";
+import { Code } from '@lucide/vue';
+import {
+  TabsContent,
+  TabsIndicator,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+} from 'reka-ui';
 
 defineOptions({
   inheritAttrs: false,
@@ -21,7 +27,7 @@ const props = withDefaults(
 
 const open = ref(false);
 
-const slots: SetupContext["slots"] = useSlots();
+const slots: SetupContext['slots'] = useSlots();
 
 const tabs = computed(() => {
   return props.files.map((file) => {
@@ -32,7 +38,7 @@ const tabs = computed(() => {
   });
 });
 
-const currentTab = ref("index.vue");
+const currentTab = ref('index.vue');
 
 const toggleOpen = () => {
   open.value = !open.value;
@@ -79,7 +85,7 @@ const toggleOpen = () => {
                 @click="toggleOpen"
               />
             </template>
-            {{ open ? "Collapse code" : "Expand code" }}
+            {{ open ? 'Collapse code' : 'Expand code' }}
           </VbenTooltip>
         </div>
       </div>

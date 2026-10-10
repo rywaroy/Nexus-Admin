@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 
-import { Page, SliderRotateCaptcha } from "@vben/common-ui";
-import { preferences } from "@vben/preferences";
-import { useUserStore } from "@vben/stores";
+import { Page, SliderRotateCaptcha } from '@vben/common-ui';
+import { preferences } from '@vben/preferences';
+import { useUserStore } from '@vben/stores';
 
-import { Card, message } from "ant-design-vue";
+import { Card, message } from 'antdv-next';
 
 const userStore = useUserStore();
 function handleSuccess() {
-  message.success("success!");
+  message.success('success!');
 }
 
 const avatar = computed(() => {

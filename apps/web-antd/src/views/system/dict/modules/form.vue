@@ -24,7 +24,7 @@ const [Form, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<SystemDictApi.DictType>({
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) return;
@@ -55,9 +55,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
   async onOpenChange(isOpen) {
     if (!isOpen) return;
 
-    const data = drawerApi.getData<SystemDictApi.DictType>();
+    const data = drawerApi.getData();
     formData.value = data?.id ? data : undefined;
-    formApi.resetForm();
+    formApi.reset();
 
     await nextTick();
     if (data?.id) {

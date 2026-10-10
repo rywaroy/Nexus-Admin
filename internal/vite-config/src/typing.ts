@@ -1,7 +1,13 @@
-import type { PluginVisualizerOptions } from "rollup-plugin-visualizer";
-import type { PluginOptions } from "unplugin-dts";
-import type { ConfigEnv, PluginOption, UserConfig, UserConfigFnPromise } from "vite";
-import type { Options as PwaPluginOptions } from "vite-plugin-pwa";
+import type { Options as HtmlMinifierOptions } from 'html-minifier-terser';
+import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer';
+import type { PluginOptions } from 'unplugin-dts';
+import type {
+  ConfigEnv,
+  PluginOption,
+  UserConfig,
+  UserConfigFnPromise,
+} from 'vite';
+import type { Options as PwaPluginOptions } from 'vite-plugin-pwa';
 
 /**
  * ImportMap 配置接口
@@ -90,6 +96,12 @@ interface ArchiverPluginOptions {
 }
 
 /**
+ * HTML 插件配置
+ * @description 用于配置基于 transformIndexHtml 的 HTML 压缩行为
+ */
+type HtmlPluginOptions = HtmlMinifierOptions;
+
+/**
  * ImportMap 插件配置
  * @description 用于配置模块的 CDN 导入
  */
@@ -99,7 +111,7 @@ interface ImportmapPluginOptions {
    * @default 'jspm.io'
    * @description 支持 esm.sh 和 jspm.io 两种 CDN 供应商
    */
-  defaultProvider?: "esm.sh" | "jspm.io";
+  defaultProvider?: 'esm.sh' | 'jspm.io';
   /**
    * ImportMap 配置数组
    * @description 配置需要从 CDN 导入的包
@@ -201,7 +213,12 @@ interface ApplicationPluginOptions extends CommonPluginOptions {
    * @default ['gzip']
    * @description 可选的压缩类型
    */
-  compressTypes?: ("brotli" | "gzip")[];
+  compressTypes?: ('brotli' | 'gzip')[];
+  /**
+   * 是否开启 dayjs 插件
+   * @default true
+   */
+  dayjs?: boolean;
   /**
    * 是否抽离配置文件
    * @default false
@@ -212,7 +229,7 @@ interface ApplicationPluginOptions extends CommonPluginOptions {
    * 是否开启 HTML 插件
    * @default true
    */
-  html?: boolean;
+  html?: boolean | HtmlPluginOptions;
   /**
    * 是否开启国际化
    * @default false
@@ -259,7 +276,7 @@ interface ApplicationPluginOptions extends CommonPluginOptions {
   /**
    * 打印插件配置
    */
-  printInfoMap?: PrintPluginOptions["infoMap"];
+  printInfoMap?: PrintPluginOptions['infoMap'];
   /**
    * 是否开启 PWA
    * @default false
@@ -337,6 +354,7 @@ export type {
   DefineApplicationOptions,
   DefineConfig,
   DefineLibraryOptions,
+  HtmlPluginOptions,
   IImportMap,
   ImportmapPluginOptions,
   LibraryPluginOptions,

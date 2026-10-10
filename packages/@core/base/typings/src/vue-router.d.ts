@@ -1,5 +1,5 @@
-import type { Component } from "vue";
-import type { Router, RouteRecordRaw } from "vue-router";
+import type { Component } from 'vue';
+import type { Router, RouteRecordRaw } from 'vue-router';
 
 interface RouteMeta {
   /**
@@ -10,6 +10,11 @@ interface RouteMeta {
    * 当前激活的菜单，有时候不想激活现有菜单，需要激活父级菜单时使用
    */
   activePath?: string;
+  /**
+   * 是否使用 activePath 对应的路由层级生成面包屑
+   * @default false
+   */
+  breadcrumbUseActivePath?: boolean;
   /**
    * 是否固定标签页
    * @default false
@@ -32,11 +37,17 @@ interface RouteMeta {
   /**
    * 徽标类型
    */
-  badgeType?: "dot" | "normal";
+  badgeType?: 'dot' | 'normal';
   /**
    * 徽标颜色
    */
-  badgeVariants?: "default" | "destructive" | "primary" | "success" | "warning" | string;
+  badgeVariants?:
+    | 'default'
+    | 'destructive'
+    | 'primary'
+    | 'success'
+    | 'warning'
+    | string;
   /**
    * 路由对应dom是否缓存起来
    */
@@ -122,7 +133,10 @@ interface RouteMeta {
 }
 
 // 定义递归类型以将 RouteRecordRaw 的 component 属性更改为 string
-type RouteRecordStringComponent<T = string> = Omit<RouteRecordRaw, "children" | "component"> & {
+type RouteRecordStringComponent<T = string> = Omit<
+  RouteRecordRaw,
+  'children' | 'component'
+> & {
   children?: RouteRecordStringComponent<T>[];
   component: T;
 };
@@ -131,7 +145,7 @@ type ComponentRecordType = Record<string, () => Promise<Component>>;
 
 interface GenerateMenuAndRoutesOptions {
   fetchMenuListAsync?: () => Promise<RouteRecordStringComponent[]>;
-  forbiddenComponent?: RouteRecordRaw["component"];
+  forbiddenComponent?: RouteRecordRaw['component'];
   layoutMap?: ComponentRecordType;
   pageMap?: ComponentRecordType;
   roles?: string[];

@@ -83,6 +83,9 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         { link: 'essentials/settings', text: 'Configuration' },
         { link: 'essentials/icons', text: 'Icons' },
         { link: 'essentials/styles', text: 'Styles' },
+        { link: 'essentials/utils', text: 'Utils' },
+        { link: 'essentials/stores', text: 'Stores' },
+        { link: 'essentials/cache', text: 'Cache' },
         { link: 'essentials/external-module', text: 'External Modules' },
         { link: 'essentials/build', text: 'Build and Deployment' },
         { link: 'essentials/server', text: 'Server Interaction and Data Mock' },
@@ -183,10 +186,6 @@ function sidebarComponents(): DefaultTheme.SidebarItem[] {
           text: 'Drawer',
         },
         {
-          link: 'common-ui/vben-tiptap',
-          text: 'Tiptap Rich Text Editor',
-        },
-        {
           link: 'common-ui/vben-form',
           text: 'Form',
         },
@@ -201,6 +200,22 @@ function sidebarComponents(): DefaultTheme.SidebarItem[] {
         {
           link: 'common-ui/vben-ellipsis-text',
           text: 'EllipsisText',
+        },
+        {
+          link: 'common-ui/vben-descriptions',
+          text: 'Descriptions',
+        },
+        {
+          link: 'common-ui/vben-table-action',
+          text: 'TableAction',
+        },
+        {
+          link: 'common-ui/vben-cropper',
+          text: 'Cropper',
+        },
+        {
+          link: 'common-ui/vben-tiptap',
+          text: 'Tiptap RichTextEditor',
         },
       ],
     },

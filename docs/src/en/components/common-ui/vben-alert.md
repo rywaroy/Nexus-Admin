@@ -32,16 +32,18 @@ If `content`, `footer`, or `icon` is rendered through a custom component, you ca
 ## Core Types
 
 ```ts
-export type IconType = "error" | "info" | "question" | "success" | "warning";
+export type IconType = 'error' | 'info' | 'question' | 'success' | 'warning';
 
 export type BeforeCloseScope = {
   isConfirm: boolean;
 };
 
 export type AlertProps = {
-  beforeClose?: (scope: BeforeCloseScope) => boolean | Promise<boolean | undefined> | undefined;
+  beforeClose?: (
+    scope: BeforeCloseScope,
+  ) => boolean | Promise<boolean | undefined> | undefined;
   bordered?: boolean;
-  buttonAlign?: "center" | "end" | "start";
+  buttonAlign?: 'center' | 'end' | 'start';
   cancelText?: string;
   centered?: boolean;
   confirmText?: string;
@@ -63,8 +65,9 @@ export type PromptProps<T = any> = {
   }) => boolean | Promise<boolean | undefined> | undefined;
   component?: Component;
   componentProps?: Recordable<any>;
-  componentSlots?: (() => any) | Recordable<unknown> | VNode | VNodeArrayChildren;
+  componentSlots?:
+    (() => any) | Recordable<unknown> | VNode | VNodeArrayChildren;
   defaultValue?: T;
   modelPropName?: string;
-} & Omit<AlertProps, "beforeClose">;
+} & Omit<AlertProps, 'beforeClose'>;
 ```

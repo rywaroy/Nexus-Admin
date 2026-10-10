@@ -32,7 +32,7 @@ const [Form, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<SystemRoleApi.SystemRole>({
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) return;
@@ -59,8 +59,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
   async onOpenChange(isOpen) {
     if (isOpen) {
-      const data = drawerApi.getData<SystemRoleApi.SystemRole>();
-      formApi.resetForm();
+      const data = drawerApi.getData();
+      formApi.reset();
 
       formData.value = data?.id ? data : undefined;
 
@@ -123,7 +123,9 @@ function getNodeClass(node: Recordable<any>) {
             :default-expanded-level="2"
             :get-node-class="getNodeClass"
             :model-value="slotProps.modelValue"
-            @update:model-value="slotProps['onUpdate:modelValue']"
+            @update:model-value="
+              slotProps.componentField['onUpdate:modelValue']
+            "
             value-field="id"
             label-field="meta.title"
             icon-field="meta.icon"

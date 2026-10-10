@@ -1,12 +1,20 @@
 <script lang="ts" setup>
-import type { Component } from "vue";
+import type { Component } from 'vue';
 
-import type { AlertProps } from "./alert";
+import type { AlertProps } from './alert';
 
-import { computed, h, nextTick, ref } from "vue";
+import { computed, h, nextTick, ref } from 'vue';
 
-import { useSimpleLocale } from "@vben-core/composables";
-import { CircleAlert, CircleCheckBig, CircleHelp, CircleX, Info, X } from "@vben-core/icons";
+import { useSimpleLocale } from '@vben-core/composables';
+import {
+  CircleAlert,
+  CircleCheckBig,
+  CircleHelp,
+  CircleX,
+  Info,
+  X,
+} from '@vben-core/icons';
+import { usePreferences } from '@vben-core/preferences';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,60 +25,68 @@ import {
   VbenButton,
   VbenLoading,
   VbenRenderContent,
-} from "@vben-core/shadcn-ui";
-import { globalShareState } from "@vben-core/shared/global-state";
-import { cn } from "@vben-core/shared/utils";
+} from '@vben-core/shadcn-ui';
+import { globalShareState } from '@vben-core/shared/global-state';
+import { cn } from '@vben-core/shared/utils';
 
-import { provideAlertContext } from "./alert";
+import { provideAlertContext } from './alert';
 
 const props = withDefaults(defineProps<AlertProps>(), {
   bordered: true,
-  buttonAlign: "end",
+  buttonAlign: 'end',
   centered: true,
+  escapeKeyClose: true,
 });
-const emits = defineEmits(["closed", "confirm", "opened"]);
-const open = defineModel<boolean>("open", { default: false });
+const emits = defineEmits(['closed', 'confirm', 'opened']);
+const { globalEscapeShortcutKey } = usePreferences();
+const open = defineModel<boolean>('open', { default: false });
 const { $t } = useSimpleLocale();
 const components = globalShareState.getComponents();
 const isConfirm = ref(false);
 
 function onAlertClosed() {
-  emits("closed", isConfirm.value);
+  emits('closed', isConfirm.value);
   isConfirm.value = false;
 }
 
-function onEscapeKeyDown() {
+function onEscapeKeyDown(e: KeyboardEvent) {
+  // 先标记是按 Esc 触发的（用于后续 isConfirm 判断等）
   isConfirm.value = false;
+
+  // 只有当组件参数和全局配置都为false时才阻止关闭，其任意一个为true都需要让esc生效
+  if (!props.escapeKeyClose && !globalEscapeShortcutKey.value) {
+    e.preventDefault();
+  }
 }
 
 const getIconRender = computed(() => {
   let iconRender: Component | null = null;
   if (props.icon) {
-    if (typeof props.icon === "string") {
+    if (typeof props.icon === 'string') {
       switch (props.icon) {
-        case "error": {
+        case 'error': {
           iconRender = h(CircleX, {
-            style: { color: "hsl(var(--destructive))" },
+            style: { color: 'hsl(var(--destructive))' },
           });
           break;
         }
-        case "info": {
-          iconRender = h(Info, { style: { color: "hsl(var(--info))" } });
+        case 'info': {
+          iconRender = h(Info, { style: { color: 'hsl(var(--info))' } });
           break;
         }
-        case "question": {
+        case 'question': {
           iconRender = CircleHelp;
           break;
         }
-        case "success": {
+        case 'success': {
           iconRender = h(CircleCheckBig, {
-            style: { color: "hsl(var(--success))" },
+            style: { color: 'hsl(var(--success))' },
           });
           break;
         }
-        case "warning": {
+        case 'warning': {
           iconRender = h(CircleAlert, {
-            style: { color: "hsl(var(--warning))" },
+            style: { color: 'hsl(var(--warning))' },
           });
           break;
         }
@@ -103,7 +119,7 @@ provideAlertContext({
 
 function handleConfirm() {
   isConfirm.value = true;
-  emits("confirm");
+  emits('confirm');
 }
 
 function handleCancel() {
@@ -129,18 +145,19 @@ async function handleOpenChange(val: boolean) {
 }
 </script>
 <template>
-  <AlertDialog :open="open" @update:open="handleOpenChange">
+  <AlertDialog :modal="false" :open="open" @update:open="handleOpenChange">
     <AlertDialogContent
       :open="open"
       :centered="centered"
       :overlay-blur="overlayBlur"
       @opened="emits('opened')"
       @closed="onAlertClosed"
-      @escape-key-down="onEscapeKeyDown"
+      @escape-key-down="onEscapeKeyDown($event)"
+      @close="handleOpenChange(false)"
       :class="
         cn(
           containerClass,
-          'inset-x-0 mx-auto flex max-h-[80%] flex-col p-0 duration-300 sm:w-130 sm:max-w-[80%] sm:rounded-(--radius)',
+          'flex max-h-[80%] flex-col p-0 duration-300 sm:w-130 sm:max-w-[80%] sm:rounded-(--radius)',
           {
             'border border-border': bordered,
             'shadow-3xl': !bordered,
@@ -172,16 +189,19 @@ async function handleOpenChange(val: boolean) {
           </div>
           <VbenLoading v-if="loading && contentMasking" :spinning="loading" />
         </AlertDialogDescription>
-        <div class="flex items-center justify-end gap-x-2" :class="`justify-${buttonAlign}`">
+        <div
+          class="flex items-center justify-end gap-x-2"
+          :class="`justify-${buttonAlign}`"
+        >
           <VbenRenderContent :content="footer" />
           <AlertDialogCancel v-if="showCancel" as-child>
             <component
               :is="components.DefaultButton || VbenButton"
               :disabled="loading"
-              variant="ghost"
+              variant="outline"
               @click="handleCancel"
             >
-              {{ cancelText || $t("cancel") }}
+              {{ cancelText || $t('cancel') }}
             </component>
           </AlertDialogCancel>
           <AlertDialogAction as-child>
@@ -190,7 +210,7 @@ async function handleOpenChange(val: boolean) {
               :loading="loading"
               @click="handleConfirm"
             >
-              {{ confirmText || $t("confirm") }}
+              {{ confirmText || $t('confirm') }}
             </component>
           </AlertDialogAction>
         </div>

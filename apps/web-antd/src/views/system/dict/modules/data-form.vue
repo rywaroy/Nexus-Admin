@@ -13,7 +13,7 @@ import { $t } from '#/locales';
 
 import { useDataFormSchema } from '../data';
 
-interface DictDataFormDrawerData {
+export interface DictDataFormDrawerData {
   currentType: SystemDictApi.DictType;
   record?: SystemDictApi.DictData;
 }
@@ -30,7 +30,7 @@ const [Form, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-const [Drawer, drawerApi] = useVbenDrawer({
+const [Drawer, drawerApi] = useVbenDrawer<DictDataFormDrawerData>({
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) return;
@@ -46,7 +46,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
       listClass: values.listClass,
       remark: values.remark,
       status: values.status ?? 0,
-      typeId: currentType.value!.id,
+      typeId: (currentType.value as SystemDictApi.DictType).id,
     };
 
     try {
@@ -69,10 +69,10 @@ const [Drawer, drawerApi] = useVbenDrawer({
   async onOpenChange(isOpen) {
     if (!isOpen) return;
 
-    const data = drawerApi.getData<DictDataFormDrawerData>();
+    const data = drawerApi.getData() as DictDataFormDrawerData;
     currentType.value = data.currentType;
     formData.value = data.record?.id ? data.record : undefined;
-    formApi.resetForm();
+    formApi.reset();
 
     await nextTick();
     if (data.record?.id) {

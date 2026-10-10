@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 
-import { cn } from "@vben-core/shared/utils";
+import { cn } from '@vben-core/shared/utils';
 
 interface Props {
   class?: string;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 defineOptions({
-  name: "VbenSpinner",
+  name: 'VbenSpinner',
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -65,7 +65,8 @@ function onTransitionEnd() {
       cn(
         'flex-center bg-overlay-content absolute top-0 left-0 z-100 size-full backdrop-blur-xs transition-all duration-500',
         {
-          'invisible opacity-0': !showSpinner,
+          'invisible pointer-events-none opacity-0': !showSpinner,
+          'pointer-events-auto': showSpinner,
         },
         props.class,
       )
