@@ -117,5 +117,57 @@
       "setTimezone": "Set Timezone",
       "setSuccess": "Timezone set successfully"
     }
+  },
+  "tiptap": {
+    "placeholder": "Please enter content...",
+    "prompts": {
+      "image": "Enter image URL",
+      "link": "Enter link URL",
+      "video": "Enter the video URL"
+    },
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strike",
+      "code": "Code",
+      "codeBlock": "Code Block",
+      "heading": "Heading",
+      "paragraph": "Paragraph",
+      "heading1": "H1",
+      "heading2": "H2",
+      "heading3": "H3",
+      "heading4": "H4",
+      "bulletList": "Bullets",
+      "orderedList": "Numbering",
+      "blockquote": "Quote",
+      "link": "Link",
+      "unlink": "Unlink",
+      "image": "Image",
+      "imageUrl": "Image URL",
+      "imageUpload": "Upload Image",
+      "textColor": "Text Color",
+      "highlightColor": "Highlight Color",
+      "alignLeft": "Left",
+      "alignCenter": "Center",
+      "alignRight": "Right",
+      "preview": "Preview",
+      "undo": "Undo",
+      "redo": "Redo",
+      "clear": "Clear",
+      "video": "Video",
+      "videoUpload": "Upload video",
+      "videoUrl": "Video URL"
+    },
+    "upload": {
+      "fileTooLarge": "File size exceeds the limit",
+      "fileTypeNotAllowed": "File type is not allowed",
+      "uploadFailed": "Upload Failed"
+    },
+    "media": {
+      "width": "Width (px)",
+      "height": "Height (px)",
+      "apply": "Apply size"
+    }
   }
 }

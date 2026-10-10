@@ -181,6 +181,10 @@ function sidebarComponents(): DefaultTheme.SidebarItem[] {
           text: 'Drawer 抽屉',
         },
         {
+          link: 'common-ui/vben-tiptap',
+          text: 'Tiptap 富文本编辑器',
+        },
+        {
           link: 'common-ui/vben-form',
           text: 'Form 表单',
         },

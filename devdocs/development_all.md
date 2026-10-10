@@ -1907,3 +1907,7 @@ function onRefresh() {
   </Page>
 </template>
 ```
+
+## 富文本编辑器
+
+项目内置 `@vben/plugins/tiptap`，支持图片、视频上传以及媒体宽高调整，可对接现有上传接口。简要说明见 [富文本编辑器](./components/tiptap.md)。

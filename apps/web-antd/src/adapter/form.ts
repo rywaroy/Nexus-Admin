@@ -20,6 +20,7 @@ async function initSetupVbenForm() {
         Radio: 'checked',
         Switch: 'checked',
         Upload: 'fileList',
+        Tiptap: 'modelValue',
       },
     },
     defineRules: {

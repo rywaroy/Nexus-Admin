@@ -66,6 +66,9 @@ const Textarea = defineAsyncComponent(() =>
 const TimePicker = defineAsyncComponent(() => import("ant-design-vue/es/time-picker"));
 const TreeSelect = defineAsyncComponent(() => import("ant-design-vue/es/tree-select"));
 const Cascader = defineAsyncComponent(() => import("ant-design-vue/es/cascader"));
+const Tiptap = defineAsyncComponent(() =>
+  import("@vben/plugins/tiptap").then((module) => module.VbenTiptap),
+);
 const Upload = defineAsyncComponent(() => import("ant-design-vue/es/upload"));
 const Image = defineAsyncComponent(() => import("ant-design-vue/es/image"));
 const PreviewGroup = defineAsyncComponent(() =>
@@ -517,6 +520,7 @@ export type ComponentType =
   | "Switch"
   | "Textarea"
   | "TimePicker"
+  | "Tiptap"
   | "TreeSelect"
   | "Upload"
   | BaseFormComponentType;
@@ -580,6 +584,7 @@ async function initComponentAdapter() {
     Switch,
     Textarea: withDefaultPlaceholder(Textarea, "input"),
     TimePicker,
+    Tiptap,
     TreeSelect: withDefaultPlaceholder(TreeSelect, "select"),
     Upload: withPreviewUpload(),
   };

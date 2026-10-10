@@ -22,6 +22,7 @@
 | VxeTable | [vxe-table.md](./devdocs/components/vxe-table.md) | 数据表格、远程加载、编辑功能 |
 | Vben Modal | [vben-modal.md](./devdocs/components/vben-modal.md) | 弹窗、表单弹窗 |
 | Vben Drawer | [vben-drawer.md](./devdocs/components/vben-drawer.md) | 抽屉面板、表单抽屉 |
+| Vben Tiptap | [tiptap.md](./devdocs/components/tiptap.md) | 富文本编辑、图片和视频上传、媒体宽高调整 |
 | Icon | [icon.md](./devdocs/components/icon.md) | 图标使用、Iconify、图标选择器 |
 
 ### 开发指南

@@ -183,6 +183,10 @@ function sidebarComponents(): DefaultTheme.SidebarItem[] {
           text: 'Drawer',
         },
         {
+          link: 'common-ui/vben-tiptap',
+          text: 'Tiptap Rich Text Editor',
+        },
+        {
           link: 'common-ui/vben-form',
           text: 'Form',
         },

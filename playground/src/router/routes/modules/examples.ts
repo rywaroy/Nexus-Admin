@@ -14,6 +14,12 @@ const routes: RouteRecordRaw[] = [
     path: "/examples",
     children: [
       {
+        name: "TiptapExample",
+        path: "/examples/tiptap",
+        component: () => import("#/views/examples/tiptap/index.vue"),
+        meta: { icon: "lucide:text-cursor-input", title: "Tiptap 富文本编辑器" },
+      },
+      {
         name: "FormExample",
         path: "/examples/form",
         meta: {
