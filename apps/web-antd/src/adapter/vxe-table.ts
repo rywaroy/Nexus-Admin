@@ -12,10 +12,18 @@ import {
   setupVbenVxeTable,
   useVbenVxeGrid as useGrid,
 } from '@vben/plugins/vxe-table';
+import { useDictStore } from '@vben/stores';
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
+import {
+  Button,
+  Dropdown,
+  Image,
+  Popconfirm,
+  Switch,
+  Tag,
+} from 'ant-design-vue';
 
 import { $t } from '#/locales';
 
@@ -101,6 +109,25 @@ setupVbenVxeTable({
       },
     });
 
+    vxeUI.renderer.add('CellDict', {
+      renderTableDefault({ props }, { column, row }) {
+        const code = props?.code as string | undefined;
+        const value = get(row, column.field);
+        if (!code) {
+          return value;
+        }
+        const dictStore = useDictStore();
+        const item = dictStore.getDictItem(code, value);
+        if (!item) {
+          return value;
+        }
+        if (item.color) {
+          return h(Tag, { color: item.color }, { default: () => item.label });
+        }
+        return item.label;
+      },
+    });
+
     vxeUI.renderer.add('CellSwitch', {
       renderTableDefault({ attrs, props }, { column, row }) {
         const loadingKey = `__loading_${column.field}`;
@@ -133,7 +160,18 @@ setupVbenVxeTable({
      * 注册表格的操作按钮渲染器
      */
     vxeUI.renderer.add('CellOperation', {
-      renderTableDefault({ attrs, options, props }, { column, row }) {
+      renderTableDefault({ attrs, options, props: rawProps }, { column, row }) {
+        const {
+          dropdownProps,
+          menuButtonProps,
+          menuButtonPosition = 'right',
+          menuCodes = [],
+          menuIcon = 'ant-design:more-outlined',
+          menuText = $t('common.more'),
+          mode,
+          renderMode,
+          ...props
+        } = rawProps ?? {};
         const defaultProps = { size: 'small', type: 'link', ...props };
         let align: 'center' | 'end' | 'start';
         switch (column.align) {
@@ -256,16 +294,118 @@ setupVbenVxeTable({
           );
         }
 
-        const btns = operations.map((opt) =>
-          opt.code === 'delete' ? renderConfirm(opt) : renderBtn(opt),
-        );
+        const renderOperation = (opt: Recordable<any>) =>
+          opt.code === 'delete' ? renderConfirm(opt) : renderBtn(opt);
+        const btns = operations.map((operation) => renderOperation(operation));
+
+        function renderMenuTrigger() {
+          return h(
+            Button,
+            {
+              size: defaultProps.size,
+              type: defaultProps.type,
+              ...menuButtonProps,
+            },
+            {
+              default: () => {
+                const content = [];
+                if (menuIcon) {
+                  content.push(
+                    h(IconifyIcon, { class: 'size-5', icon: menuIcon }),
+                  );
+                }
+                if (menuText) {
+                  content.push(h('span', menuText));
+                }
+                return h(
+                  'div',
+                  { class: 'inline-flex items-center gap-1 leading-none' },
+                  content,
+                );
+              },
+            },
+          );
+        }
+
+        const operationRenderStrategies = {
+          button: () => btns,
+          menu: () => {
+            // 未配置 menuCodes 时，renderMode=menu 仍然将全部操作收入下拉菜单。
+            const hasMenuCodes =
+              Array.isArray(menuCodes) && menuCodes.length > 0;
+            const menuCodeSet = new Set(menuCodes);
+            const inlineBtns = hasMenuCodes
+              ? operations
+                  .filter((opt) => !menuCodeSet.has(opt.code))
+                  .map((operation) => renderOperation(operation))
+              : [];
+            const menuBtns = hasMenuCodes
+              ? operations
+                  .filter((opt) => menuCodeSet.has(opt.code))
+                  .map((operation) => renderOperation(operation))
+              : btns;
+            const dropdownBtn =
+              menuBtns.length > 0
+                ? [
+                    h(
+                      Dropdown,
+                      {
+                        getPopupContainer: () => document.body,
+                        placement:
+                          column.align === 'left'
+                            ? 'bottomLeft'
+                            : 'bottomRight',
+                        trigger: ['click'],
+                        ...dropdownProps,
+                      },
+                      {
+                        default: () =>
+                          h(
+                            'span',
+                            {
+                              class: 'inline-flex cursor-pointer',
+                            },
+                            [renderMenuTrigger()],
+                          ),
+
+                        overlay: () =>
+                          h(
+                            'div',
+                            {
+                              class:
+                                'ant-dropdown-menu flex flex-col gap-1 p-1',
+
+                              onClick: (event: MouseEvent) =>
+                                event.stopPropagation(),
+
+                              style: {
+                                minWidth: '80px',
+                              },
+                            },
+                            menuBtns,
+                          ),
+                      },
+                    ),
+                  ]
+                : [];
+
+            return hasMenuCodes && menuButtonPosition === 'left'
+              ? [...dropdownBtn, ...inlineBtns]
+              : [...inlineBtns, ...dropdownBtn];
+          },
+        };
+        const renderOperations =
+          (renderMode ?? mode) === 'menu'
+            ? operationRenderStrategies.menu
+            : operationRenderStrategies.button;
+
         return h(
           'div',
           {
             class: 'flex table-operations',
             style: { justifyContent: align },
           },
-          btns,
+          renderOperations(),
         );
       },
     });

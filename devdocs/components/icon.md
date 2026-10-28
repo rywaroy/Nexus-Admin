@@ -7,3 +7,5 @@
 表单图标选择器使用 `component: 'IconPicker'`，由 [应用组件适配器](../../apps/web-antd/src/adapter/component/index.ts) 配置输入组件和模型字段。业务例子见 [菜单表单](../../apps/web-antd/src/views/system/menu/modules/form.vue)。
 
 新增静态图标先确认现有导出；需要增加导出时在共享图标包中沿用上游导出方式。完整公共导出见 [图标包](../../packages/icons/src/index.ts)。
+
+IconPicker 对外统一使用 `modelValue/update:modelValue`，应用表单适配器通过 `modelPropNameMap.IconPicker` 配置。`modelValueProp: 'value'` 仅指定内部 Ant Design Input 的取值协议。

@@ -1,3 +1,5 @@
+import { useDictStore } from '@vben/stores';
+
 import { requestClient } from '#/api/request';
 
 export namespace SystemDictApi {
@@ -96,22 +98,33 @@ export const getDictType = (id: string) => {
   return requestClient.get<SystemDictApi.DictType>(`/system/dict/type/${id}`);
 };
 
-export const createDictType = (data: SystemDictApi.CreateDictTypeRequest) => {
-  return requestClient.post<SystemDictApi.DictType>('/system/dict/type', data);
+export const createDictType = async (
+  data: SystemDictApi.CreateDictTypeRequest,
+) => {
+  const result = await requestClient.post<SystemDictApi.DictType>(
+    '/system/dict/type',
+    data,
+  );
+  useDictStore().refreshDict();
+  return result;
 };
 
-export const updateDictType = (
+export const updateDictType = async (
   id: string,
   data: SystemDictApi.UpdateDictTypeRequest,
 ) => {
-  return requestClient.put<SystemDictApi.DictType>(
+  const result = await requestClient.put<SystemDictApi.DictType>(
     `/system/dict/type/${id}`,
     data,
   );
+  useDictStore().refreshDict();
+  return result;
 };
 
-export const deleteDictType = (id: string) => {
-  return requestClient.delete(`/system/dict/type/${id}`);
+export const deleteDictType = async (id: string) => {
+  const result = await requestClient.delete(`/system/dict/type/${id}`);
+  useDictStore().refreshDict();
+  return result;
 };
 
 export const getDictDataList = (
@@ -133,20 +146,36 @@ export const getDictData = (id: string) => {
   return requestClient.get<SystemDictApi.DictData>(`/system/dict/data/${id}`);
 };
 
-export const createDictData = (data: SystemDictApi.CreateDictDataRequest) => {
-  return requestClient.post<SystemDictApi.DictData>('/system/dict/data', data);
+export const createDictData = async (
+  data: SystemDictApi.CreateDictDataRequest,
+) => {
+  const result = await requestClient.post<SystemDictApi.DictData>(
+    '/system/dict/data',
+    data,
+  );
+  useDictStore().refreshDict();
+  return result;
 };
 
-export const updateDictData = (
+export const updateDictData = async (
   id: string,
   data: SystemDictApi.UpdateDictDataRequest,
 ) => {
-  return requestClient.put<SystemDictApi.DictData>(
+  const result = await requestClient.put<SystemDictApi.DictData>(
     `/system/dict/data/${id}`,
     data,
   );
+  useDictStore().refreshDict();
+  return result;
 };
 
-export const deleteDictData = (id: string) => {
-  return requestClient.delete(`/system/dict/data/${id}`);
+export const deleteDictData = async (id: string) => {
+  const result = await requestClient.delete(`/system/dict/data/${id}`);
+  useDictStore().refreshDict();
+  return result;
+};
+
+export const refreshDictCache = async () => {
+  await requestClient.delete('/system/dict/cache');
+  useDictStore().refreshDict();
 };

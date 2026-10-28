@@ -25,6 +25,9 @@
   "imports": {
     "#/*": "./src/*"
   },
+  "devDependencies": {
+    "@vue/test-utils": "catalog:"
+  },
   "dependencies": {
     "@vben-core/menu-ui": "workspace:*",
     "@vben/access": "workspace:*",

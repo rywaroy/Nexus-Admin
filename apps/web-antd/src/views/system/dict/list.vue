@@ -5,9 +5,12 @@ import type {
 } from '#/adapter/vxe-table';
 import type { SystemDictApi } from '#/api/system/dict';
 
+import { ref } from 'vue';
+
 import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
+import { useDictStore } from '@vben/stores';
 
 import { Button, message, Modal } from 'ant-design-vue';
 
@@ -15,6 +18,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   deleteDictType,
   getDictTypeList,
+  refreshDictCache,
   updateDictType,
 } from '#/api/system/dict';
 import { $t } from '#/locales';
@@ -24,6 +28,18 @@ import DataDrawer from './modules/data-drawer.vue';
 import Form from './modules/form.vue';
 
 const { hasAccessByCodes } = useAccess();
+const refreshingCache = ref(false);
+
+const onRefreshCache = async () => {
+  refreshingCache.value = true;
+  try {
+    await refreshDictCache();
+    await useDictStore().loadAllDicts(true);
+    message.success($t('system.dict.cacheRefreshed'));
+  } finally {
+    refreshingCache.value = false;
+  }
+};
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -186,6 +202,13 @@ async function onDelete(row: SystemDictApi.DictType) {
     <DataDetailDrawer />
     <Grid :table-title="$t('system.dict.list')" @reload="onRefresh">
       <template #toolbar-tools>
+        <Button
+          v-access:code="PERMISSION_CODES.update"
+          :loading="refreshingCache"
+          @click="onRefreshCache"
+        >
+          {{ $t('system.dict.refreshCache') }}
+        </Button>
         <Button
           v-access:code="PERMISSION_CODES.create"
           type="primary"

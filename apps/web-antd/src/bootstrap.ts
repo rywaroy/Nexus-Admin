@@ -14,6 +14,7 @@ import { $t, setupI18n } from '#/locales';
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
+import { initDict } from './dict-init';
 import { router } from './router';
 
 async function bootstrap(namespace: string) {
@@ -45,6 +46,7 @@ async function bootstrap(namespace: string) {
 
   // 配置 pinia-tore
   await initStores(app, { namespace });
+  initDict();
 
   // 安装权限指令
   registerAccessDirective(app);

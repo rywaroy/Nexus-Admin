@@ -183,6 +183,8 @@
     "deleteFailed": "Delete failed"
   },
   "dict": {
+    "refreshCache": "Refresh cache",
+    "cacheRefreshed": "Dictionary cache refreshed",
     "title": "Dictionary Management",
     "list": "Dictionary Type List",
     "query": "Query Dictionary",

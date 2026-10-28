@@ -183,6 +183,8 @@
     "deleteFailed": "删除失败"
   },
   "dict": {
+    "refreshCache": "刷新缓存",
+    "cacheRefreshed": "字典缓存已刷新",
     "title": "字典管理",
     "list": "字典类型列表",
     "query": "查询字典",

@@ -1,6 +1,6 @@
 # Nexus 前端开发文档（AI 入口）
 
-本文档对应当前代码。上游同步基线为 `vbenjs/vue-vben-admin` 的 `main` 提交 `533e2464670f525204428e37c2a9a3d39eac3e4b`（2026-10-09），见 [同步说明](devdocs/upstream-sync.md)。根目录版本号仍为 5.7.0；底层 API 以源码和锁文件为准。
+本文档对应当前代码。上游同步基线为 `vbenjs/vue-vben-admin` 的 `main` 提交 `4ca6b09e399c`（2026-10-27），见 [同步说明](devdocs/upstream-sync.md)。根目录版本号仍为 5.7.0；底层 API 以源码和锁文件为准。
 
 ## 开发前必读
 
@@ -24,6 +24,7 @@
 | 弹窗与传参 | [Vben Modal](devdocs/components/vben-modal.md) |
 | CRUD 抽屉与传参 | [Vben Drawer](devdocs/components/vben-drawer.md) |
 | 富文本、媒体上传和尺寸 | [Tiptap](devdocs/components/tiptap.md) |
+| 字典缓存、业务选项和标签 | [字典](devdocs/components/dict.md) |
 | 图标 | [Icon](devdocs/components/icon.md) |
 | 可复制的列表页示例 | [列表页模板](devdocs/templates/list-page.md) |
 

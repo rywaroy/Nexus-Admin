@@ -1,6 +1,6 @@
 # VxeTable
 
-业务从 `#/adapter/vxe-table` 导入 useVbenVxeGrid 和 VxeTableGridOptions，得到应用的表单适配和 CellTag、CellSwitch、CellOperation 渲染器。完整示例见 [list.vue](../../apps/web-antd/src/documentation/list.vue)。
+业务从 `#/adapter/vxe-table` 导入 useVbenVxeGrid 和 VxeTableGridOptions，得到应用的表单适配和 CellTag、CellDict、CellSwitch、CellOperation 渲染器。完整示例见 [list.vue](../../apps/web-antd/src/documentation/list.vue)。
 
 `useVbenVxeGrid<行类型, 查询表单值类型, 查询提交值类型>({ formOptions, gridOptions, ... })` 返回 `[Grid, gridApi]`。查询表单字段遵循 [表单指南](vben-form.md)，表格列配置遵循 VxeTableGridOptions。
 
@@ -17,3 +17,11 @@
 业务渲染器的参数和事件见 [应用适配器](../../apps/web-antd/src/adapter/vxe-table.ts)。状态 0=启用、1=停用；CellSwitch 的 beforeChange 负责提交状态接口，CellOperation 结合业务权限决定操作项。不要修改公共默认配置去适配单个页面。
 
 完整组件配置见 [上游文档](../../docs/src/components/common-ui/vben-vxe-table.md)，应用实例见 [用户列表](../../apps/web-antd/src/views/system/user/list.vue)。
+
+## 字典与更多操作
+
+`CellDict` 使用 `cellRender: { name: 'CellDict', props: { code: 'project_status' } }` 将字段值显示为字典标签或彩色 Tag，接入方式见 [字典指南](dict.md)。
+
+`CellOperation` 默认展示按钮。配置 `props: { renderMode: 'menu', menuCodes: ['resetPassword'] }` 后，指定 code 的操作收进“更多”，其他操作保留行内显示。省略 menuCodes 则全部收进菜单。`show` 权限过滤发生在分组前；分组内没有可见操作时隐藏菜单入口。删除操作继续经过确认，点击回调仍为 `{ code, row }`。
+
+Ant Design Vue 下拉内容使用 `overlay` 插槽。不要复制 antdv-next 的 `popupRender` 接口。
